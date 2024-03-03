@@ -4,15 +4,14 @@
 <br />
 <div align="center">
 
-  <h1 align="center">NAME OF CHOSEN GAME</h1>
+  <h1 align="center">KIRBY'S ADVENTURE</h1>
 
   <p align="center">
-    Short description of the game.
-    <br />
+    Kirby's Adventure is a side-scrolling platform game developed in 1993 for the NES. The game has a wide variety of enemies with special abilities. When inhaling and swallowing an enemy as Kirby, you can take over their special powers. Kirby on his own also has some special moves. He can walk, sprint, jump, fly, inhale, slide, and more.    <br />
     <strong>Original game : </strong>
-    <a href="https://www.google.be/"><strong>General info »</strong></a>
+    <a href="https://en.wikipedia.org/wiki/Kirby%27s_Adventure"><strong>General info »</strong></a>
     ·
-    <a href="https://www.google.be/"><strong>Youtube video »<strong></a>
+    <a href="https://www.youtube.com/watch?v=_WsaJLcBQCY/$"><strong>Youtube video »<strong></a>
     <br />
     <br />
   </p>
@@ -46,13 +45,12 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-TODO: add screenshot 
+<img src=https://nesninja.com/public/images/nes/found/Kirby%27s_Adventure_1.png>
 
 Here's why:
-TODO: describe why you chose this game 
-* reason 1
-* reason .. 
-
+* "Kirby's Adventure" is an easy to understand and fun to play game, that's why it was one of the first games that I thought of when choosing a game.
+* Kirby's cute and friendly looking appearance makes  him one of my favourite Nintendo characters.
+* One of my best friends is the biggest Kirby fan I know, so I couldn't not choose a Kirby game.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -61,16 +59,21 @@ TODO: describe why you chose this game
 This section gives a clear and detailed overview of which parts of the original game I planned to make.
 
 ### The minimum I will most certainly develop:
-* .. 
-* .. 
+* Kirby's basic mechanics
+* The first level of the game
+* Different types of enemies, as found in level 1
+* Power-Ups for Kirby
 
 ### What I will probably make as well:
-* .. 
-* .. 
+* Particle effects for all the different actions in the game
+* Loading screens and menus
+* The level-hub as seen in the original game
 
 ### What I plan to create if I have enough time left:
-* .. 
-* .. 
+* The jumppad minigame, accessed when completing a level, used to gain bonus score or extra lives
+* More levels
+* More enemies and power-ups for Kirby
+* The small 'boss-fight' found in level 2
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
