@@ -1,5 +1,11 @@
 #pragma once
+#include "Texture.h"
 #include "BaseGame.h"
+#include <vector>
+
+class Kirby;
+class Enemy;
+
 class Game : public BaseGame
 {
 public:
@@ -27,4 +33,10 @@ private:
 	void Initialize();
 	void Cleanup( );
 	void ClearBackground( ) const;
+
+	// VARIABLES
+	Kirby* m_pKirby;
+	Enemy* m_pEnemy;
+
+	std::vector<std::vector<Point2f>> m_World;
 };
