@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="1016"
+   height="168"
+   viewBox="0 0 1016 168"
+   sodipodi:docname="VegetableValley.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.2105596"
+     inkscape:cx="534.46355"
+     inkscape:cy="193.71206"
+     inkscape:window-width="2560"
+     inkscape:window-height="1334"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1" />
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g1">
+    <image
+       width="1016"
+       height="168"
+       preserveAspectRatio="none"
+       xlink:href="VegetableValley.png"
+       id="image1" />
+    <path
+       style="fill:#000000;fill-opacity:0.30312499"
+       d="M 0.02581451,129.02091 H 281.14215 v -16.06755 h 29.80815 v 16.00841 H 537.14826 V 113.1708 h 93.80992 v 15.85011 h 66.08513 v -15.79848 h 96.0816 V 49.047563 h 29.78994 v 31.958359 h 15.95336 v 32.061618 h 177.08749 v 54.88164 H -0.02581451 Z"
+       id="path1" />
+  </g>
+</svg>

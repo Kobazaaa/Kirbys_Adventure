@@ -273,7 +273,7 @@ void Texture::Draw( const Rectf& dstRect, const Rectf& srcRect ) const
 		// Convert to the range [0.0, 1.0]
 		textLeft = srcRect.left / m_Width;
 		textRight = ( srcRect.left + srcRect.width ) / m_Width;
-		textTop = ( srcRect.bottom - srcRect.height ) / m_Height;
+		textTop = (srcRect.bottom - srcRect.height) / m_Height;
 		textBottom = srcRect.bottom / m_Height;
 
 		defaultDestHeight = srcRect.height;

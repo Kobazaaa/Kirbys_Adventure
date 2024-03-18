@@ -18,9 +18,15 @@ public:
 	// Behavioral Functions
 	void Draw(bool flipSprite) const;
 
+public:
 	// Mutators
 	void SetPosition(const Point2f& newCenterPos);
 	void SetPosition(float centerX, float centerY);
+	void IsEliminated(bool isEliminated);
+
+	// Accessors
+	Point2f GetPosition() const;
+	Rectf GetDstRect() const;
 
 protected:
 	// Behavioral Functions
@@ -39,11 +45,14 @@ protected:
 	float m_Width;
 	float m_Height;
 	float m_AccumSec;
+	bool m_IsInvincible;
+	bool m_IsEliminated;
+	bool m_WorldCollision;
 
 	Point2f  m_SrcRectStart;
-	// Static Data Members
-	static const float GRAVITY;
-	static const float SCALE;
+
+	float m_GRAVITY{ -300.f };
+
 private:
 	void UpdateSourceRect();
 	void ApplyGravity(float elapsedSec);

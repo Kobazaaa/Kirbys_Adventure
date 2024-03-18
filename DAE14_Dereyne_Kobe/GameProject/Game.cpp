@@ -3,7 +3,6 @@
 #include "Game.h"
 #include "utils.h"
 #include "Kirby.h"
-#include "Enemy.h"
 #include <iostream>
 
 Game::Game( const Window& window ) 
@@ -19,30 +18,73 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	SVGParser::GetVerticesFromSvgFile("Level.svg", m_World);
-	m_pKirby = new Kirby(Point2f(100, 300));
-	m_pEnemy = new Enemy("WaddleDee.png", Point2f(300, 300));
+	// Kirby
+	m_pKirby =	new Kirby(Point2f(100, 168));
+
+	// EnemyManager
+	m_pEnemyMngr = new EnemyManager();
+
+	// Camera + Level + HUD
+	m_pCamera = new Camera(GetViewPort().width, GetViewPort().height, m_SCALE);
+	m_pLevel =	new Level("VegetableValley.png");
+	m_pHUD = new HUD(m_pKirby, m_SCALE);
+
+	// World
+	SVGParser::GetVerticesFromSvgFile("VegetableValley.svg", m_World);
+	for (size_t i = 0; i < m_World[0].size(); i++)
+	{
+		m_World[0][i].y += (GetViewPort().height / m_SCALE - m_pLevel->GetHeight());
+	}
 }
 
 void Game::Cleanup( )
 {
 	delete m_pKirby;
-	delete m_pEnemy;
+	m_pKirby = nullptr;
+	delete m_pEnemyMngr;
+	m_pEnemyMngr = nullptr;
+	delete m_pCamera;
+	m_pCamera = nullptr;
+	delete m_pLevel;
+	m_pLevel = nullptr;
+	delete m_pHUD;
+	m_pHUD = nullptr;
 }
 
 void Game::Update( float elapsedSec )
 {
-	// Check keyboard state
 	m_pKirby->Update(elapsedSec, m_World);
-	m_pEnemy->Update(elapsedSec, m_World);
+	if (m_pEnemyMngr->KirbyCollision(m_pKirby->GetDstRect())) m_pKirby->EnemyCollision();
+	//if (m_pKirby->EnemyInhaleArea(m_pEnemies[idx])) m_pEnemies[idx]->IsActivated(false);
+	m_pEnemyMngr->Update(elapsedSec, m_World);
+	//if (!utils::IsOverlapping(m_pEnemies[idx]->GetDstRect(), m_pCamera->GetCameraView()))
+	//{
+	//	delete m_pEnemies[idx];
+	//	m_pEnemies[idx] = nullptr;
+	//}
+
+	//if (utils::IsPointInRect(Point2f(300, 200), m_pCamera->GetCameraView())) m_pEnemies.push_back(new Enemy("WaddleDee.png", Point2f(300, 200)));
+
+	m_pHUD->Update(elapsedSec);
 }
 
 void Game::Draw( ) const
 {
-	ClearBackground( );
-	utils::DrawPolygon(m_World[0]);
-	m_pKirby->Draw();
-	m_pEnemy->Draw();
+	ClearBackground();
+
+	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetHeight(), m_pKirby->GetPosition());
+		m_pLevel->Draw();
+		utils::DrawPolygon(m_World[0]);
+		m_pKirby->Draw();
+		m_pEnemyMngr->Draw();
+
+		utils::SetColor(Color4f(1, 1, 1, 1));
+		utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
+		utils::DrawRect(m_pKirby->GetDstRect());
+		utils::DrawRect(m_pKirby->GetInhaleRect());
+	m_pCamera->Reset();
+
+	m_pHUD->Draw();
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
@@ -75,13 +117,19 @@ void Game::ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e )
 
 void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 {
-	if (e.button == SDL_BUTTON_LEFT)
-	{
-		m_pKirby->SetPosition(Point2f(float(e.x), float(e.y)));
-	}
+	Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE };
+
 	if (e.button == SDL_BUTTON_RIGHT)
 	{
-		m_pEnemy->SetPosition(Point2f(float(e.x), float(e.y)));
+		m_pEnemyMngr->Add(new WaddleDee(clickPos));
+	}
+	if (e.button == SDL_BUTTON_LEFT)
+	{
+		m_pKirby->SetPosition(clickPos);
+	}
+	if (e.button == SDL_BUTTON_MIDDLE)
+	{
+		m_pEnemyMngr->Add(new BrontoBurt(clickPos));
 	}
 	
 }

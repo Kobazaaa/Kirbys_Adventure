@@ -1,6 +1,10 @@
 #pragma once
 #include "Texture.h"
 #include "BaseGame.h"
+#include "HUD.h"
+#include "Camera.h"
+#include "Level.h"
+#include "EnemyManager.h"
 #include <vector>
 
 class Kirby;
@@ -36,7 +40,12 @@ private:
 
 	// VARIABLES
 	Kirby* m_pKirby;
-	Enemy* m_pEnemy;
+	EnemyManager* m_pEnemyMngr;
 
 	std::vector<std::vector<Point2f>> m_World;
+	Camera* m_pCamera;
+	Level* m_pLevel;
+	HUD* m_pHUD;
+
+	const float m_SCALE{2.f};
 };

@@ -11,8 +11,10 @@ public:
 	// Behavioral Functions
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 	void Draw() const;
-private:
-	void WalkingAnimation();
 
+	void IsActivated(bool isActivated);
+
+private:
+	bool m_IsActivated;
 };
 
