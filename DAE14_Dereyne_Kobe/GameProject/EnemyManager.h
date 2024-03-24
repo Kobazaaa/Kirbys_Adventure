@@ -7,9 +7,11 @@ class Kirby;
 class EnemyManager
 {
 public:
+	// Constructor & Destructor
 	EnemyManager();
 	~EnemyManager();
 
+	// Behavioral
 	void Draw() const;
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 
@@ -19,9 +21,10 @@ public:
 	void Eliminate(int index);
 
 	bool KirbyCollision(const Rectf& kirbyHitbox);
-	bool KirbyInhaleCollision(const Rectf& inhaleRect);
-private:
+	bool KirbyInhaleCollision(const Rectf& inhaleRect, float elapsedSec, const Point2f& kirbyPos);
 
+private:
+	// Variables
 	std::vector<Enemy*> m_vEnemies;
 };
 

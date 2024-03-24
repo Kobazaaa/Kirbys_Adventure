@@ -1,24 +1,32 @@
 #include "pch.h"
 #include "utils.h"
 #include "Kirby.h"
+#include "Level.h"
 #include <iostream>
 
-Kirby::Kirby( const Point2f& center)
+Kirby::Kirby( const Point2f& center, Level* const level)
 	: Entity("Kirby.png", 24, 24, center)
 	, m_Health		{ 6 }
 	, m_Lives		{ 4 }
 	, m_InhaledEnemy{ false }
 	, m_Score		{ 1'234'567 }
+	, m_pLevel		{ level }
 {
 }
 
 Kirby::~Kirby()
 {
+	
 }
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
+
+	//m_HitBox.left = m_Center.x - 8.f;
+	//m_HitBox.bottom = m_Center.y - 12.f;
+	//m_HitBox.width = 16.f;
+	//m_HitBox.height = 16.f;
 
 	if (m_IsInvincible) m_InvincibleAccumSec += elapsedSec;
 	if (m_IsInvincible and m_InvincibleAccumSec >= 3.f)
@@ -46,11 +54,11 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	// World Collision
 	if (m_WorldCollision and m_CurrentState != State::Flight and m_CurrentState != State::Inhaling)
 	{
-		m_CurrentState = State::None;
+		if (m_CurrentState != State::Exhaling) m_CurrentState = State::None;
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// ~~			INHALING		~~
+	// ~~		 IN/EXHALING		~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if (pStates[SDL_SCANCODE_LSHIFT] and CanInhaleWithCurrentState())
 	{
@@ -64,6 +72,9 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	{
 		m_CurrentState = State::None;
 	}
+
+
+	DoDoorChecks();
 }
 
 void Kirby::Draw() const
@@ -144,6 +155,57 @@ void Kirby::MovementUpdate(float elapsedSec, const Uint8* pStates)
 
 }
 
+void Kirby::DoDoorChecks()
+{
+	if (utils::IsPointInRect(m_Center, Rectf(968, 125, 16, 24)))
+	{
+		m_Center = Point2f(50, 200);
+		m_pLevel->SetSubLevel(1);
+	}
+}
+
+//bool Kirby::FloorCollision(const std::vector<std::vector<Point2f>>& world)
+//{
+//	const Point2f topLeft		{ m_Center.x - (m_Width / 2), m_Center.y + (m_Height / 2) };
+//	const Point2f topRight		{ m_Center.x + (m_Width / 2), m_Center.y + (m_Height / 2) };
+//	const Point2f bottomLeft	{ m_Center.x - (m_Width / 2), m_Center.y - (m_Height / 2) };
+//	const Point2f bottomRight	{ m_Center.x + (m_Width / 2), m_Center.y - (m_Height / 2) };
+//	const Point2f halfLeft		{ m_Center.x - (m_Width / 2), m_Center.y };
+//	const Point2f halfRight		{ m_Center.x + (m_Width / 2), m_Center.y };
+//
+//	bool isHit{false};
+//
+//	if (utils::Raycast(world[0], halfLeft, halfRight, m_HitInfo))
+//	{
+//		m_Velocity.x = 0;
+//		m_Center.x = m_HitInfo.intersectPoint.x -static_cast<int>(m_Direction) * m_Width / 2;
+//		isHit =  true;
+//	}
+//	if (utils::Raycast(world[0], bottomLeft, topLeft, m_HitInfo))
+//	{
+//		if (m_HitInfo.lambda < 0.1f)
+//		{
+//			m_Velocity.y = 0;
+//			if (m_HitInfo.normal.y > 0) m_Center.y = m_HitInfo.intersectPoint.y + (m_Height / 2);
+//			else m_Center.y = m_HitInfo.intersectPoint.y - (m_Height / 2);
+//			isHit = true;
+//		}
+//
+//	}
+//	if (utils::Raycast(world[0], bottomRight, topRight, m_HitInfo))
+//	{
+//		if (m_HitInfo.lambda < 0.1f)
+//		{
+//			m_Velocity.y = 0;
+//			if (m_HitInfo.normal.y > 0) m_Center.y = m_HitInfo.intersectPoint.y + m_Height / 2;
+//			else m_Center.y = m_HitInfo.intersectPoint.y - m_Height / 2;
+//			isHit = true;
+//		}
+//	}
+//
+//	return isHit;
+//}
+
 void Kirby::EnemyCollision()
 {
 	if (!m_IsInvincible)
@@ -155,25 +217,10 @@ void Kirby::EnemyCollision()
 	}
 }
 
-bool Kirby::EnemyInhaleArea(Entity* const other)
+void Kirby::InhalingEnemy()
 {
-	if (utils::IsPointInRect(other->GetPosition(), this->GetInhaleRect()) and m_CurrentState == State::Inhaling)
-	{
-		Point2f otherPos{ other->GetPosition() };
-		float xInc{ -static_cast<int>(m_Direction) * 1.f };
-		float yInc{ 1 * ((otherPos.y - m_Center.y) / (GetInhaleRect().height) / 2.f) };
-
-		other->SetPosition(otherPos.x + xInc, otherPos.y - yInc);
-		
-		if (utils::IsOverlapping(this->GetDstRect(), other->GetDstRect()))
-		{
-			m_InhaledEnemy = true;
-		}
-
-		return true;
-	}
-	return false;
-
+	m_InhaledEnemy = true;
+	m_CurrentState = State::None;
 }
 
 Kirby::State Kirby::GetCurrentState() const
@@ -341,12 +388,13 @@ bool Kirby::CanMoveWithCurrentState() const
 }
 bool Kirby::CanJumpWithCurrentState() const
 {
-	if (m_CurrentState == State::Slide or
-		m_CurrentState == State::Inhaling or
-		m_CurrentState == State::Falling or
-		m_CurrentState == State::Jump or
-		m_CurrentState == State::Flight or
-		m_CurrentState == State::Exhaling) return false;
+	if (m_CurrentState == State::Slide		or
+		m_CurrentState == State::Inhaling	or
+		m_CurrentState == State::Falling	or
+		m_CurrentState == State::Jump		or
+		m_CurrentState == State::Flight		or
+		m_CurrentState == State::Exhaling	or
+		m_Velocity.y != 0.f) return false;
 	else return true;
 }
 bool Kirby::CanSlideWithCurrentState() const
@@ -365,7 +413,7 @@ bool Kirby::CanInhaleWithCurrentState() const
 {
 	if (m_CurrentState == State::Slide or
 		m_CurrentState == State::Flight or
-		m_CurrentState == State::Exhaling or
+		(m_CurrentState == State::Exhaling) or
 		m_InhaledEnemy) return false;
 	else return true;
 }

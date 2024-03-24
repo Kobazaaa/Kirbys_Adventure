@@ -4,17 +4,22 @@
 class Enemy : public Entity
 {
 public:
-	// Constructors and Destructor
+	// Constructor & Destructor
 	Enemy(const std::string& filePathName, const Point2f& center);
-	~Enemy();
+	virtual ~Enemy() override;
 
-	// Behavioral Functions
+	// Behavioral
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 	void Draw() const;
 
+	// Accessors
+	bool IsActivated() const;
+
+	// Mutators
 	void IsActivated(bool isActivated);
 
 private:
+	// Variables
 	bool m_IsActivated;
 };
 

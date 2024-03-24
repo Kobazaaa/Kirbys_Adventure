@@ -43,6 +43,7 @@ private:
 	EnemyManager* m_pEnemyMngr;
 
 	std::vector<std::vector<Point2f>> m_World;
+	std::vector<std::vector<Point2f>> m_TransWorld;
 	Camera* m_pCamera;
 	Level* m_pLevel;
 	HUD* m_pHUD;

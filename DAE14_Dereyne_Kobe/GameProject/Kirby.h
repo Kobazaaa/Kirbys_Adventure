@@ -5,25 +5,27 @@
 #include "Texture.h"
 
 class Enemy;
+class Level;
 
-class Kirby : public Entity
+class Kirby final : public Entity
 {
 public:
 	enum class State
 	{
-		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling
+		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Full
 	};
 
-	// Constructors and Destructor
-	Kirby(const Point2f& center );
-	~Kirby();
+	// Constructor & Destructor
+	Kirby(const Point2f& center, Level* const level);
+	virtual ~Kirby() override;
 
-	// Behavioral Functions
-	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
+	// Behavioral
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 	void Draw() const;
 	void EnemyCollision();
-	bool EnemyInhaleArea(Entity* const other);
+	void InhalingEnemy();
 
+	// Accessors
 	Rectf GetInhaleRect() const;
 	Kirby::State GetCurrentState() const;
 	int GetHealth() const;
@@ -34,7 +36,10 @@ private:
 	// Private Update Functions
 	void UpdateSprite();
 	void MovementUpdate(float elapsedSec, const Uint8* pStates);
+	
+	void DoDoorChecks();
 
+	//bool FloorCollision(const std::vector<std::vector<Point2f>>& world);
 
 	// Animation Functions
 	void AnimateIdle();
@@ -85,5 +90,7 @@ private:
 	bool m_InhaledEnemy;
 
 	bool m_CanSlide{true};
+
+	Level* const m_pLevel;
 };
 

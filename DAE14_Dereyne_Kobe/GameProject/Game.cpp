@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SVGParser.h"
+#include "Matrix2x3.h"
 #include "Game.h"
 #include "utils.h"
 #include "Kirby.h"
@@ -18,22 +19,30 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	// Kirby
-	m_pKirby =	new Kirby(Point2f(100, 168));
-
 	// EnemyManager
 	m_pEnemyMngr = new EnemyManager();
 
 	// Camera + Level + HUD
 	m_pCamera = new Camera(GetViewPort().width, GetViewPort().height, m_SCALE);
-	m_pLevel =	new Level("VegetableValley.png");
+	m_pLevel =	new Level("VegetableValley.png", 3);
+	
+	// Kirby
+	m_pKirby = new Kirby(Point2f(100, 168), m_pLevel);
 	m_pHUD = new HUD(m_pKirby, m_SCALE);
 
 	// World
-	SVGParser::GetVerticesFromSvgFile("VegetableValley.svg", m_World);
-	for (size_t i = 0; i < m_World[0].size(); i++)
+	SVGParser::GetVerticesFromSvgFile("VegetableValleyFull.svg", m_World);
+	for (size_t idx{}; idx < m_World.size(); idx++)
 	{
-		m_World[0][i].y += (GetViewPort().height / m_SCALE - m_pLevel->GetHeight());
+		for (size_t i = 0; i < m_World[idx].size(); i++)
+		{
+			m_World[idx][i].y += (GetViewPort().height / m_SCALE - m_pLevel->GetHeight());
+		}
+	}	
+	for (size_t idx{}; idx < m_World.size(); idx++)
+	{
+		std::vector<Point2f> a;
+		m_TransWorld.push_back(a);
 	}
 }
 
@@ -53,10 +62,10 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
-	m_pKirby->Update(elapsedSec, m_World);
-	if (m_pEnemyMngr->KirbyCollision(m_pKirby->GetDstRect())) m_pKirby->EnemyCollision();
-	//if (m_pKirby->EnemyInhaleArea(m_pEnemies[idx])) m_pEnemies[idx]->IsActivated(false);
-	m_pEnemyMngr->Update(elapsedSec, m_World);
+	m_pKirby->Update(elapsedSec, m_TransWorld);
+	if (m_pKirby->GetCurrentState() == Kirby::State::Inhaling and m_pEnemyMngr->KirbyInhaleCollision(m_pKirby->GetInhaleRect(), elapsedSec, m_pKirby->GetPosition())) m_pKirby->InhalingEnemy();
+	if (m_pEnemyMngr->KirbyCollision(m_pKirby->GetHitBox())) m_pKirby->EnemyCollision();
+	m_pEnemyMngr->Update(elapsedSec, m_TransWorld);
 	//if (!utils::IsOverlapping(m_pEnemies[idx]->GetDstRect(), m_pCamera->GetCameraView()))
 	//{
 	//	delete m_pEnemies[idx];
@@ -66,6 +75,15 @@ void Game::Update( float elapsedSec )
 	//if (utils::IsPointInRect(Point2f(300, 200), m_pCamera->GetCameraView())) m_pEnemies.push_back(new Enemy("WaddleDee.png", Point2f(300, 200)));
 
 	m_pHUD->Update(elapsedSec);
+	
+	
+	for (size_t idx{}; idx < m_World.size(); idx++)
+	{
+		Matrix2x3 translateMat{};
+		translateMat.SetAsTranslate(Vector2f(0, 0 - m_pLevel->GetSubLevel() * m_pLevel->GetHeight()));
+		m_TransWorld[idx] = translateMat.Transform(m_World[idx]);
+	}
+
 }
 
 void Game::Draw( ) const
@@ -74,13 +92,20 @@ void Game::Draw( ) const
 
 	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetHeight(), m_pKirby->GetPosition());
 		m_pLevel->Draw();
-		utils::DrawPolygon(m_World[0]);
+		utils::SetColor(Color4f(1, 1, 1, 1));
+		for (size_t idx{}; idx < m_TransWorld.size(); idx++)
+		{
+			utils::DrawPolygon(m_TransWorld[idx]);
+		}
 		m_pKirby->Draw();
 		m_pEnemyMngr->Draw();
 
+
+
+		// DEBUGGING I LOVE IT <3 <3 <3
 		utils::SetColor(Color4f(1, 1, 1, 1));
 		utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
-		utils::DrawRect(m_pKirby->GetDstRect());
+		utils::DrawRect(m_pKirby->GetHitBox());
 		utils::DrawRect(m_pKirby->GetInhaleRect());
 	m_pCamera->Reset();
 
@@ -89,25 +114,10 @@ void Game::Draw( ) const
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 {
-	
 }
 
 void Game::ProcessKeyUpEvent( const SDL_KeyboardEvent& e )
 {
-	//std::cout << "KEYUP event: " << e.keysym.sym << std::endl;
-	//switch ( e.keysym.sym )
-	//{
-	//case SDLK_LEFT:
-	//	//std::cout << "Left arrow key released\n";
-	//	break;
-	//case SDLK_RIGHT:
-	//	//std::cout << "`Right arrow key released\n";
-	//	break;
-	//case SDLK_1:
-	//case SDLK_KP_1:
-	//	//std::cout << "Key 1 released\n";
-	//	break;
-	//}
 }
 
 void Game::ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e )

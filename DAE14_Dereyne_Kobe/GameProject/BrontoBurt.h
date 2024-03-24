@@ -1,18 +1,20 @@
 #pragma once
 #include "Enemy.h"
 
-class BrontoBurt : public Enemy
+class BrontoBurt final : public Enemy
 {
 public:
+	// Constructor & Destructor
 	BrontoBurt(const Point2f center);
-	~BrontoBurt();
+	virtual ~BrontoBurt() override;
 
-	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
-
+	// Behavioral
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 
 private:
 	void MovementAnimation();
 
+	// Variables
 	float m_SineTime;
 	int m_NrCycles;
 };

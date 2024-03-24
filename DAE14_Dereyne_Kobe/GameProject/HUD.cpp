@@ -2,9 +2,10 @@
 #include "HUD.h"
 
 HUD::HUD(Kirby* kirby, float scale)
-	: m_pKIRBY	{ kirby }
-	, m_AccumSec{ 0 }
-	, m_Scale	{ scale }
+	: m_pKIRBY		 { kirby }
+	, m_AccumSec	 { 0 }
+	, m_Scale		 { scale }
+	, m_CurrentFrame { 0 }
 {
 	m_pSprites = new Texture("HUD.png");
 }
@@ -68,7 +69,7 @@ void HUD::DrawHealth() const
 		if (idx < health)
 		{
 			pos		= Point2f( m_KIRBY_HEALTH_POS.x + idx * m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_POS.y );
-			srcRect = Rectf( -m_KIRBY_HEALTH_WIDTH * (m_CurrentFrame % 2), -8, m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_HEIGHT );
+			srcRect = Rectf( m_KIRBY_HEALTH_WIDTH * (m_CurrentFrame % 2), -8, m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_HEIGHT );
 		}
 		else
 		{
@@ -97,7 +98,7 @@ void HUD::DrawLives() const
 void HUD::DrawLivesAnim() const
 {
 	const Point2f pos{ m_KIRBY_ANIM_POS.x, m_KIRBY_ANIM_POS.y };
-	const Rectf srcRect{ 0 - (m_CurrentFrame % 4) * m_KIRBY_ANIM_WIDTH, 289, m_KIRBY_ANIM_WIDTH, m_KIRBY_ANIM_HEIGHT};
+	const Rectf srcRect{ (m_CurrentFrame % 4) * m_KIRBY_ANIM_WIDTH, 289, m_KIRBY_ANIM_WIDTH, m_KIRBY_ANIM_HEIGHT};
 	m_pSprites->Draw(pos, srcRect);
 }
 

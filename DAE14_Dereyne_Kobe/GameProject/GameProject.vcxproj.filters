@@ -13,17 +13,23 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Enemies">
-      <UniqueIdentifier>{2d4dc283-68d2-4cc9-9959-ed4f35dc67d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\World">
       <UniqueIdentifier>{98ca2d6c-3fa8-435f-a229-587461aa4afe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Enemies">
-      <UniqueIdentifier>{86eb0698-3a22-49e3-998b-9871017d3a9d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\World">
       <UniqueIdentifier>{d1573121-c870-4a17-88f7-8f47529a2d5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entities">
+      <UniqueIdentifier>{9425e397-77ea-4fea-a4b4-b9335fafafb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entities\Enemies">
+      <UniqueIdentifier>{2d4dc283-68d2-4cc9-9959-ed4f35dc67d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities">
+      <UniqueIdentifier>{c36d4ac5-069b-4f85-b0a1-f0bb13b6efa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities\Enemies">
+      <UniqueIdentifier>{86eb0698-3a22-49e3-998b-9871017d3a9d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,23 +42,17 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Kirby.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BrontoBurt.cpp">
-      <Filter>Source Files\Enemies</Filter>
+      <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files\Enemies</Filter>
+      <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="WaddleDee.cpp">
-      <Filter>Source Files\Enemies</Filter>
+      <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="EnemyManager.cpp">
-      <Filter>Source Files\Enemies</Filter>
+      <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\World</Filter>
@@ -63,6 +63,15 @@
     <ClCompile Include="HUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Kirby.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -71,23 +80,17 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Kirby.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BrontoBurt.h">
-      <Filter>Header Files\Enemies</Filter>
+      <Filter>Header Files\Entities\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="EnemyManager.h">
-      <Filter>Header Files\Enemies</Filter>
+      <Filter>Header Files\Entities\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="WaddleDee.h">
-      <Filter>Header Files\Enemies</Filter>
+      <Filter>Header Files\Entities\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Header Files\Enemies</Filter>
+      <Filter>Header Files\Entities\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\World</Filter>
@@ -98,5 +101,22 @@
     <ClInclude Include="HUD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Kirby.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GameProject.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

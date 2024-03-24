@@ -2,31 +2,34 @@
 #include "Texture.h"
 #include "Kirby.h"
 
-class HUD
+class HUD final
 {
 public:
+	// Constructor & Destructor
 	HUD(Kirby* kirby, float scale = 1);
 	~HUD();
 
-	void Draw() const;
+	// Behavioral
+	void Draw()						const;
 	void Update(float elapsedSec);
 
 private:
-	void PrintScore() const;
-	void DrawHealth() const;
-	void DrawLives() const;
-	void DrawLivesAnim() const;
-	void DrawCard() const;
+	// Private Draw
+	void PrintScore()				const;
+	void DrawHealth()				const;
+	void DrawLives()				const;
+	void DrawLivesAnim()			const;
+	void DrawCard()					const;
 
-
+	// Variables
 	Texture* m_pSprites;
-	Kirby* m_pKIRBY;
+	Kirby*	 m_pKIRBY;
 
-	float m_AccumSec;
-	float m_Scale;
-	int m_CurrentFrame;
+	float	 m_AccumSec;
+	float	 m_Scale;
+	int		 m_CurrentFrame;
 
-	// Dimenions for every HUD element
+	// Dimensions for every HUD element
 	const float		m_HUD_WIDTH				{ 248.f };
 	const float		m_HUD_HEIGHT			{  64.f };
 	const Point2f	m_HUD_POS				{ 0.f, 0.f };

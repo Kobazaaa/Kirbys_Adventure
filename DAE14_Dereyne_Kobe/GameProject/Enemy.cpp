@@ -31,6 +31,11 @@ void Enemy::Draw() const
 	}
 }
 
+bool Enemy::IsActivated() const
+{
+	return m_IsActivated;
+}
+
 void Enemy::IsActivated(bool isActivated)
 {
 	m_IsActivated = false;

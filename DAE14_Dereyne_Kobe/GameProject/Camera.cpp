@@ -11,6 +11,10 @@ Camera::Camera(float screenWidth, float screenHeight, float scale)
 {
 }
 
+Camera::~Camera()
+{
+}
+
 
 void Camera::Aim(float levelW, float levelH, const Point2f& trackCenter)
 {
@@ -18,7 +22,7 @@ void Camera::Aim(float levelW, float levelH, const Point2f& trackCenter)
 	Point2f cameraCenter	{ m_CameraPos.x    + m_CameraWidth / 2, m_CameraPos.y   + m_CameraHeight / 2};
 
 	float moveBoxW			{ m_CameraWidth  / 6};
-	float moveBoxH			{ 10};
+	float moveBoxH			{ 10 };
 	Rectf movementBox
 	{
 		cameraCenter.x - moveBoxW,
