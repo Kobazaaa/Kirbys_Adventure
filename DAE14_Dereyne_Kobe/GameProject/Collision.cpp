@@ -6,66 +6,64 @@ Collision::Collision()
 {
 }
 
-Collision::~Collision()
-{
-}
-
 bool Collision::WallCollision(Entity* entity, const std::vector<std::vector<Point2f>>& world)
 {
-	const Point2f left	{ entity->m_Center.x - (entity->m_Width / 2), entity->m_Center.y - entity->m_Height / 2 + 5};
-	const Point2f right	{ entity->m_Center.x + (entity->m_Width / 2), entity->m_Center.y - entity->m_Height / 2 + 5};
+	const Point2f left		{ entity->GetHitBox().left								- 1, entity->GetHitBox().bottom + 1};
+	const Point2f right		{ entity->GetHitBox().left + entity->GetHitBox().width	+ 1, entity->GetHitBox().bottom + 1};
+	utils::HitInfo hitInfo	{ entity->GetHitInfo() };
+
 
 	for (size_t idx{}; idx < world.size(); idx++)
 	{
-		if (utils::Raycast(world[idx], left, right, entity->m_HitInfo))
+		if (utils::Raycast(world[idx], left, right, hitInfo))
 		{
-			entity->m_Velocity.x = 0;
-			entity->m_Center.x = entity->m_HitInfo.intersectPoint.x - static_cast<int>(entity->m_Direction) * entity->m_Width / 2;
-			entity->m_WorldCollision = true;
+			//Vector2f newVelocity{ 0, entity->GetVelocity().y };
+			//entity->SetVelocity(newVelocity);
+
+			Point2f newPosition
+			{ 
+				hitInfo.intersectPoint.x + utils::GetSign(hitInfo.normal.x) * (entity->GetHitBox().width / 2 + 1.f), 
+				entity->GetPosition().y
+			};
+			entity->SetPosition(newPosition);
+
+			return true;
 		}
 	}
-	return entity->m_WorldCollision;
+	return false;
 }
-
 bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Point2f>>& world)
 {
-	const Point2f topLeft		{ entity->m_Center.x - (entity->m_Width / 2), entity->m_Center.y + (entity->m_Height / 2) };
-	const Point2f topRight		{ entity->m_Center.x + (entity->m_Width / 2), entity->m_Center.y + (entity->m_Height / 2) };
-	const Point2f topMiddle		{ entity->m_Center.x						, entity->m_Center.y + (entity->m_Height / 2) };
-	const Point2f bottomLeft	{ entity->m_Center.x - (entity->m_Width / 2), entity->m_Center.y - (entity->m_Height / 2) };
-	const Point2f bottomRight	{ entity->m_Center.x + (entity->m_Width / 2), entity->m_Center.y - (entity->m_Height / 2) };
-	const Point2f bottomMiddle	{ entity->m_Center.x						, entity->m_Center.y - (entity->m_Height / 2) };
-
-	entity->m_WorldCollision = false;
+	const Point2f topLeft		{ entity->GetHitBox().left,									entity->GetHitBox().bottom + (entity->GetHitBox().height) };
+	const Point2f topRight		{ entity->GetHitBox().left + entity->GetHitBox().width,		entity->GetHitBox().bottom + (entity->GetHitBox().height) };
+	const Point2f topMiddle		{ entity->GetHitBox().left + entity->GetHitBox().width / 2, entity->GetHitBox().bottom + (entity->GetHitBox().height) };
+	const Point2f bottomLeft	{ entity->GetHitBox().left,									entity->GetHitBox().bottom };
+	const Point2f bottomRight	{ entity->GetHitBox().left + entity->GetHitBox().width,		entity->GetHitBox().bottom };
+	const Point2f bottomMiddle	{ entity->GetHitBox().left + entity->GetHitBox().width / 2,	entity->GetHitBox().bottom };
+	utils::HitInfo hitInfo		{ entity->GetHitInfo() };
 
 	for (size_t idx{}; idx < world.size(); idx++)
 	{
-		if (entity->m_Direction == Entity::Direction::Left)
+		if  (utils::Raycast(world[idx], bottomRight,  topRight,	 hitInfo)
+		or  (utils::Raycast(world[idx], bottomLeft,   topLeft,	 hitInfo)
+		or  (utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))))
 		{
-			if (utils::Raycast(world[idx], bottomRight, topRight, entity->m_HitInfo)) entity->m_WorldCollision = true;
-			else if (utils::Raycast(world[idx], bottomLeft, topLeft, entity->m_HitInfo)) entity->m_WorldCollision = true;
-			else if (utils::Raycast(world[idx], bottomMiddle, topMiddle, entity->m_HitInfo)) entity->m_WorldCollision = true;
-		}
-		else
-		{
-			if (utils::Raycast(world[idx], bottomLeft, topLeft, entity->m_HitInfo)) entity->m_WorldCollision = true;
-			else if (utils::Raycast(world[idx], bottomRight, topRight, entity->m_HitInfo)) entity->m_WorldCollision = true;
-			else if (utils::Raycast(world[idx], bottomMiddle, topMiddle, entity->m_HitInfo)) entity->m_WorldCollision = true;
-		}
+			Vector2f newVelocity{ entity->GetVelocity().x, 0 };
+			entity->SetVelocity(newVelocity);
 
-		if (entity->m_WorldCollision == true)
-		{
-			entity->m_Velocity.y = 0;
-			if (entity->m_HitInfo.normal.y > 0) entity->m_Center.y = entity->m_HitInfo.intersectPoint.y + (entity->m_Height / 2);
-			else entity->m_Center.y = entity->m_HitInfo.intersectPoint.y - (entity->m_Height / 2);
+			Point2f newPosition
+			{
+				entity->GetPosition().x,
+				hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (entity->GetHeight() / 2)
+			};
+			entity->SetPosition(newPosition);
 
+			return true;
 		}
 	}
-
-	return entity->m_WorldCollision;
-}
-
-bool Collision::EntityCollision(Entity* entity, const std::vector<std::vector<Point2f>>& world)
-{
 	return false;
+}
+bool Collision::EntityCollision(Entity* entity1, Entity* entity2)
+{
+	return utils::IsOverlapping(entity1->GetHitBox(), entity2->GetHitBox());
 }

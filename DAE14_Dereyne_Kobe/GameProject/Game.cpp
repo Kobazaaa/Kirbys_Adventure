@@ -36,14 +36,9 @@ void Game::Initialize( )
 	{
 		for (size_t i = 0; i < m_World[idx].size(); i++)
 		{
-			m_World[idx][i].y += (GetViewPort().height / m_SCALE - m_pLevel->GetHeight());
+			m_World[idx][i].y += (GetViewPort().height / m_SCALE - m_pLevel->GetHeight() / 3);
 		}
 	}	
-	for (size_t idx{}; idx < m_World.size(); idx++)
-	{
-		std::vector<Point2f> a;
-		m_TransWorld.push_back(a);
-	}
 }
 
 void Game::Cleanup( )
@@ -62,10 +57,20 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
-	m_pKirby->Update(elapsedSec, m_TransWorld);
-	if (m_pKirby->GetCurrentState() == Kirby::State::Inhaling and m_pEnemyMngr->KirbyInhaleCollision(m_pKirby->GetInhaleRect(), elapsedSec, m_pKirby->GetPosition())) m_pKirby->InhalingEnemy();
-	if (m_pEnemyMngr->KirbyCollision(m_pKirby->GetHitBox())) m_pKirby->EnemyCollision();
-	m_pEnemyMngr->Update(elapsedSec, m_TransWorld);
+	m_pKirby->Update(elapsedSec, m_World);
+	if (m_pKirby->GetCurrentState() == Kirby::State::Inhaling and
+		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec))
+	{
+		if (m_pEnemyMngr->KirbyHitDetection(m_pKirby))
+		{
+			m_pKirby->InhaledEnemy();
+		}	
+	}
+	if (m_pEnemyMngr->KirbyHitDetection(m_pKirby))
+	{
+		m_pKirby->HitEnemy();
+	}
+	m_pEnemyMngr->Update(elapsedSec, m_World);
 	//if (!utils::IsOverlapping(m_pEnemies[idx]->GetDstRect(), m_pCamera->GetCameraView()))
 	//{
 	//	delete m_pEnemies[idx];
@@ -75,14 +80,6 @@ void Game::Update( float elapsedSec )
 	//if (utils::IsPointInRect(Point2f(300, 200), m_pCamera->GetCameraView())) m_pEnemies.push_back(new Enemy("WaddleDee.png", Point2f(300, 200)));
 
 	m_pHUD->Update(elapsedSec);
-	
-	
-	for (size_t idx{}; idx < m_World.size(); idx++)
-	{
-		Matrix2x3 translateMat{};
-		translateMat.SetAsTranslate(Vector2f(0, 0 - m_pLevel->GetSubLevel() * m_pLevel->GetHeight()));
-		m_TransWorld[idx] = translateMat.Transform(m_World[idx]);
-	}
 
 }
 
@@ -93,9 +90,9 @@ void Game::Draw( ) const
 	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetHeight(), m_pKirby->GetPosition());
 		m_pLevel->Draw();
 		utils::SetColor(Color4f(1, 1, 1, 1));
-		for (size_t idx{}; idx < m_TransWorld.size(); idx++)
+		for (size_t idx{}; idx < m_World.size(); idx++)
 		{
-			utils::DrawPolygon(m_TransWorld[idx]);
+			utils::DrawPolygon(m_World[idx]);
 		}
 		m_pKirby->Draw();
 		m_pEnemyMngr->Draw();
@@ -107,6 +104,7 @@ void Game::Draw( ) const
 		utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
 		utils::DrawRect(m_pKirby->GetHitBox());
 		utils::DrawRect(m_pKirby->GetInhaleRect());
+
 	m_pCamera->Reset();
 
 	m_pHUD->Draw();

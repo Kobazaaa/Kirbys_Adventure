@@ -683,4 +683,20 @@ bool utils::IntersectRectLine(const Rectf& r, const Point2f& p1, const Point2f& 
 	return true;
 }
 
+int utils::GetSign(int number)
+{
+	return GetSign(static_cast<double>(number));
+}
+
+int utils::GetSign(float number)
+{
+	return GetSign(static_cast<double>(number));
+}
+
+int utils::GetSign(double number)
+{
+	if (number >= 0) return 1;
+	else return -1;
+}
+
 #pragma endregion CollisionFunctionality

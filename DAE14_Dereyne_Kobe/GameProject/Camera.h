@@ -11,7 +11,11 @@ public:
 	void Reset();
 
 	// Accessors
-	Rectf GetCameraView();
+	Rectf GetCameraView() const;
+
+	// Mutators
+	void SetPosition(const Point2f& pos);
+	void SetPosition(float x, float y);
 
 private:
 	// Variables

@@ -17,13 +17,13 @@ public:
 
 	// Constructor & Destructor
 	Kirby(const Point2f& center, Level* const level);
-	virtual ~Kirby() override;
+	virtual ~Kirby() override = default;
 
 	// Behavioral
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 	void Draw() const;
-	void EnemyCollision();
-	void InhalingEnemy();
+	void HitEnemy();
+	void InhaledEnemy();
 
 	// Accessors
 	Rectf GetInhaleRect() const;
@@ -36,10 +36,11 @@ private:
 	// Private Update Functions
 	void UpdateSprite();
 	void MovementUpdate(float elapsedSec, const Uint8* pStates);
-	
+	virtual void UpdateHitBox() override;
+
 	void DoDoorChecks();
 
-	//bool FloorCollision(const std::vector<std::vector<Point2f>>& world);
+	//bool FloorCollisionDetection(const std::vector<std::vector<Point2f>>& world);
 
 	// Animation Functions
 	void AnimateIdle();
@@ -51,11 +52,11 @@ private:
 	void AnimateExhaling();
 
 	// Functions that check whether or not Kirby can perform a certain action in his current state
-	bool CanMoveWithCurrentState() const;
-	bool CanJumpWithCurrentState() const;
-	bool CanSlideWithCurrentState() const;
-	bool CanFlyWithCurrentState() const;
-	bool CanInhaleWithCurrentState() const;
+	bool CanMoveWithCurrentState()		const;
+	bool CanJumpWithCurrentState()		const;
+	bool CanSlideWithCurrentState()		const;
+	bool CanFlyWithCurrentState()		const;
+	bool CanInhaleWithCurrentState()	const;
 
 	// Frame Delays for Animations (in seconds)
 	const float m_IDLE_START_DELAY{ 1.f };

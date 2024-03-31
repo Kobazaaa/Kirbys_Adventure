@@ -6,17 +6,14 @@ WaddleDee::WaddleDee(const Point2f& center)
 {
 }
 
-WaddleDee::~WaddleDee()
-{
-}
-
 void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	Enemy::Update(elapsedSec, world);
-	WalkingAnimation();
+	UpdateAnimation();
 }
 
-void WaddleDee::WalkingAnimation()
+#pragma region Animation
+void WaddleDee::UpdateAnimation()
 {
 	if (m_AccumSec >= 0.2f)
 	{
@@ -25,3 +22,4 @@ void WaddleDee::WalkingAnimation()
 		m_CurrentFrame = m_CurrentFrame % 2;
 	}
 }
+#pragma endregion

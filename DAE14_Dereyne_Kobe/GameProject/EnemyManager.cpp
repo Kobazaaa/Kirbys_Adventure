@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "EnemyManager.h"
+#include "Kirby.h"
 #include <iostream>
 
 EnemyManager::EnemyManager()
@@ -28,6 +29,7 @@ void EnemyManager::Draw() const
 		if (enemyPtr != nullptr)
 		{
 			enemyPtr->Draw();
+			utils::DrawRect(enemyPtr->GetHitBox());
 		}
 	}
 }
@@ -39,6 +41,11 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 		if (enemyPtr != nullptr)
 		{
 			enemyPtr->Update(elapsedSec, world);
+			
+			if (Collision::WallCollision(enemyPtr, world))
+			{
+				enemyPtr->InverseDirection();
+			}
 		}
 	}
 }
@@ -67,43 +74,43 @@ void EnemyManager::Eliminate(int index)
 	m_vEnemies.at(index) = nullptr;
 }
 
-bool EnemyManager::KirbyCollision(const Rectf& kirbyHitbox)
+bool EnemyManager::KirbyHitDetection(Kirby* pKirby)
 {
-	bool hasCollided{ false };
 	int index{-1};
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
 		++index;
 		if (enemyPtr != nullptr)
 		{
-			if (utils::IsPointInRect(enemyPtr->GetPosition(), kirbyHitbox))
+			if (Collision::EntityCollision(enemyPtr, pKirby))
 			{
-				if (enemyPtr->IsActivated()) hasCollided = true;
 				Eliminate(index);
-				return hasCollided;
+				//if (enemyPtr->IsActivated()) return true;
+				return true;
 			}
 		}
 	}
-	return hasCollided;
+	return false;
 }
 
-bool EnemyManager::KirbyInhaleCollision(const Rectf& inhaleRect, float elapsedSec, const Point2f& kirbyPos)
+bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 {
 	bool isEnemyInRect{ false };
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
 		if (enemyPtr != nullptr)
 		{
-			if (utils::IsPointInRect(enemyPtr->GetPosition(), inhaleRect))
+			if (utils::IsPointInRect(enemyPtr->GetPosition(), pKirby->GetInhaleRect()))
 			{
+				if (enemyPtr->IsActivated()) isEnemyInRect = true;
 				enemyPtr->IsActivated(false);
-				isEnemyInRect = true;
 
-				float xInc{ elapsedSec   * 10.f * (kirbyPos.x - enemyPtr->GetPosition().x) };
-				float yInc{ - elapsedSec * 10.f  * ((enemyPtr->GetPosition().y - (inhaleRect.bottom + (inhaleRect.height / 2)))) };
+				float xInc{ elapsedSec   * 10.f  * (pKirby->GetPosition().x - enemyPtr->GetPosition().x)};
+				float yInc{ - elapsedSec * 10.f  * ((enemyPtr->GetPosition().y - (pKirby->GetInhaleRect().bottom + (pKirby->GetInhaleRect().height / 2)))) };
 				enemyPtr->SetPosition(Point2f(enemyPtr->GetPosition().x + xInc, enemyPtr->GetPosition().y + yInc));
 			}
 		}
+
 	}
 	return isEnemyInRect;
 }

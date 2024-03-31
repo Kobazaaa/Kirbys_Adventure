@@ -14,19 +14,11 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 {
 }
 
-Kirby::~Kirby()
-{
-	
-}
-
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
+	UpdateHitBox();
 
-	//m_HitBox.left = m_Center.x - 8.f;
-	//m_HitBox.bottom = m_Center.y - 12.f;
-	//m_HitBox.width = 16.f;
-	//m_HitBox.height = 16.f;
+	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
 
 	if (m_IsInvincible) m_InvincibleAccumSec += elapsedSec;
 	if (m_IsInvincible and m_InvincibleAccumSec >= 3.f)
@@ -52,10 +44,11 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	UpdateSprite();
 	
 	// World Collision
-	if (m_WorldCollision and m_CurrentState != State::Flight and m_CurrentState != State::Inhaling)
+	if (m_WorldFloorCollision and m_CurrentState != State::Flight and m_CurrentState != State::Inhaling)
 	{
 		if (m_CurrentState != State::Exhaling) m_CurrentState = State::None;
 	}
+	if (Collision::WallCollision(this, world));
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~		 IN/EXHALING		~~
@@ -64,15 +57,20 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	{
 		m_CurrentState = State::Inhaling;
 	}
-	else if (pStates[SDL_SCANCODE_LSHIFT] and (m_InhaledEnemy or m_CurrentState == State::Flight) and m_OldState != State::Inhaling)
-	{
-		m_CurrentState = State::Exhaling;
-	}
+	//else if (pStates[SDL_SCANCODE_LSHIFT] and (m_InhaledEnemy or m_CurrentState == State::Flight) and m_OldState != State::Inhaling)
+	//{
+	//	m_CurrentState = State::Exhaling;
+	//}
 	if (!pStates[SDL_SCANCODE_LSHIFT] and m_CurrentState == State::Inhaling and m_AccumSec >= 0.40f)
 	{
 		m_CurrentState = State::None;
 	}
 
+	if (pStates[SDL_SCANCODE_R])
+	{
+		m_CurrentState = State::None;
+		m_InhaledEnemy = false;
+	}
 
 	DoDoorChecks();
 }
@@ -86,28 +84,7 @@ void Kirby::Draw() const
 void Kirby::MovementUpdate(float elapsedSec, const Uint8* pStates)
 {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// ~~		  SLIDING			~~
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//if (pStates[SDL_SCANCODE_DOWN] and CanSlideWithCurrentState())
-	//{
-	//	m_CurrentState = State::Slide;
-	//	if (pStates[SDL_SCANCODE_SPACE] and m_CanSlide)
-	//	{
-	//		m_CurrentFrame = 1;
-	//		m_Center.x += int(m_Direction) * m_SlideSpeed * elapsedSec;
-	//		if (m_AccumSec >= 1.f)
-	//		{
-	//			m_AccumSec = 0;
-	//			m_CurrentFrame = 0;
-	//			m_CanSlide = false;
-	//		}
-	//	}
-	//	else if (!pStates[SDL_SCANCODE_SPACE]) m_CanSlide = true;
-	//}
-
-
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// ~~		  MOVEMENT			~~
+	// ~~	DIRECTIONAL MOVEMENT	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if ((pStates[SDL_SCANCODE_RIGHT] or pStates[SDL_SCANCODE_LEFT]) and CanMoveWithCurrentState())
 	{
@@ -116,13 +93,14 @@ void Kirby::MovementUpdate(float elapsedSec, const Uint8* pStates)
 	}
 	else
 	{
-		m_Velocity.x -= m_Velocity.x * 15 * elapsedSec;
+		const float FRICTION{ -15.f };
+		m_Velocity.x += m_Velocity.x * elapsedSec * FRICTION;
 		if (m_Velocity.x <= 0.f)
 		{
 			m_Velocity.x = 0.f;
 		}
 	}
-	m_Center.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
+	m_SpriteCenter.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
 	if (m_Velocity.x >= 5.f and m_CurrentState == State::None) m_CurrentState = State::Walk;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -145,68 +123,26 @@ void Kirby::MovementUpdate(float elapsedSec, const Uint8* pStates)
 	{
 		m_CurrentState = State::Flight;
 		m_Velocity.y = 50.f;
-		m_GRAVITY = -100.f;
 	}
-	else if (m_CurrentState != State::Flight)
-	{
-		m_GRAVITY = -300.f;
-	}
+}
 
-
+void Kirby::UpdateHitBox()
+{
+	m_HitBox.left = m_SpriteCenter.x - 8.f;
+	m_HitBox.bottom = m_SpriteCenter.y - 12.f;
+	m_HitBox.width = 16.f;
+	m_HitBox.height = 16.f;
 }
 
 void Kirby::DoDoorChecks()
 {
-	if (utils::IsPointInRect(m_Center, Rectf(968, 125, 16, 24)))
+	if (utils::IsPointInRect(m_SpriteCenter, Rectf(968, 125, 16, 24)))
 	{
-		m_Center = Point2f(50, 200);
-		m_pLevel->SetSubLevel(1);
+		m_SpriteCenter = Point2f(50, 200);
 	}
 }
 
-//bool Kirby::FloorCollision(const std::vector<std::vector<Point2f>>& world)
-//{
-//	const Point2f topLeft		{ m_Center.x - (m_Width / 2), m_Center.y + (m_Height / 2) };
-//	const Point2f topRight		{ m_Center.x + (m_Width / 2), m_Center.y + (m_Height / 2) };
-//	const Point2f bottomLeft	{ m_Center.x - (m_Width / 2), m_Center.y - (m_Height / 2) };
-//	const Point2f bottomRight	{ m_Center.x + (m_Width / 2), m_Center.y - (m_Height / 2) };
-//	const Point2f halfLeft		{ m_Center.x - (m_Width / 2), m_Center.y };
-//	const Point2f halfRight		{ m_Center.x + (m_Width / 2), m_Center.y };
-//
-//	bool isHit{false};
-//
-//	if (utils::Raycast(world[0], halfLeft, halfRight, m_HitInfo))
-//	{
-//		m_Velocity.x = 0;
-//		m_Center.x = m_HitInfo.intersectPoint.x -static_cast<int>(m_Direction) * m_Width / 2;
-//		isHit =  true;
-//	}
-//	if (utils::Raycast(world[0], bottomLeft, topLeft, m_HitInfo))
-//	{
-//		if (m_HitInfo.lambda < 0.1f)
-//		{
-//			m_Velocity.y = 0;
-//			if (m_HitInfo.normal.y > 0) m_Center.y = m_HitInfo.intersectPoint.y + (m_Height / 2);
-//			else m_Center.y = m_HitInfo.intersectPoint.y - (m_Height / 2);
-//			isHit = true;
-//		}
-//
-//	}
-//	if (utils::Raycast(world[0], bottomRight, topRight, m_HitInfo))
-//	{
-//		if (m_HitInfo.lambda < 0.1f)
-//		{
-//			m_Velocity.y = 0;
-//			if (m_HitInfo.normal.y > 0) m_Center.y = m_HitInfo.intersectPoint.y + m_Height / 2;
-//			else m_Center.y = m_HitInfo.intersectPoint.y - m_Height / 2;
-//			isHit = true;
-//		}
-//	}
-//
-//	return isHit;
-//}
-
-void Kirby::EnemyCollision()
+void Kirby::HitEnemy()
 {
 	if (!m_IsInvincible)
 	{
@@ -217,42 +153,40 @@ void Kirby::EnemyCollision()
 	}
 }
 
-void Kirby::InhalingEnemy()
+void Kirby::InhaledEnemy()
 {
 	m_InhaledEnemy = true;
 	m_CurrentState = State::None;
 }
 
+#pragma region Accessors
 Kirby::State Kirby::GetCurrentState() const
 {
 	return m_CurrentState;
 }
-
 int Kirby::GetHealth() const
 {
 	return m_Health;
 }
-
 int Kirby::GetLives() const
 {
 	return m_Lives;
 }
-
 int Kirby::GetScore() const
 {
 	return m_Score;
 }
-
 Rectf Kirby::GetInhaleRect() const
 {
 	Rectf inhaleRect
 	{
-		m_Center.x + (((static_cast<int>(m_Direction) + 1) / 2) - 1) * 48.f,
-		m_Center.y - m_Height / 2 - 16.f,
+		m_SpriteCenter.x + (((static_cast<int>(m_Direction) + 1) / 2) - 1) * 48.f,
+		m_SpriteCenter.y - m_Height / 2 - 16.f,
 		48.f, 48.f
 	};
 	return inhaleRect;
 }
+#pragma endregion
 
 #pragma region Animation
 void Kirby::UpdateSprite()

@@ -83,4 +83,9 @@ namespace utils
 
 #pragma endregion CollisionFunctionality
 
+#pragma region Custom
+	int GetSign(int number);
+	int GetSign(float number);
+	int GetSign(double number);
+#pragma endregion
 }

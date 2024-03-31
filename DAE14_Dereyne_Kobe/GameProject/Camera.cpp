@@ -50,7 +50,17 @@ void Camera::Reset()
 	glPopMatrix();
 }
 
-Rectf Camera::GetCameraView()
+Rectf Camera::GetCameraView() const
 {
 	return Rectf(m_CameraPos.x, m_CameraPos.y, m_CameraWidth, m_CameraHeight);
+}
+
+void Camera::SetPosition(const Point2f& pos)
+{
+	m_CameraPos = pos;
+}
+
+void Camera::SetPosition(float x, float y)
+{
+	SetPosition(Point2f(x, y));
 }

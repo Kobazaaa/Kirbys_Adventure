@@ -12,56 +12,59 @@ public:
 		Right = 1,
 	};
 
-	// Constructor & Destructor
-	Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center);
+	// Constructor, Destructor and Operator Overloading
+	explicit Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center);
+	Entity(const Entity& other) = delete;
 	virtual ~Entity();
+	Entity& operator=(const Entity& rhs) = delete;
 
 	// Behavioral
-	void Draw(bool flipSprite) const;
+	virtual void Draw(bool flipSprite) const;
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 
 	// Mutators
-	void SetPosition(const Point2f& newCenterPos);
-	void SetPosition(float centerX, float centerY);
-	void IsEliminated(bool isEliminated);
+	virtual void SetPosition(const Point2f& newCenterPos)		final;
+	virtual void SetPosition(float centerX, float centerY)		final;
+	virtual void SetVelocity(const Vector2f& velocity)			final;
+	virtual void IsEliminated(bool isEliminated)				final;
+	virtual void InverseDirection()								final;
 
 	// Accessors
-	Point2f	GetPosition()	 const;
-	Rectf GetDstRect()		 const;
-	float GetWidth()		 const;
-	float GetHeight()		 const;
-	Rectf GetHitBox()		 const;
-
-	friend bool Collision::WallCollision	(Entity* entity, const std::vector<std::vector<Point2f>>& world);
-	friend bool Collision::FloorCollision	(Entity* entity, const std::vector<std::vector<Point2f>>& world);
-	friend bool Collision::EntityCollision	(Entity* entity, const std::vector<std::vector<Point2f>>& world);
-
+	virtual Point2f	GetPosition()			 const final;
+	virtual Vector2f GetVelocity()			 const final;
+	virtual Rectf GetDstRect()				 const final;
+	virtual float GetWidth()				 const final;
+	virtual float GetHeight()				 const final;
+	virtual Rectf GetHitBox()				 const final;
+	virtual utils::HitInfo& GetHitInfo()		   final;
+	virtual Entity::Direction GetDirection() const final;
 
 protected:
 	// Behavioral Functions
+	virtual void UpdateHitBox();
+	void FloorCollisionDetection(const std::vector<std::vector<Point2f>>& world);
 	
-	void FloorCollision(const std::vector<std::vector<Point2f>>& world);
-	void WallCollision(const std::vector<std::vector<Point2f>>& world);
-
 	// Protected Data Members
-	Point2f			m_Center;
-	Rectf			m_HitBox;
+	Point2f			m_SpriteCenter;
 	Vector2f		m_Velocity;
 	Direction		m_Direction;
 	utils::HitInfo	m_HitInfo;
+	Rectf 			m_HitBox;
 
-	int m_CurrentFrame;
-	int m_CurrentFrameRow;
-	float m_Width;
-	float m_Height;
-	float m_AccumSec;
-	bool m_IsInvincible;
-	bool m_IsEliminated;
-	bool m_WorldCollision;
+	int		m_CurrentFrame;
+	int		m_CurrentFrameRow;
+	float	m_AccumSec;
+
+	float	m_Width;
+	float	m_Height;
+
+	bool	m_IsInvincible;
+	bool	m_IsEliminated;
+	bool	m_WorldFloorCollision;
 
 	Point2f  m_SrcRectStart;
 
-	float m_GRAVITY{ -300.f };
+	static const float m_GRAVITY;
 
 private:
 	void UpdateSourceRect();

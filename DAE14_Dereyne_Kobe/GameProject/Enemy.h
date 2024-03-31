@@ -6,11 +6,11 @@ class Enemy : public Entity
 public:
 	// Constructor & Destructor
 	Enemy(const std::string& filePathName, const Point2f& center);
-	virtual ~Enemy() override;
+	virtual ~Enemy() override = default;
 
 	// Behavioral
-	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
-	void Draw() const;
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	virtual void Draw() const;
 
 	// Accessors
 	bool IsActivated() const;

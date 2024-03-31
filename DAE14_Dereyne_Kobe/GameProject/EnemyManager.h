@@ -4,12 +4,14 @@
 
 class Kirby;
 
-class EnemyManager
+class EnemyManager final
 {
 public:
 	// Constructor & Destructor
 	EnemyManager();
+	EnemyManager(const EnemyManager& other) = delete;
 	~EnemyManager();
+	EnemyManager& operator=(const EnemyManager& rhs) = delete;
 
 	// Behavioral
 	void Draw() const;
@@ -20,8 +22,8 @@ public:
 	void Pop();
 	void Eliminate(int index);
 
-	bool KirbyCollision(const Rectf& kirbyHitbox);
-	bool KirbyInhaleCollision(const Rectf& inhaleRect, float elapsedSec, const Point2f& kirbyPos);
+	bool KirbyHitDetection(Kirby* pKirby);
+	bool KirbyInhaleCollision(Kirby* pKirby, float elapsedSec);
 
 private:
 	// Variables

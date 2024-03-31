@@ -9,16 +9,13 @@ Enemy::Enemy(const std::string& filePathName, const Point2f& center)
 	m_Direction = Direction::Left;
 }
 
-Enemy::~Enemy()
-{
-}
-
 void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
+	UpdateHitBox();
 	if (m_IsActivated)
 	{
 		Entity::Update(elapsedSec, world);
-		m_Center.x += int(m_Direction) * elapsedSec * m_Velocity.x;
+		m_SpriteCenter.x += int(m_Direction) * elapsedSec * m_Velocity.x;
 	}
 }
 
@@ -31,12 +28,16 @@ void Enemy::Draw() const
 	}
 }
 
+#pragma region Accessors
 bool Enemy::IsActivated() const
 {
 	return m_IsActivated;
 }
+#pragma endregion
 
+#pragma region Mutators
 void Enemy::IsActivated(bool isActivated)
 {
 	m_IsActivated = false;
 }
+#pragma endregion
