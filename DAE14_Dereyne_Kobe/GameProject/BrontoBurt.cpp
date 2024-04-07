@@ -16,7 +16,7 @@ void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>
 
 	if (m_NrCycles < 6)
 	{
-		m_Velocity.y = 50 * sin(2 * M_PI / 2.f * m_SineTime);
+		m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
 		if (m_Velocity.y > -0.1f and m_Velocity.y < 0.1f) ++m_NrCycles;
 	}
 	else m_Velocity.y = 200.f;

@@ -32,7 +32,6 @@ public:
 	// Accessors
 	virtual Point2f	GetPosition()			 const final;
 	virtual Vector2f GetVelocity()			 const final;
-	virtual Rectf GetDstRect()				 const final;
 	virtual float GetWidth()				 const final;
 	virtual float GetHeight()				 const final;
 	virtual Rectf GetHitBox()				 const final;
@@ -41,15 +40,12 @@ public:
 
 protected:
 	// Behavioral Functions
-	virtual void UpdateHitBox();
-	void FloorCollisionDetection(const std::vector<std::vector<Point2f>>& world);
 	
 	// Protected Data Members
-	Point2f			m_SpriteCenter;
+	Point2f			m_Position;
 	Vector2f		m_Velocity;
 	Direction		m_Direction;
 	utils::HitInfo	m_HitInfo;
-	Rectf 			m_HitBox;
 
 	int		m_CurrentFrame;
 	int		m_CurrentFrameRow;
@@ -60,7 +56,6 @@ protected:
 
 	bool	m_IsInvincible;
 	bool	m_IsEliminated;
-	bool	m_WorldFloorCollision;
 
 	Point2f  m_SrcRectStart;
 
@@ -70,9 +65,10 @@ private:
 	void UpdateSourceRect();
 	void ApplyGravity(float elapsedSec);
 
+	Rectf GetDstRect()				 const;
+	Point2f GetDstCenter()			 const;
 	// Private Data Members
 	Texture* m_pSpriteSheet;
 	Rectf	 m_SrcRect;
-
 };
 

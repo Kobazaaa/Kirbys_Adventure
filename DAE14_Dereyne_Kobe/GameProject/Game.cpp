@@ -58,29 +58,17 @@ void Game::Cleanup( )
 void Game::Update( float elapsedSec )
 {
 	m_pKirby->Update(elapsedSec, m_World);
-	if (m_pKirby->GetCurrentState() == Kirby::State::Inhaling and
-		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec))
+	if (m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec))
 	{
-		if (m_pEnemyMngr->KirbyHitDetection(m_pKirby))
-		{
-			m_pKirby->InhaledEnemy();
-		}	
+
 	}
 	if (m_pEnemyMngr->KirbyHitDetection(m_pKirby))
 	{
 		m_pKirby->HitEnemy();
 	}
 	m_pEnemyMngr->Update(elapsedSec, m_World);
-	//if (!utils::IsOverlapping(m_pEnemies[idx]->GetDstRect(), m_pCamera->GetCameraView()))
-	//{
-	//	delete m_pEnemies[idx];
-	//	m_pEnemies[idx] = nullptr;
-	//}
-
-	//if (utils::IsPointInRect(Point2f(300, 200), m_pCamera->GetCameraView())) m_pEnemies.push_back(new Enemy("WaddleDee.png", Point2f(300, 200)));
 
 	m_pHUD->Update(elapsedSec);
-
 }
 
 void Game::Draw( ) const
@@ -112,6 +100,10 @@ void Game::Draw( ) const
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 {
+	if (e.keysym.sym == SDLK_i)
+	{
+		std::cout << *m_pKirby;
+	}
 }
 
 void Game::ProcessKeyUpEvent( const SDL_KeyboardEvent& e )
@@ -135,9 +127,13 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 	{
 		m_pKirby->SetPosition(clickPos);
 	}
+	//if (e.button == SDL_BUTTON_MIDDLE)
+	//{
+	//	m_pEnemyMngr->Add(new BrontoBurt(clickPos));
+	//}	
 	if (e.button == SDL_BUTTON_MIDDLE)
 	{
-		m_pEnemyMngr->Add(new BrontoBurt(clickPos));
+		m_pEnemyMngr->Add(new WaddleDoo(clickPos));
 	}
 	
 }

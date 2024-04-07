@@ -30,6 +30,8 @@ void EnemyManager::Draw() const
 		{
 			enemyPtr->Draw();
 			utils::DrawRect(enemyPtr->GetHitBox());
+			utils::FillEllipse(enemyPtr->GetPosition(), 2, 2);
+
 		}
 	}
 }
@@ -41,11 +43,6 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 		if (enemyPtr != nullptr)
 		{
 			enemyPtr->Update(elapsedSec, world);
-			
-			if (Collision::WallCollision(enemyPtr, world))
-			{
-				enemyPtr->InverseDirection();
-			}
 		}
 	}
 }
@@ -59,6 +56,7 @@ void EnemyManager::Add(const std::string& filePath, Point2f center)
 void EnemyManager::Add(Enemy* enemyPtr)
 {
 	m_vEnemies.push_back(enemyPtr);
+	std::cout << "ADDED\n";
 }
 
 void EnemyManager::Pop()
@@ -85,8 +83,8 @@ bool EnemyManager::KirbyHitDetection(Kirby* pKirby)
 			if (Collision::EntityCollision(enemyPtr, pKirby))
 			{
 				Eliminate(index);
-				//if (enemyPtr->IsActivated()) return true;
-				return true;
+				if (enemyPtr->IsActivated()) return true;
+				else return false;
 			}
 		}
 	}
@@ -100,15 +98,33 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 	{
 		if (enemyPtr != nullptr)
 		{
-			if (utils::IsPointInRect(enemyPtr->GetPosition(), pKirby->GetInhaleRect()))
+			if (pKirby->GetCurrentState() == Kirby::State::Inhaling and 
+				utils::IsPointInRect(enemyPtr->GetPosition(), pKirby->GetInhaleRect()))
 			{
-				if (enemyPtr->IsActivated()) isEnemyInRect = true;
-				enemyPtr->IsActivated(false);
+				if (enemyPtr->IsActivated())
+				{
+					isEnemyInRect = true;
+					enemyPtr->IsActivated(false);
+				
+				}
 
-				float xInc{ elapsedSec   * 10.f  * (pKirby->GetPosition().x - enemyPtr->GetPosition().x)};
-				float yInc{ - elapsedSec * 10.f  * ((enemyPtr->GetPosition().y - (pKirby->GetInhaleRect().bottom + (pKirby->GetInhaleRect().height / 2)))) };
-				enemyPtr->SetPosition(Point2f(enemyPtr->GetPosition().x + xInc, enemyPtr->GetPosition().y + yInc));
+				float xInc{ elapsedSec   * 10.f  * (pKirby->GetPosition().x		- enemyPtr->GetPosition().x) };
+				float yInc{ - elapsedSec * 10.f  * ((enemyPtr->GetPosition().y	- (pKirby->GetInhaleRect().bottom + (pKirby->GetInhaleRect().height / 2)))) };
+
+				Point2f newEnemyPos
+				{
+					enemyPtr->GetPosition().x + xInc,
+					enemyPtr->GetPosition().y + yInc
+				};
+
+				enemyPtr->SetPosition(newEnemyPos);
+
+				if (!enemyPtr->IsActivated() and KirbyHitDetection(pKirby))
+				{
+					pKirby->InhaledEnemy(enemyPtr);
+				}
 			}
+
 		}
 
 	}

@@ -699,4 +699,51 @@ int utils::GetSign(double number)
 	else return -1;
 }
 
+static bool m_PrevKeyStatesPress[256] = {false};
+bool utils::KeyPress(int SDL_SCANCODE)
+{
+	const Uint8* pKeyStates = SDL_GetKeyboardState(nullptr);
+	bool isPressed{ false };
+
+	if (pKeyStates[SDL_SCANCODE])
+	{
+		if (m_PrevKeyStatesPress[SDL_SCANCODE] == false and
+			static_cast<bool>(pKeyStates[SDL_SCANCODE] == true)) isPressed = true;
+	}
+	else isPressed = false;
+
+	m_PrevKeyStatesPress[SDL_SCANCODE] = static_cast<bool>(pKeyStates[SDL_SCANCODE]);
+
+	return isPressed;
+}
+
+bool utils::KeyDown(int SDL_SCANCODE)
+{
+	static const Uint8* pKeyStates = SDL_GetKeyboardState(nullptr);
+	return static_cast<bool>(pKeyStates[SDL_SCANCODE]);
+}
+
+static bool m_PrevKeyStatesRelease[256] = {false};
+bool utils::KeyRelease(int SDL_SCANCODE)
+{
+	const Uint8* pKeyStates = SDL_GetKeyboardState(nullptr);
+	bool isReleased{ false };
+
+	if (pKeyStates[SDL_SCANCODE])
+	{
+		isReleased = false;
+	}
+	else
+	{
+		if (m_PrevKeyStatesRelease[SDL_SCANCODE] == true and
+			static_cast<bool>(pKeyStates[SDL_SCANCODE]) == false)
+		{
+			isReleased = true;
+		}
+	}
+	m_PrevKeyStatesRelease[SDL_SCANCODE] = static_cast<bool>(pKeyStates[SDL_SCANCODE]);
+
+	return isReleased;
+}
+
 #pragma endregion CollisionFunctionality

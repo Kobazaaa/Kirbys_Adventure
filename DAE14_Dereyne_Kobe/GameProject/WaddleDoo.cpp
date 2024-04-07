@@ -1,22 +1,29 @@
 #include "pch.h"
-#include "WaddleDee.h"
+#include "WaddleDoo.h"
 
-WaddleDee::WaddleDee(const Point2f& center)
-	: Enemy("WaddleDee.png", center)
+WaddleDoo::WaddleDoo(const Point2f& center)
+	: Enemy("WaddleDoo.png", center)
 {
 }
 
-void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	Collision::FloorCollision(this, world);
 	if (Collision::WallCollision(this, world)) InverseDirection();
-	m_Velocity.x = 30.f;
+
 	Enemy::Update(elapsedSec, world);
+
 	UpdateAnimation();
+
+
+	if (utils::KeyPress(SDL_SCANCODE_SPACE))
+	{
+
+	}
+
 }
 
-#pragma region Animation
-void WaddleDee::UpdateAnimation()
+void WaddleDoo::UpdateAnimation()
 {
 	if (m_AccumSec >= 0.2f)
 	{
@@ -25,4 +32,3 @@ void WaddleDee::UpdateAnimation()
 		m_CurrentFrame = m_CurrentFrame % 2;
 	}
 }
-#pragma endregion

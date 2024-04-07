@@ -11,11 +11,10 @@ Enemy::Enemy(const std::string& filePathName, const Point2f& center)
 
 void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	UpdateHitBox();
 	if (m_IsActivated)
 	{
 		Entity::Update(elapsedSec, world);
-		m_SpriteCenter.x += int(m_Direction) * elapsedSec * m_Velocity.x;
+		m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
 	}
 }
 
@@ -38,6 +37,6 @@ bool Enemy::IsActivated() const
 #pragma region Mutators
 void Enemy::IsActivated(bool isActivated)
 {
-	m_IsActivated = false;
+	m_IsActivated = isActivated;
 }
 #pragma endregion

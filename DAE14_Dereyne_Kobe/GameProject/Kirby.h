@@ -18,12 +18,14 @@ public:
 	// Constructor & Destructor
 	Kirby(const Point2f& center, Level* const level);
 	virtual ~Kirby() override = default;
+	friend std::ostream& operator<<(std::ostream& out, const Kirby& kirby);
+	std::string EnumToString(Kirby::State state) const;
 
 	// Behavioral
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 	void Draw() const;
 	void HitEnemy();
-	void InhaledEnemy();
+	void InhaledEnemy(Enemy* enemy);
 
 	// Accessors
 	Rectf GetInhaleRect() const;
@@ -35,8 +37,7 @@ public:
 private:
 	// Private Update Functions
 	void UpdateSprite();
-	void MovementUpdate(float elapsedSec, const Uint8* pStates);
-	virtual void UpdateHitBox() override;
+	void MovementUpdate(float elapsedSec);
 
 	void DoDoorChecks();
 
@@ -46,6 +47,7 @@ private:
 	void AnimateIdle();
 	void AnimateWalk();
 	void AnimateJump();
+	void AnimateSlide();
 	void AnimateFall();
 	void AnimateFlight();
 	void AnimateInhaling();
@@ -89,8 +91,9 @@ private:
 	float m_InvincibleAccumSec{};
 
 	bool m_InhaledEnemy;
+	Enemy* m_pInhaledEnemy;
 
-	bool m_CanSlide{true};
+	bool m_IsSliding{false};
 
 	Level* const m_pLevel;
 };

@@ -87,5 +87,9 @@ namespace utils
 	int GetSign(int number);
 	int GetSign(float number);
 	int GetSign(double number);
+
+	bool KeyPress(int SDL_SCANCODE);
+	bool KeyDown(int SDL_SCANCODE);
+	bool KeyRelease(int SDL_SCANCODE);
 #pragma endregion
 }

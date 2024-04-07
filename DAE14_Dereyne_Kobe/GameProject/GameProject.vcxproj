@@ -160,6 +160,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="WaddleDee.cpp" />
+    <ClCompile Include="WaddleDoo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrontoBurt.h" />
@@ -175,6 +176,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="Entity.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="WaddleDee.h" />
+    <ClInclude Include="WaddleDoo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameProject.rc" />

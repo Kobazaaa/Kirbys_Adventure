@@ -49,7 +49,7 @@
 
 Here's why:
 * "Kirby's Adventure" is an easy to understand and fun to play game, that's why it was one of the first games that I thought of when choosing a game.
-* Kirby's cute and friendly looking appearance makes  him one of my favourite Nintendo characters.
+* Kirby's cute and friendly looking appearance makes  him one of my favorite Nintendo characters.
 * One of my best friends is the biggest Kirby fan I know, so I couldn't not choose a Kirby game.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -70,7 +70,7 @@ This section gives a clear and detailed overview of which parts of the original 
 * The level-hub as seen in the original game
 
 ### What I plan to create if I have enough time left:
-* The jumppad minigame, accessed when completing a level, used to gain bonus score or extra lives
+* The jump pad mini game, accessed when completing a level, used to gain bonus score or extra lives
 * More levels
 * More enemies and power-ups for Kirby
 * The small 'boss-fight' found in level 2

@@ -17,15 +17,13 @@ bool Collision::WallCollision(Entity* entity, const std::vector<std::vector<Poin
 	{
 		if (utils::Raycast(world[idx], left, right, hitInfo))
 		{
-			//Vector2f newVelocity{ 0, entity->GetVelocity().y };
-			//entity->SetVelocity(newVelocity);
-
 			Point2f newPosition
 			{ 
-				hitInfo.intersectPoint.x + utils::GetSign(hitInfo.normal.x) * (entity->GetHitBox().width / 2 + 1.f), 
+				hitInfo.intersectPoint.x + utils::GetSign(hitInfo.normal.x) * ((entity->GetHitBox().width / 2.f) + 1),
 				entity->GetPosition().y
 			};
 			entity->SetPosition(newPosition);
+			entity->SetVelocity(Vector2f(0, entity->GetVelocity().y));
 
 			return true;
 		}
@@ -54,7 +52,7 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 			Point2f newPosition
 			{
 				entity->GetPosition().x,
-				hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (entity->GetHeight() / 2)
+				hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (entity->GetHitBox().height / 2)
 			};
 			entity->SetPosition(newPosition);
 

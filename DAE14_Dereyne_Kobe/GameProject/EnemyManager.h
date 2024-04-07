@@ -1,6 +1,7 @@
 #pragma once
 #include "WaddleDee.h"
 #include "BrontoBurt.h"
+#include "WaddleDoo.h"
 
 class Kirby;
 
