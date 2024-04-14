@@ -1,31 +1,21 @@
 #include "pch.h"
 #include "WaddleDoo.h"
 
-WaddleDoo::WaddleDoo(const Point2f& center)
-	: Enemy("WaddleDoo.png", center)
+WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
+	: Enemy("Enemies/WaddleDoo.png", center, doesWorldCollsion)
 {
 }
 
 void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	Collision::FloorCollision(this, world);
-	if (Collision::WallCollision(this, world)) InverseDirection();
-
 	Enemy::Update(elapsedSec, world);
 
 	UpdateAnimation();
-
-
-	if (utils::KeyPress(SDL_SCANCODE_SPACE))
-	{
-
-	}
-
 }
 
 void WaddleDoo::UpdateAnimation()
 {
-	if (m_AccumSec >= 0.2f)
+	if (m_AccumSec >= m_WALK_FRAME_DELAY)
 	{
 		m_AccumSec = 0;
 		++m_CurrentFrame;

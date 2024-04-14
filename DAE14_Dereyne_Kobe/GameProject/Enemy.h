@@ -5,7 +5,7 @@ class Enemy : public Entity
 {
 public:
 	// Constructor & Destructor
-	Enemy(const std::string& filePathName, const Point2f& center);
+	explicit Enemy(const std::string& filePathName, const Point2f& center, bool doesWorldCollsion = true);
 	virtual ~Enemy() override = default;
 
 	// Behavioral
@@ -14,12 +14,25 @@ public:
 
 	// Accessors
 	bool IsActivated() const;
+	bool IsEliminated() const;
 
 	// Mutators
+	Rectf GetSpawnRect() const;
+	Point2f GetSpawnPoint() const;
 	void IsActivated(bool isActivated);
+	void IsEliminated(bool isEliminated);
 
+protected:
+	bool m_DoesWorldCollision;
+
+	const float m_WALK_SPEED{30.f};
+
+	const float m_WALK_FRAME_DELAY{0.2f};
 private:
 	// Variables
+	bool m_IsEliminated;
 	bool m_IsActivated;
+
+	Point2f m_SpawnPoint;
 };
 

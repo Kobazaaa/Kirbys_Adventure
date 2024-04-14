@@ -153,12 +153,14 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="HotHead.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Kirby.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Sparky.cpp" />
     <ClCompile Include="WaddleDee.cpp" />
     <ClCompile Include="WaddleDoo.cpp" />
   </ItemGroup>
@@ -169,17 +171,22 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="HotHead.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Kirby.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Sparky.h" />
     <ClInclude Include="WaddleDee.h" />
     <ClInclude Include="WaddleDoo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameProject.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

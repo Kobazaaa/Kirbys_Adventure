@@ -1,16 +1,13 @@
 #include "pch.h"
 #include "WaddleDee.h"
 
-WaddleDee::WaddleDee(const Point2f& center)
-	: Enemy("WaddleDee.png", center)
+WaddleDee::WaddleDee(const Point2f& center, bool doesWorldCollsion)
+	: Enemy("Enemies/WaddleDee.png", center, doesWorldCollsion)
 {
 }
 
 void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	Collision::FloorCollision(this, world);
-	if (Collision::WallCollision(this, world)) InverseDirection();
-	m_Velocity.x = 30.f;
 	Enemy::Update(elapsedSec, world);
 	UpdateAnimation();
 }
@@ -18,7 +15,7 @@ void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 #pragma region Animation
 void WaddleDee::UpdateAnimation()
 {
-	if (m_AccumSec >= 0.2f)
+	if (m_AccumSec >= m_WALK_FRAME_DELAY)
 	{
 		m_AccumSec = 0;
 		++m_CurrentFrame;

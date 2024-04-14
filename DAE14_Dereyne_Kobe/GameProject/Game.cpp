@@ -19,26 +19,20 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	// EnemyManager
-	m_pEnemyMngr = new EnemyManager();
 
 	// Camera + Level + HUD
+	m_pLevel =	new Level("Levels/VegetableValley.png", 3);
 	m_pCamera = new Camera(GetViewPort().width, GetViewPort().height, m_SCALE);
-	m_pLevel =	new Level("VegetableValley.png", 3);
 	
+	// EnemyManager
+	m_pEnemyMngr = new EnemyManager(m_pCamera);
+
 	// Kirby
-	m_pKirby = new Kirby(Point2f(100, 168), m_pLevel);
+	m_pKirby = new Kirby(Point2f(100, 100), m_pLevel);
 	m_pHUD = new HUD(m_pKirby, m_SCALE);
 
 	// World
-	SVGParser::GetVerticesFromSvgFile("VegetableValleyFull.svg", m_World);
-	for (size_t idx{}; idx < m_World.size(); idx++)
-	{
-		for (size_t i = 0; i < m_World[idx].size(); i++)
-		{
-			m_World[idx][i].y += (GetViewPort().height / m_SCALE - m_pLevel->GetHeight() / 3);
-		}
-	}	
+	SVGParser::GetVerticesFromSvgFile("Levels/VegetableValley.svg", m_World);
 }
 
 void Game::Cleanup( )
@@ -57,17 +51,20 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
-	m_pKirby->Update(elapsedSec, m_World);
-	if (m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec))
+	if (m_pKirby->DoDoorChecks())
 	{
-
+		m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
 	}
+	
+	m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
 	if (m_pEnemyMngr->KirbyHitDetection(m_pKirby))
 	{
 		m_pKirby->HitEnemy();
-	}
-	m_pEnemyMngr->Update(elapsedSec, m_World);
 
+	}
+
+	m_pKirby->Update(elapsedSec, m_World);
+	m_pEnemyMngr->Update(elapsedSec, m_World);
 	m_pHUD->Update(elapsedSec);
 }
 
@@ -75,24 +72,28 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 
-	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetHeight(), m_pKirby->GetPosition());
+	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetSubLevelHeight(), m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
+	{
 		m_pLevel->Draw();
 		utils::SetColor(Color4f(1, 1, 1, 1));
-		for (size_t idx{}; idx < m_World.size(); idx++)
-		{
-			utils::DrawPolygon(m_World[idx]);
-		}
+
 		m_pKirby->Draw();
-		m_pEnemyMngr->Draw();
+		m_pEnemyMngr->Draw(m_DEBUG_MODE);
 
 
 
-		// DEBUGGING I LOVE IT <3 <3 <3
-		utils::SetColor(Color4f(1, 1, 1, 1));
-		utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
-		utils::DrawRect(m_pKirby->GetHitBox());
-		utils::DrawRect(m_pKirby->GetInhaleRect());
-
+		if (m_DEBUG_MODE)
+		{
+			for (size_t idx{}; idx < m_World.size(); idx++)
+			{
+				utils::DrawPolygon(m_World[idx]);
+			}
+			utils::SetColor(Color4f(1, 1, 1, 1));
+			utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
+			utils::DrawRect(m_pKirby->GetHitBox());
+			utils::DrawRect(m_pKirby->GetInhaleRect());
+		}
+	}
 	m_pCamera->Reset();
 
 	m_pHUD->Draw();
@@ -100,9 +101,16 @@ void Game::Draw( ) const
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 {
-	if (e.keysym.sym == SDLK_i)
+	if (m_DEBUG_MODE)
 	{
-		std::cout << *m_pKirby;
+		if (e.keysym.sym == SDLK_i)
+		{
+			std::cout << *m_pKirby;
+		}
+	}
+	if (e.keysym.sym == SDLK_r)
+	{
+		m_pKirby->Reset();
 	}
 }
 
@@ -117,25 +125,28 @@ void Game::ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e )
 
 void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 {
-	Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE };
+	if (m_DEBUG_MODE)
+	{
+		Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE - 64 };
 
-	if (e.button == SDL_BUTTON_RIGHT)
-	{
-		m_pEnemyMngr->Add(new WaddleDee(clickPos));
+		if (e.button == SDL_BUTTON_RIGHT)
+		{
+			m_pEnemyMngr->Add(new WaddleDee(clickPos));
+		}
+		if (e.button == SDL_BUTTON_LEFT)
+		{
+			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
+			m_pKirby->SetPosition(clickPos);
+		}
+		//if (e.button == SDL_BUTTON_MIDDLE)
+		//{
+		//	m_pEnemyMngr->Add(new BrontoBurt(clickPos));
+		//}	
+		if (e.button == SDL_BUTTON_MIDDLE)
+		{
+			m_pEnemyMngr->Add(new WaddleDoo(clickPos));
+		}
 	}
-	if (e.button == SDL_BUTTON_LEFT)
-	{
-		m_pKirby->SetPosition(clickPos);
-	}
-	//if (e.button == SDL_BUTTON_MIDDLE)
-	//{
-	//	m_pEnemyMngr->Add(new BrontoBurt(clickPos));
-	//}	
-	if (e.button == SDL_BUTTON_MIDDLE)
-	{
-		m_pEnemyMngr->Add(new WaddleDoo(clickPos));
-	}
-	
 }
 
 void Game::ProcessMouseUpEvent( const SDL_MouseButtonEvent& e )

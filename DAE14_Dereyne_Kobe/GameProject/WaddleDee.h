@@ -5,7 +5,7 @@ class WaddleDee final : public Enemy
 {
 public:
 	// Constructor & Destructor
-	WaddleDee(const Point2f& center);
+	explicit WaddleDee(const Point2f& center, bool doesWorldCollsion = true);
 	virtual ~WaddleDee() override = default;
 
 	// Behavioral

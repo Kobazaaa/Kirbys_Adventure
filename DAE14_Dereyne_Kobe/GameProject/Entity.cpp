@@ -16,7 +16,6 @@ Entity::Entity(const std::string& spriteFilePath, float width, float height, con
 	, m_HitInfo			{}
 	, m_SrcRectStart	{ 0, 0 }
 	, m_IsInvincible	{ false }
-	, m_IsEliminated	{ false }
 {
 	m_pSpriteSheet = new Texture(spriteFilePath);
 }
@@ -61,10 +60,6 @@ void Entity::SetPosition(float centerX, float centerY)
 void Entity::SetVelocity(const Vector2f& velocity)
 {
 	m_Velocity = velocity;
-}
-void Entity::IsEliminated(bool isEliminated)
-{
-	m_IsEliminated = isEliminated;
 }
 void Entity::InverseDirection()
 {
@@ -115,8 +110,8 @@ float Entity::GetHeight() const
 Rectf Entity::GetHitBox() const
 {
 	Rectf hitBox{};
-	hitBox.width	= 16.f;
-	hitBox.height	= 16.f;
+	hitBox.width	= 14.f;
+	hitBox.height	= 14.f;
 	hitBox.left		= m_Position.x - hitBox.width / 2;
 	hitBox.bottom	= m_Position.y - hitBox.height / 2;
 
@@ -143,6 +138,7 @@ void Entity::UpdateSourceRect()
 void Entity::ApplyGravity(float elapsedSec)
 {
 	m_Velocity.y += m_GRAVITY * elapsedSec;
+	if (m_Velocity.y <= m_GRAVITY) m_Velocity.y = m_GRAVITY;
 	m_Position.y += m_Velocity.y * elapsedSec;
 }
 #pragma endregion

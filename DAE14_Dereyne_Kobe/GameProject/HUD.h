@@ -13,6 +13,8 @@ public:
 	void Draw()						const;
 	void Update(float elapsedSec);
 
+	// Accessorts
+	float GetHeight() const;
 private:
 	// Private Draw
 	void PrintScore()				const;

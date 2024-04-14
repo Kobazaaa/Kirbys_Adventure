@@ -39,6 +39,8 @@ private:
 	void ClearBackground( ) const;
 
 	// VARIABLES
+	const bool m_DEBUG_MODE{false};
+
 	Kirby* m_pKirby;
 	EnemyManager* m_pEnemyMngr;
 

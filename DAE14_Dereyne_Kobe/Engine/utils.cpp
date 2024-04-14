@@ -699,6 +699,18 @@ int utils::GetSign(double number)
 	else return -1;
 }
 
+bool utils::IsRectInRect(const Rectf& smallRect, const Rectf& bigRect)
+{
+	if (smallRect.left > bigRect.left and
+		smallRect.bottom > bigRect.bottom)
+	{
+		if (smallRect.left + smallRect.width < bigRect.left + bigRect.width and
+			smallRect.bottom + smallRect.height < bigRect.bottom + bigRect.height) return true;
+	}
+
+	return false;
+}
+
 static bool m_PrevKeyStatesPress[256] = {false};
 bool utils::KeyPress(int SDL_SCANCODE)
 {

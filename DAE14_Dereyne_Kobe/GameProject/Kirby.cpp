@@ -7,12 +7,13 @@
 using namespace utils;
 
 Kirby::Kirby( const Point2f& center, Level* const level)
-	: Entity("Kirby.png", 24, 24, center)
+	: Entity("Kirby/Kirby.png", 24, 24, center)
 	, m_Health		{ 6 }
 	, m_Lives		{ 4 }
 	, m_InhaledEnemy{ false }
-	, m_Score		{ 1'234'567 }
+	, m_Score		{ 0 }
 	, m_pLevel		{ level }
+	, m_pInhaledEnemy{ nullptr }
 {
 }
 
@@ -46,8 +47,8 @@ std::string Kirby::EnumToString(Kirby::State state) const
 	case Kirby::State::Exhaling:
 		enumAsString = "Exhaling";
 		break;
-	case Kirby::State::Full:
-		enumAsString = "Full";
+	case Kirby::State::Swallow:
+		enumAsString = "Swallow";
 		break;
 	default:
 		enumAsString = "[NO STATE FOUND]";
@@ -61,74 +62,98 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 {
 	// Invincibility
 	if (m_IsInvincible) m_InvincibleAccumSec += elapsedSec;
-	if (m_IsInvincible and m_InvincibleAccumSec >= 3.f)
+	if (m_IsInvincible and m_InvincibleAccumSec >= m_INVINCIBILITY_TIME)
 	{
 		m_InvincibleAccumSec = 0;
 		m_IsInvincible = false;
-		std::cout << "Set Invincible to False\n";
 	}
 
-	// Score
-	if (KeyDown(SDL_SCANCODE_U)) ++m_Score;
-	if (KeyDown(SDL_SCANCODE_D)) --m_Score;
+	if (m_Health <= 0)
+	{
+		--m_Lives;
+		m_Health = 6;
+		if (m_Lives <= 0)
+		{
+			Reset();
+		}
+	}
 
 	// Movement
 	MovementUpdate(elapsedSec);
 	Entity::Update(elapsedSec, world);
 
-	if (m_Velocity.y < m_GRAVITY / 1.85f and (m_CurrentState == State::None or m_CurrentState == State::Jump))
-	{
-		m_CurrentState = State::Falling;
-	}
-
 	// Animate
 	UpdateSprite();
-	
-	// World Collision
-	if (Collision::FloorCollision(this, world))
-	{
-		if (m_CurrentState != State::Exhaling and
-			m_CurrentState != State::Flight and
-			m_CurrentState != State::Inhaling and
-			m_CurrentState != State::Walk or
-			m_Velocity.x <= 0) m_CurrentState = State::None;
-	}
-	if (Collision::WallCollision(this, world))
-	{
-		std::cout << "Wall\n";
-		if (m_CurrentState == State::Walk)
-		{
-			m_CurrentFrame = 9;
-			m_CurrentState = State::None;
-		}
-	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~		 IN/EXHALING		~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if (KeyDown(SDL_SCANCODE_LSHIFT) and CanInhaleWithCurrentState())
+	if (KeyPress(SDL_SCANCODE_LSHIFT))
 	{
-		m_CurrentState = State::Inhaling;
+		if (CanInhaleWithCurrentState()) m_CurrentState = State::Inhaling;
+		if (m_InhaledEnemy or m_CurrentState == State::Flight) m_CurrentState = State::Exhaling;
 	}	
-	if (m_InhaledEnemy and KeyPress(SDL_SCANCODE_LSHIFT))
-	{
-		m_CurrentState = State::Exhaling;
-	}
 
 	if (!KeyDown(SDL_SCANCODE_LSHIFT) and m_CurrentState == State::Inhaling and m_AccumSec >= 0.40f)
 	{
 		m_CurrentState = State::None;
 	}
 
-
-	// Debugging Purposes
-	if (KeyDown(SDL_SCANCODE_R))
+	// World Collision
+	ApplyPlaySpace();
+	if (Collision::WallCollision(this, world))
 	{
-		m_CurrentState = State::None;
-		m_InhaledEnemy = false;
+		m_IsSliding = false;
+		if (m_CurrentState == State::Walk and !m_InhaledEnemy)
+		{
+			m_CurrentFrame = 9;
+			m_CurrentState = State::None;
+		}
 	}
+	if (Collision::FloorCollision(this, world))
+	{
+		if (m_CurrentState != State::Exhaling and
+			m_CurrentState != State::Flight and
+			m_CurrentState != State::Inhaling and
+			m_CurrentState != State::Falling and
+			(m_Velocity.x >= 0.f )) m_CurrentState = State::None;
 
-	DoDoorChecks();
+		if (m_CurrentState == State::Falling)
+		{
+			static bool bounced{false};
+			if (bounced)
+			{
+				m_CurrentState = State::None;
+				bounced = false;
+			}
+			else
+			{
+				m_Velocity.y = m_JUMP_SPEED / 2;
+				bounced = true;
+			}
+		}
+	}
+	else
+	{
+		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_InhaledEnemy)
+		{
+			m_CurrentState = State::Falling;
+		}
+
+		if (m_Velocity.y < 0.f and
+			m_CurrentState != State::Flight and
+			m_CurrentState != State::Exhaling and
+			m_CurrentState != State::Inhaling and
+			m_CurrentState != State::Jump and
+			m_CurrentState != State::Falling)
+		{
+			m_CurrentState = State::None;
+			m_CurrentFrameRow = static_cast<int>(State::Jump);
+			if (!m_InhaledEnemy) m_CurrentFrame = 4;
+			else m_CurrentFrame = 2;
+		}
+
+	}
 }
 
 void Kirby::Draw() const
@@ -150,12 +175,15 @@ void Kirby::MovementUpdate(float elapsedSec)
 			m_AccumSec = 0;
 			m_IsSliding = true;
 		}
-		if (m_IsSliding and m_AccumSec >= 0.5f) m_IsSliding = false;
-		else if (m_IsSliding) m_Velocity.x = 120.f;
-	}
-	else
-	{
-		m_IsSliding = false;
+		if (m_IsSliding)
+		{
+			if (m_AccumSec >= m_SLIDING_TIME)
+			{
+				m_Velocity.x = 0;
+				m_IsSliding = false;
+			}
+			else m_Velocity.x = m_SLIDE_SPEED;
+		}
 	}
 
 
@@ -165,8 +193,12 @@ void Kirby::MovementUpdate(float elapsedSec)
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if ((KeyDown(SDL_SCANCODE_RIGHT) or KeyDown(SDL_SCANCODE_LEFT)) and CanMoveWithCurrentState())
 	{
-		m_Velocity.x = 60.f;
+		if (m_CurrentState != State::Falling)
+		{
+			m_Velocity.x += m_WALK_SPEED * (elapsedSec * 5);
+			if (m_Velocity.x >= m_WALK_SPEED) m_Velocity.x = m_WALK_SPEED;
 		m_Direction = KeyDown(SDL_SCANCODE_RIGHT) ? Direction::Right : Direction::Left;
+		}
 	}
 	else
 	{
@@ -174,7 +206,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 		m_Velocity.x += elapsedSec * FRICTION;
 		if (m_Velocity.x <= 0.f)
 		{
-			m_Velocity.x = 0.f;
+			m_Velocity.x = 0;
 		}
 	}
 	
@@ -186,10 +218,10 @@ void Kirby::MovementUpdate(float elapsedSec)
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			JUMPING			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if (KeyDown(SDL_SCANCODE_SPACE) and CanJumpWithCurrentState())
+	if (KeyPress(SDL_SCANCODE_SPACE) and CanJumpWithCurrentState())
 	{
 		m_CurrentState = State::Jump;
-		m_Velocity.y = m_JumpSpeed;
+		m_Velocity.y = m_JUMP_SPEED;
 	}
 	else if (KeyRelease(SDL_SCANCODE_SPACE))
 	{
@@ -204,23 +236,65 @@ void Kirby::MovementUpdate(float elapsedSec)
 	if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
 	{
 		m_CurrentState = State::Flight;
-		m_Velocity.y = 50.f;
+		m_Velocity.y = m_FLIGHT_SPEED;
 	}
-	if (m_CurrentState == State::Flight and KeyPress(SDL_SCANCODE_LSHIFT))
-	{
-		m_CurrentState = State::Exhaling;
-	}
-
-
 
 }
 
-void Kirby::DoDoorChecks()
+void Kirby::ApplyPlaySpace()
 {
-	if (utils::IsPointInRect(m_Position, Rectf(968, 125, 16, 24)))
+	Rectf subLevel
 	{
-		m_Position = Point2f(50, 200);
+		0,
+		m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(),
+		m_pLevel->GetWidth(),
+		m_pLevel->GetSubLevelHeight()
+	};
+
+	if (m_Position.x - GetHitBox().width  / 2 < subLevel.left)							m_Position.x = subLevel.left					 + GetHitBox().width  / 2;
+	if (m_Position.x + GetHitBox().width  / 2 > subLevel.left + subLevel.width)			m_Position.x = subLevel.left + subLevel.width	 - GetHitBox().width  / 2;
+	if (m_Position.y + GetHitBox().height / 2 > subLevel.bottom + subLevel.height) 
+	{
+		m_Position.y = subLevel.bottom + subLevel.height - GetHitBox().height / 2;
+		m_Velocity.y = 0;
 	}
+	if (m_Position.y - GetHitBox().height / 2 < subLevel.bottom)						m_Health = 0;
+}
+
+bool Kirby::DoDoorChecks()
+{
+	std::vector<Door> vDoors = m_pLevel->GetDoors();
+	
+	for (const Door& door : vDoors)
+	{
+		if (utils::IsPointInRect(m_Position, door.doorRect))
+		{
+			if (KeyPress(SDL_SCANCODE_UP) and !door.isFinalDoor)
+			{
+				if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
+				else m_pLevel->DecreaseSubLevel();
+
+				m_Position = door.outcomePos;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void Kirby::Reset()
+{
+	m_pLevel->SetSubLevel(0);
+	m_Position = Point2f(50, 50);
+	m_Lives = 4;
+	m_Health = 6;
+	m_Score = 0;
+	m_IsInvincible = false;
+	m_InhaledEnemy = false;
+	m_pInhaledEnemy = nullptr;
+	m_CurrentState = State::None;
+	m_AccumSec = 0;
+	m_InvincibleAccumSec = 0;
 }
 
 void Kirby::HitEnemy()
@@ -229,16 +303,15 @@ void Kirby::HitEnemy()
 	{
 		--m_Health;
 		m_IsInvincible = true;
-		std::cout << "Set Invincible to True\n";
-		std::cout << m_Health << std::endl;
 	}
 }
 
 void Kirby::InhaledEnemy(Enemy* enemy)
 {
-	m_InhaledEnemy = true;
 	m_pInhaledEnemy = enemy;
+	m_InhaledEnemy = true;
 	m_CurrentState = State::None;
+	m_Score += ((rand() % 5) + 1) * 100;
 }
 
 #pragma region Accessors
@@ -276,6 +349,9 @@ void Kirby::UpdateSprite()
 	if (m_InhaledEnemy) m_SrcRectStart = Point2f(240, 0);
 	else m_SrcRectStart = Point2f(0, 0);
 
+	// Updates the active row in the sprite sheet according to Kirby's state
+	m_CurrentFrameRow = static_cast<int>(m_CurrentState);
+
 	// Set CurrentFrame and AccumSec to 0 when a change in State is detected
 	if (m_CurrentState != m_OldState)
 	{
@@ -283,8 +359,6 @@ void Kirby::UpdateSprite()
 		m_OldState = m_CurrentState;
 		m_AccumSec = 0;
 	}
-	// Updates the active row in the sprite sheet according to Kirby's state
-	m_CurrentFrameRow = int(m_CurrentState);
 	
 
 	// Play the correct animation according to Kirby's state
@@ -324,32 +398,55 @@ void Kirby::AnimateIdle()
 }
 void Kirby::AnimateWalk()
 {
-	if (m_AccumSec >= m_WALKING_FRAME_DELAY)
-	{
-		m_AccumSec = 0;
-		++m_CurrentFrame %= m_NR_WALK_FRAMES;
-	}
+	//if (!m_InhaledEnemy)
+	//{
+		if (m_AccumSec >= m_WALKING_FRAME_DELAY)
+		{
+			m_AccumSec = 0;
+			++m_CurrentFrame %= m_NR_WALK_FRAMES;
+		}
+	//}
+	//else
+	//{
+	//	if (m_AccumSec >= m_WALKING_FRAME_DELAY)
+	//	{
+	//		m_AccumSec = 0;
+	//		++m_CurrentFrame %= m_NR_WALK_FRAMES;
+	//	}
+	//}
 }
 void Kirby::AnimateJump()
 {
-	if (m_Velocity.y >= 0.f) m_CurrentFrame = 0;
+	if (!m_InhaledEnemy)
+	{
+		if (m_Velocity.y >= 0.f) m_CurrentFrame = 0;
+		else
+		{
+			if (m_CurrentFrame < m_NR_FLIP_FRAMES and m_AccumSec >= m_FLIP_FRAME_DELAY)
+			{
+				m_AccumSec = 0.f;
+				m_CurrentFrame = (m_CurrentFrame % m_NR_FLIP_FRAMES) + 1;
+			}
+			//if (m_CurrentFrame >= m_NR_FLIP_FRAMES and m_AccumSec >= m_FALLING_DELAY)
+			//{
+			//	m_AccumSec = 0.f;
+			//	m_CurrentState = State::Falling;
+			//}
+		}
+	}
 	else
 	{
-		if (m_CurrentFrame < m_NR_FLIP_FRAMES and m_AccumSec >= m_FLIP_FRAME_DELAY)
+		if (m_AccumSec >= m_JUMP_FRAME_DELAY_FULL)
 		{
-			m_AccumSec = 0.f;
-			m_CurrentFrame = (m_CurrentFrame % m_NR_FLIP_FRAMES) + 1;
+			m_AccumSec = 0;
+			++m_CurrentFrame;
+			if (m_CurrentFrame > m_NR_JUMP_FRAMES_FULL) m_CurrentFrame = m_NR_JUMP_FRAMES_FULL;
 		}
-		//if (m_CurrentFrame >= m_NR_FLIP_FRAMES and m_AccumSec >= m_FALLING_DELAY)
-		//{
-		//	m_AccumSec = 0.f;
-		//	m_CurrentState = State::Falling;
-		//}
 	}
 }
 void Kirby::AnimateSlide()
 {
-	if (m_Velocity.x > 60.f) m_CurrentFrame = 1;
+	if (m_Velocity.x > m_WALK_SPEED) m_CurrentFrame = 1;
 	else m_CurrentFrame = 0;
 }
 void Kirby::AnimateFall()
@@ -360,13 +457,13 @@ void Kirby::AnimateFlight()
 {
 	if (m_Velocity.y <= 0.f)
 	{
-		if (m_AccumSec >= 0.3f)
+		if (m_AccumSec >= 3 * m_FLIGHT_FRAME_DELAY)
 		{
 			m_AccumSec = 0;
 			m_CurrentFrame = (m_CurrentFrame + 1) % 2 + 4;
 		}
 	}
-	else if (m_AccumSec >= 0.1f)
+	else if (m_AccumSec >= m_FLIGHT_FRAME_DELAY)
 	{
 		m_AccumSec = 0;
 		++m_CurrentFrame %= m_NR_FLIGHT_FRAMES;
@@ -376,7 +473,7 @@ void Kirby::AnimateFlight()
 }
 void Kirby::AnimateInhaling()
 {
-	if (m_AccumSec > 0.1f)
+	if (m_AccumSec > m_INHALE_FRAME_DELAY)
 	{
 		if (m_CurrentFrame == 1) m_CurrentFrame = 1;
 		else
@@ -388,7 +485,7 @@ void Kirby::AnimateInhaling()
 }
 void Kirby::AnimateExhaling()
 {
-	if (m_AccumSec >= 0.15f)
+	if (m_AccumSec >= m_EXHALE_FRAME_DELAY)
 	{
 		m_AccumSec -= 0.1f;
 		++m_CurrentFrame;
@@ -437,7 +534,7 @@ bool Kirby::CanInhaleWithCurrentState() const
 {
 	if (m_CurrentState == State::Slide or
 		m_CurrentState == State::Flight or
-		(m_CurrentState == State::Exhaling) or
+		m_CurrentState == State::Exhaling or
 		m_InhaledEnemy) return false;
 	else return true;
 }

@@ -1,13 +1,14 @@
 #pragma once
+
 class Camera final
 {
 public:
 	// Constructor & Destructor
-	Camera(float screenWidth, float screenHeight, float scale = 1.f);
-	~Camera();
+	explicit Camera(float screenWidth, float screenHeight, float scale = 1.f);
+	virtual ~Camera() = default;
 
 	// Behavioral
-	void Aim(float levelW, float levelH, const Point2f& trackCenter);
+	void Aim(float sublevelW, float sublevelH, float sublevelBottom, const Point2f& trackCenter, float hudHeight);
 	void Reset();
 
 	// Accessors

@@ -5,7 +5,7 @@ class BrontoBurt final : public Enemy
 {
 public:
 	// Constructor & Destructor
-	BrontoBurt(const Point2f center);
+	explicit BrontoBurt(const Point2f center, bool doesWorldCollsion = false);
 	virtual ~BrontoBurt() override = default;
 
 	// Behavioral

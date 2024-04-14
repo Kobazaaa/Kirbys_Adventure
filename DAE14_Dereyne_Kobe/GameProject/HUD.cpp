@@ -7,7 +7,7 @@ HUD::HUD(Kirby* kirby, float scale)
 	, m_Scale		 { scale }
 	, m_CurrentFrame { 0 }
 {
-	m_pSprites = new Texture("HUD.png");
+	m_pSprites = new Texture("HUD/HUD.png");
 }
 
 HUD::~HUD()
@@ -43,16 +43,29 @@ void HUD::Update(float elapsedSec)
 
 }
 
+float HUD::GetHeight() const
+{
+	return m_HUD_HEIGHT;
+}
+
 void HUD::PrintScore() const
 {
 	int score{ m_pKIRBY->GetScore() };
 	if (score < 0) score = 0;
 
-	for (size_t idx{0}; idx < 7; ++idx)
+	for (int idx{0}; idx < 7; ++idx)
 	{
-		const Point2f pos{ m_SCORE_POS.x + (6 - idx) * m_NUMBER_WIDTH, m_SCORE_POS.y};
-		int nrToPrint{ score / int(powf(10, idx)) % 10};
-		const Rectf srcRect{nrToPrint * m_NUMBER_WIDTH, 0, m_NUMBER_WIDTH, m_NUMBER_HEIGHT};
+		const Point2f pos	{ m_SCORE_POS.x + (6 - idx) * m_NUMBER_WIDTH, m_SCORE_POS.y};
+		int nrToPrint		{ score / int(powf(10, idx)) % 10};
+		
+		const Rectf srcRect
+		{
+			nrToPrint * m_NUMBER_WIDTH,
+			0,
+			m_NUMBER_WIDTH,
+			m_NUMBER_HEIGHT
+		};
+		
 		m_pSprites->Draw(pos, srcRect);
 	}
 }
@@ -62,7 +75,7 @@ void HUD::DrawHealth() const
 	int health{ m_pKIRBY->GetHealth() };
 	if (health < 0) health = 0;
 
-	for (size_t idx{ 0 }; idx < 6; ++idx)
+	for (int idx{ 0 }; idx < 6; ++idx)
 	{
 		Point2f pos{};
 		Rectf srcRect{};
@@ -90,15 +103,30 @@ void HUD::DrawLives() const
 	{
 		const Point2f pos{ m_KIRBY_LIVES_POS.x + (1 - idx) * m_NUMBER_WIDTH, m_KIRBY_LIVES_POS.y };
 		int nrToPrint{ lives / int(powf(10, idx)) % 10};
-		const Rectf srcRect{ nrToPrint * m_NUMBER_WIDTH, 0, m_NUMBER_WIDTH, m_NUMBER_HEIGHT };
+		
+		const Rectf srcRect
+		{
+			nrToPrint * m_NUMBER_WIDTH,
+			0,
+			m_NUMBER_WIDTH,
+			m_NUMBER_HEIGHT
+		};
+		
 		m_pSprites->Draw(pos, srcRect);
 	}
 }
 
 void HUD::DrawLivesAnim() const
 {
-	const Point2f pos{ m_KIRBY_ANIM_POS.x, m_KIRBY_ANIM_POS.y };
-	const Rectf srcRect{ (m_CurrentFrame % 4) * m_KIRBY_ANIM_WIDTH, 289, m_KIRBY_ANIM_WIDTH, m_KIRBY_ANIM_HEIGHT};
+	const Point2f pos	{ m_KIRBY_ANIM_POS.x, m_KIRBY_ANIM_POS.y };
+	const Rectf srcRect
+	{ 
+		(m_CurrentFrame % 4) * m_KIRBY_ANIM_WIDTH,
+		289,
+		m_KIRBY_ANIM_WIDTH,
+		m_KIRBY_ANIM_HEIGHT
+	};
+	
 	m_pSprites->Draw(pos, srcRect);
 }
 

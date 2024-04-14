@@ -26,17 +26,16 @@ public:
 	virtual void SetPosition(const Point2f& newCenterPos)		final;
 	virtual void SetPosition(float centerX, float centerY)		final;
 	virtual void SetVelocity(const Vector2f& velocity)			final;
-	virtual void IsEliminated(bool isEliminated)				final;
 	virtual void InverseDirection()								final;
 
 	// Accessors
-	virtual Point2f	GetPosition()			 const final;
-	virtual Vector2f GetVelocity()			 const final;
-	virtual float GetWidth()				 const final;
-	virtual float GetHeight()				 const final;
-	virtual Rectf GetHitBox()				 const final;
-	virtual utils::HitInfo& GetHitInfo()		   final;
-	virtual Entity::Direction GetDirection() const final;
+	virtual Point2f				GetPosition()			  const final;
+	virtual Vector2f			GetVelocity()			  const final;
+	virtual float				GetWidth()				  const final;
+	virtual float				GetHeight()				  const final;
+	virtual Rectf				GetHitBox()				  const final;
+	virtual utils::HitInfo&		GetHitInfo()			 	    final;
+	virtual Entity::Direction	GetDirection()			  const final;
 
 protected:
 	// Behavioral Functions
@@ -55,7 +54,6 @@ protected:
 	float	m_Height;
 
 	bool	m_IsInvincible;
-	bool	m_IsEliminated;
 
 	Point2f  m_SrcRectStart;
 
@@ -67,6 +65,7 @@ private:
 
 	Rectf GetDstRect()				 const;
 	Point2f GetDstCenter()			 const;
+
 	// Private Data Members
 	Texture* m_pSpriteSheet;
 	Rectf	 m_SrcRect;
