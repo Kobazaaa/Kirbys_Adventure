@@ -54,6 +54,7 @@ private:
 	void AnimateFlight();
 	void AnimateInhaling();
 	void AnimateExhaling();
+	void AnimateSwallow();
 
 	// Functions that check whether or not Kirby can perform a certain action in his current state
 	bool CanMoveWithCurrentState()		const;
@@ -81,6 +82,8 @@ private:
 	const float m_INHALE_FRAME_DELAY	{ 0.1f };
 	const float m_EXHALE_FRAME_DELAY	{ 0.15f };
 
+	const float m_SWALLOW_FRAME_DELAY	{ 0.15f };
+
 	// Nr. of frames for Animations
 	const int m_NR_IDLE_FRAMES{ 2 };
 
@@ -90,6 +93,8 @@ private:
 	const int m_NR_JUMP_FRAMES_FULL{ 2 };
 
 	const int m_NR_FLIGHT_FRAMES{ 10 };
+
+	const int m_NR_SWALLOW_FRAMES{ 3 };
 
 	// Private Data Members
 	State		m_CurrentState{State::None};

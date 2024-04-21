@@ -2,7 +2,7 @@
 #include "HotHead.h"
 
 HotHead::HotHead(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("Enemies/HotHead.png", center, doesWorldCollsion)
+	: Enemy("Enemies/HotHead.png", center, Ability::Type::Fire, doesWorldCollsion)
 {
 }
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Collision.h"
 #include "Entity.h"
+#include "Ability.h"
 
 Collision::Collision()
 {
@@ -71,7 +72,16 @@ bool Collision::EntityCollision(Entity* entity1, Entity* entity2)
 	return utils::IsOverlapping(entity1->GetHitBox(), entity2->GetHitBox());
 }
 
-//bool Collision::ObjectCollision(Entity* entity, Object* object)
-//{
-//	return utils::IsOverlapping(entity->GetHitBox(), object->GetHitBox());
-//}
+bool Collision::AbilityCollision(Entity* entity, const Ability& ability)
+{
+	std::vector<Rectf> vHitboxes{ ability.GetHitboxes() };
+	
+	for (int index{}; index < vHitboxes.size(); ++index)
+	{
+		if (utils::IsOverlapping(entity->GetHitBox(), vHitboxes[index]))
+		{
+			return true;
+		}
+	}
+	return false;
+}

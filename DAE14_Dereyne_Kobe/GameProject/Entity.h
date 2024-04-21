@@ -1,6 +1,7 @@
 #pragma once
 #include "utils.h"
 #include "Texture.h"
+#include "Ability.h"
 #include "Collision.h"
 
 class Entity
@@ -13,7 +14,7 @@ public:
 	};
 
 	// Constructor, Destructor and Operator Overloading
-	explicit Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center);
+	explicit Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center, Ability::Type abilityType = Ability::Type::None);
 	Entity(const Entity& other) = delete;
 	virtual ~Entity();
 	Entity& operator=(const Entity& rhs) = delete;
@@ -36,6 +37,7 @@ public:
 	virtual Rectf				GetHitBox()				  const final;
 	virtual utils::HitInfo&		GetHitInfo()			 	    final;
 	virtual Entity::Direction	GetDirection()			  const final;
+	virtual const Ability&		GetAbility()			  const final;
 
 protected:
 	// Behavioral Functions
@@ -45,6 +47,7 @@ protected:
 	Vector2f		m_Velocity;
 	Direction		m_Direction;
 	utils::HitInfo	m_HitInfo;
+	Ability			m_Ability;
 
 	int		m_CurrentFrame;
 	int		m_CurrentFrameRow;

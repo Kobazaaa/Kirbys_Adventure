@@ -2,7 +2,7 @@
 #include "BrontoBurt.h"
 
 BrontoBurt::BrontoBurt(const Point2f center, bool doesWorldCollsion)
-	: Enemy("Enemies/BrontoBurt.png", center, doesWorldCollsion)
+	: Enemy("Enemies/BrontoBurt.png", center, Ability::Type::None, doesWorldCollsion)
 	, m_SineTime{0}
 	, m_NrCycles{0}
 {

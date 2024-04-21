@@ -66,9 +66,9 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 }
 
 #pragma region Managing
-void EnemyManager::Add(const std::string& filePath, Point2f center)
+void EnemyManager::Add(const std::string& filePath, Point2f center, Ability::Type abilityType)
 {
-	m_vEnemies.push_back(new Enemy(filePath, center));
+	m_vEnemies.push_back(new Enemy(filePath, center, abilityType));
 }
 void EnemyManager::Add(Enemy* enemyPtr)
 {
@@ -82,13 +82,12 @@ void EnemyManager::Pop()
 }
 void EnemyManager::Eliminate(Enemy* enemyPtr)
 {
-	enemyPtr->IsEliminated(true);
-	if (enemyPtr->GetDirection() == Entity::Direction::Right) enemyPtr->InverseDirection();
+	enemyPtr->Reset();
 }
 #pragma endregion
 
 #pragma region Update
-bool EnemyManager::KirbyHitDetection(Kirby* pKirby)
+bool EnemyManager::EnemyHitKirbyDetection(Kirby* pKirby)
 {
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
@@ -143,6 +142,21 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 		}
 	}
 	return isEnemyInRect;
+}
+
+bool EnemyManager::EnemyAbilityHitKirbyDetection(Kirby* pKirby)
+{
+	for (Enemy* enemyPtr : m_vEnemies)
+	{
+		if (!enemyPtr->IsEliminated() and enemyPtr->GetAbility().IsActivated())
+		{
+			if (Collision::AbilityCollision(pKirby, enemyPtr->GetAbility()))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 bool EnemyManager::IsEnemyInhaleRect(Kirby* pKirby) const

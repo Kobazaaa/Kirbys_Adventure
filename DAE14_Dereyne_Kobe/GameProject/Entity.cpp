@@ -4,7 +4,7 @@
 
 const float Entity::m_GRAVITY{ -300.f };
 
-Entity::Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center)
+Entity::Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center, Ability::Type abilityType)
 	: m_CurrentFrame	{ 0 }
 	, m_CurrentFrameRow	{ 0 }
 	, m_Width			{ width }
@@ -16,6 +16,7 @@ Entity::Entity(const std::string& spriteFilePath, float width, float height, con
 	, m_HitInfo			{}
 	, m_SrcRectStart	{ 0, 0 }
 	, m_IsInvincible	{ false }
+	, m_Ability			{ abilityType }
 {
 	m_pSpriteSheet = new Texture(spriteFilePath);
 }
@@ -31,6 +32,11 @@ void Entity::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 	m_AccumSec += elapsedSec;
 	UpdateSourceRect();
 	ApplyGravity(elapsedSec);
+
+	if (m_Ability.IsActivated())
+	{
+		m_Ability.Update(elapsedSec, m_Position, static_cast<int>(m_Direction));
+	}
 }
 
 void Entity::Draw(bool flipSprite) const
@@ -44,8 +50,10 @@ void Entity::Draw(bool flipSprite) const
 			glTranslatef(-m_Position.x, 0, 0);
 		}
 		m_pSpriteSheet->Draw(GetDstRect(), m_SrcRect);
+		
+		if (m_Ability.IsActivated()) m_Ability.Draw();
 	}
-	glPopMatrix();
+	glPopMatrix();	
 }
 
 #pragma region Mutators
@@ -124,6 +132,10 @@ utils::HitInfo& Entity::GetHitInfo()
 Entity::Direction Entity::GetDirection() const
 {
 	return m_Direction;
+}
+const Ability& Entity::GetAbility() const
+{
+	return m_Ability;
 }
 #pragma endregion
 

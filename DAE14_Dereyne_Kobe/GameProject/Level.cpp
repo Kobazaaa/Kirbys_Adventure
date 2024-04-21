@@ -13,7 +13,7 @@ Level::Level(const std::string& filePath, int nrSubLevels)
 	Door door1
 	{
 		Rectf(968, 57, 16, 24),
-		Point2f(28, 278),
+		Point2f(28, 228),
 		false
 	};
 	Door door3

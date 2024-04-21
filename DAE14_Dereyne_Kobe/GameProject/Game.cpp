@@ -57,10 +57,13 @@ void Game::Update( float elapsedSec )
 	}
 	
 	m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
-	if (m_pEnemyMngr->KirbyHitDetection(m_pKirby))
+	if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
 	{
 		m_pKirby->HitEnemy();
-
+	}
+	if (m_pEnemyMngr->EnemyAbilityHitKirbyDetection(m_pKirby))
+	{
+		m_pKirby->HitEnemy();
 	}
 
 	m_pKirby->Update(elapsedSec, m_World);
@@ -131,7 +134,7 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 
 		if (e.button == SDL_BUTTON_RIGHT)
 		{
-			m_pEnemyMngr->Add(new WaddleDee(clickPos));
+			m_pEnemyMngr->Add(new WaddleDoo(clickPos));
 		}
 		if (e.button == SDL_BUTTON_LEFT)
 		{
@@ -144,7 +147,7 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 		//}	
 		if (e.button == SDL_BUTTON_MIDDLE)
 		{
-			m_pEnemyMngr->Add(new WaddleDoo(clickPos));
+			m_pEnemyMngr->Add(new HotHead(clickPos));
 		}
 	}
 }

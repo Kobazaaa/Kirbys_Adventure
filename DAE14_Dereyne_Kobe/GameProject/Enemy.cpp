@@ -2,8 +2,8 @@
 #include "Enemy.h"
 #include <iostream>
 
-Enemy::Enemy(const std::string& filePathName, const Point2f& center, bool doesWorldCollsion)
-	: Entity(filePathName, 16, 16, center)
+Enemy::Enemy(const std::string& filePathName, const Point2f& center, Ability::Type abilityType, bool doesWorldCollsion)
+	: Entity(filePathName, 16, 16, center, abilityType)
 	, m_IsActivated{true}
 	, m_IsEliminated{true}
 	, m_SpawnPoint{center}
@@ -17,7 +17,10 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	if (!m_IsEliminated and m_IsActivated)
 	{
 		Entity::Update(elapsedSec, world);
-		m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
+		if (!m_Ability.IsActivated())
+		{
+			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
+		}
 	}
 
 	if (m_DoesWorldCollision)
@@ -71,5 +74,12 @@ void Enemy::IsActivated(bool isActivated)
 void Enemy::IsEliminated(bool isEliminated)
 {
 	m_IsEliminated = isEliminated;
+}
+void Enemy::Reset()
+{
+	IsEliminated(true);
+	if (GetDirection() == Entity::Direction::Right) InverseDirection();
+	m_AccumSec = 0;
+	m_Ability.Deactivate();
 }
 #pragma endregion

@@ -2,7 +2,7 @@
 #include "WaddleDee.h"
 
 WaddleDee::WaddleDee(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("Enemies/WaddleDee.png", center, doesWorldCollsion)
+	: Enemy("Enemies/WaddleDee.png", center, Ability::Type::None, doesWorldCollsion)
 {
 }
 

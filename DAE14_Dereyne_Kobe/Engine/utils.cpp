@@ -711,6 +711,34 @@ bool utils::IsRectInRect(const Rectf& smallRect, const Rectf& bigRect)
 	return false;
 }
 
+Rectf utils::VectorToRect(const std::vector<Point2f>& vector)
+{
+	Rectf nullRect{ 0, 0, 0, 0 };
+	Rectf returnRect{};
+
+	int size{ static_cast<int>(vector.size()) };
+	int rightAngles{ 0 };
+
+	if (size != 4) return nullRect;
+
+	if ((vector[0].x == vector[1].x and
+		 vector[1].y == vector[2].y and
+		 vector[2].x == vector[3].x and
+		 vector[3].y == vector[0].y) or
+		(vector[0].y == vector[1].y and
+		 vector[1].x == vector[2].x and
+		 vector[2].y == vector[3].y and
+		 vector[3].x == vector[0].x))
+	{
+		returnRect.left = std::min(vector[0].x, vector[2].x);
+		returnRect.bottom = std::min(vector[0].y, vector[2].y);
+		returnRect.width = abs(vector[0].x - vector[2].x);
+		returnRect.height = abs(vector[0].y - vector[2].y);
+		return returnRect;
+	}
+	else return nullRect;
+}
+
 static bool m_PrevKeyStatesPress[256] = {false};
 bool utils::KeyPress(int SDL_SCANCODE)
 {

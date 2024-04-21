@@ -89,6 +89,7 @@ namespace utils
 	int GetSign(double number);
 
 	bool IsRectInRect(const Rectf& smallRect, const Rectf& bigRect);
+	Rectf VectorToRect(const std::vector<Point2f>& vector);
 
 	bool KeyPress(int SDL_SCANCODE);
 	bool KeyDown(int SDL_SCANCODE);

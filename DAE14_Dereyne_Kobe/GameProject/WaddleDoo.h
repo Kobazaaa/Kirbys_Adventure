@@ -14,6 +14,8 @@ private:
 	//Animation
 	void UpdateAnimation();
 
-	//
+	// Variables
+	float m_AccumSecAbility;
+	float m_AccumSecJump;
 };
 
