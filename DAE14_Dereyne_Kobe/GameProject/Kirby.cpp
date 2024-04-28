@@ -8,14 +8,17 @@
 using namespace utils;
 
 Kirby::Kirby( const Point2f& center, Level* const level)
-	: Entity("Kirby/Kirby.png", 24, 24, center)
-	, m_Health		{ 6 }
-	, m_Lives		{ 4 }
-	, m_InhaledEnemy{ false }
-	, m_Score		{ 0 }
-	, m_pLevel		{ level }
-	, m_pInhaledEnemy{ nullptr }
+	: Entity("Kirby", 24, 24, center)
+	, m_Health			{ 6 }
+	, m_Lives			{ 4 }
+	, m_InhaledEnemy	{ false }
+	, m_Score			{ 0 }
+	, m_pLevel			{ level }
+	, m_pInhaledEnemy	{ nullptr }
+	, m_Puff			{ Puff()}
+	, m_StarProj		{ StarProjectile() }
 {
+
 }
 
 std::string Kirby::EnumToString(Kirby::State state) const
@@ -61,6 +64,18 @@ std::string Kirby::EnumToString(Kirby::State state) const
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
+	// Ability Usage
+	bool abilityActive{ false };
+	if (m_pAbility != nullptr)
+	{
+		if (m_pAbility->IsActive()) abilityActive = true;
+		else abilityActive = false;
+		m_pAbility->Update(elapsedSec, world);
+	}
+
+	m_Puff.Update(elapsedSec, world);
+	m_StarProj.Update(elapsedSec, world);
+
 	// Invincibility
 	if (m_IsInvincible) m_InvincibleAccumSec += elapsedSec;
 	if (m_IsInvincible and m_InvincibleAccumSec >= m_INVINCIBILITY_TIME)
@@ -79,12 +94,12 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		}
 	}
 
-	// Movement
-	if (!m_Ability.IsActivated())
+	if (!abilityActive)
 	{
+		// Movement
 		MovementUpdate(elapsedSec);
 	}
-	Entity::Update(elapsedSec, world);
+		Entity::Update(elapsedSec, world);
 
 	// Animate
 	UpdateSprite();
@@ -92,15 +107,31 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~		 IN/EXHALING		~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if (m_Ability.GetAbilityType() == Ability::Type::None and KeyPress(SDL_SCANCODE_LSHIFT))
+	if (KeyPress(SDL_SCANCODE_LSHIFT))
 	{
-		if (CanInhaleWithCurrentState()) m_CurrentState = State::Inhaling;
-		if (m_InhaledEnemy or m_CurrentState == State::Flight) m_CurrentState = State::Exhaling;
-	}
-	else if (!m_Ability.IsActivated() and KeyPress(SDL_SCANCODE_LSHIFT))
-	{
-		m_Ability.Use();
-		m_Velocity.x = 0;
+		if (m_InhaledEnemy)
+		{
+			m_CurrentState = State::Exhaling;
+			if (!m_StarProj.IsActivated())
+			{
+				m_StarProj.Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+			}
+		}
+		else if (m_CurrentState == State::Flight)
+		{
+			m_CurrentState = State::Exhaling;
+			if (!m_Puff.IsActivated())
+			{
+				m_Puff.Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+			}
+		}
+		else if (m_pAbility != nullptr)
+		{
+			m_pAbility->Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+		}
+
+		else if (CanInhaleWithCurrentState()) m_CurrentState = State::Inhaling;
+
 	}
 
 	if (!KeyDown(SDL_SCANCODE_LSHIFT) and m_CurrentState == State::Inhaling and m_AccumSec >= 0.40f)
@@ -113,8 +144,9 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if (m_InhaledEnemy and m_CurrentState == State::None and KeyPress(SDL_SCANCODE_DOWN))
 	{
+		// TODO fix copying over ability
+		m_pAbility = m_pInhaledEnemy->GetAbility();
 		m_CurrentState = State::Swallow;
-		m_Ability.SetAbility(m_pInhaledEnemy->GetAbility().GetAbilityType());
 		m_InhaledEnemy = false;
 		m_pInhaledEnemy = nullptr;
 	}
@@ -180,6 +212,9 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 void Kirby::Draw() const
 {
+	m_Puff.Draw();
+	m_StarProj.Draw();
+
 	if (m_Direction == Direction::Left) Entity::Draw(true);
 	else Entity::Draw(false);
 }
@@ -286,25 +321,21 @@ void Kirby::ApplyPlaySpace()
 bool Kirby::DoDoorChecks()
 {
 	std::vector<Door> vDoors = m_pLevel->GetDoors();
-	
 	for (const Door& door : vDoors)
 	{
 		if (utils::IsPointInRect(m_Position, door.doorRect))
 		{
 			if (KeyPress(SDL_SCANCODE_UP) and !door.isFinalDoor)
 			{
-				if (m_CurrentState == State::Flight or m_InhaledEnemy)
+
+				if (m_CurrentState != State::Flight and !m_InhaledEnemy and m_CurrentState != State::Exhaling)
 				{
-					m_CurrentState = State::Exhaling;
-					m_InhaledEnemy = false;
-					m_pInhaledEnemy = nullptr;
+					if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
+					else m_pLevel->DecreaseSubLevel();
+					m_Position = door.outcomePos;
+					return true;
 				}
-
-				if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
-				else m_pLevel->DecreaseSubLevel();
-
-				m_Position = door.outcomePos;
-				return true;
+				m_CurrentState = State::Exhaling;
 			}
 		}
 	}
@@ -321,7 +352,7 @@ void Kirby::Reset()
 	m_IsInvincible = false;
 	m_InhaledEnemy = false;
 	m_pInhaledEnemy = nullptr;
-	m_Ability.SetAbility(Ability::Type::None);
+	m_pAbility = nullptr;
 	m_CurrentState = State::None;
 	m_AccumSec = 0;
 	m_InvincibleAccumSec = 0;

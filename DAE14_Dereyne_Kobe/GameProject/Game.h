@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Level.h"
 #include "EnemyManager.h"
+#include "TextureManager.h"
 #include <vector>
 
 class Kirby;
@@ -39,7 +40,7 @@ private:
 	void ClearBackground( ) const;
 
 	// VARIABLES
-	const bool m_DEBUG_MODE{true};
+	const bool m_DEBUG_MODE{false};
 
 	Kirby* m_pKirby;
 	EnemyManager* m_pEnemyMngr;
@@ -50,4 +51,5 @@ private:
 	HUD* m_pHUD;
 
 	const float m_SCALE{2.f};
+	TextureManager* m_pTextureManager;
 };

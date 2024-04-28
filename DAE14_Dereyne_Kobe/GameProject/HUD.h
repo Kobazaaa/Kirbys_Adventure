@@ -7,7 +7,7 @@ class HUD final
 public:
 	// Constructor & Destructor
 	HUD(Kirby* kirby, float scale = 1);
-	~HUD();
+	~HUD() = default;
 
 	// Behavioral
 	void Draw()						const;
@@ -24,7 +24,7 @@ private:
 	void DrawCard()					const;
 
 	// Variables
-	Texture* m_pSprites;
+	Texture*  m_pSprites;
 	Kirby*	 m_pKIRBY;
 
 	float	 m_AccumSec;

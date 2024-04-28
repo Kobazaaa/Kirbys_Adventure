@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "utils.h"
 #include "Kirby.h"
+#include "TextureManager.h"
 #include <iostream>
 
 Game::Game( const Window& window ) 
@@ -19,6 +20,21 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
+	// Textures
+	m_pTextureManager = new TextureManager();
+	TextureManager::LoadTexture("Puff",					"Abilities/Puff.png");
+	TextureManager::LoadTexture("StarProjectile",		"Abilities/Star.png");
+	TextureManager::LoadTexture("Beam",					"Abilities/Beam.png");
+	TextureManager::LoadTexture("Fire",					"Abilities/Fire.png");
+	TextureManager::LoadTexture("Spark",				"Abilities/Spark.png");
+	TextureManager::LoadTexture("BrontoBurt",			"Enemies/BrontoBurt.png");
+	TextureManager::LoadTexture("HotHead",				"Enemies/HotHead.png");
+	TextureManager::LoadTexture("Sparky",				"Enemies/Sparky.png");
+	TextureManager::LoadTexture("WaddleDee",			"Enemies/WaddleDee.png");
+	TextureManager::LoadTexture("WaddleDoo",			"Enemies/WaddleDoo.png");
+	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
+	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
+	TextureManager::LoadTexture("VegetableValley",		"Levels/VegetableValley.png");
 
 	// Camera + Level + HUD
 	m_pLevel =	new Level("Levels/VegetableValley.png", 3);
@@ -47,6 +63,8 @@ void Game::Cleanup( )
 	m_pLevel = nullptr;
 	delete m_pHUD;
 	m_pHUD = nullptr;
+	delete m_pTextureManager;
+	m_pTextureManager = nullptr;
 }
 
 void Game::Update( float elapsedSec )
@@ -61,7 +79,7 @@ void Game::Update( float elapsedSec )
 	{
 		m_pKirby->HitEnemy();
 	}
-	if (m_pEnemyMngr->EnemyAbilityHitKirbyDetection(m_pKirby))
+	if (m_pEnemyMngr->EnemyKirbyProjectileCollision(m_pKirby))
 	{
 		m_pKirby->HitEnemy();
 	}
@@ -95,6 +113,7 @@ void Game::Draw( ) const
 			utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
 			utils::DrawRect(m_pKirby->GetHitBox());
 			utils::DrawRect(m_pKirby->GetInhaleRect());
+
 		}
 	}
 	m_pCamera->Reset();
@@ -131,14 +150,15 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 	if (m_DEBUG_MODE)
 	{
 		Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE - 64 };
+		clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 
 		if (e.button == SDL_BUTTON_RIGHT)
 		{
 			m_pEnemyMngr->Add(new WaddleDoo(clickPos));
+			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 		}
 		if (e.button == SDL_BUTTON_LEFT)
 		{
-			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 			m_pKirby->SetPosition(clickPos);
 		}
 		//if (e.button == SDL_BUTTON_MIDDLE)

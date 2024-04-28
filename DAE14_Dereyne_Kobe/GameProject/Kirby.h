@@ -3,6 +3,8 @@
 #include "Entity.h"
 #include "Vector2f.h"
 #include "Texture.h"
+#include "Puff.h"
+#include "StarProjectile.h"
 
 class Enemy;
 class Level;
@@ -101,7 +103,7 @@ private:
 	State		m_OldState{State::None};
 
 	const float		m_JUMP_SPEED	{ 20.f - m_GRAVITY / 2.f};
-	const float		m_WALK_SPEED	{ 60.f};
+	const float		m_WALK_SPEED	{ 60.f };
 	const float		m_RUN_SPEED		{ 2 * m_WALK_SPEED };
 	const float		m_SLIDE_SPEED	{ m_RUN_SPEED };
 	const float		m_FLIGHT_SPEED	{ 50.f };
@@ -114,6 +116,9 @@ private:
 
 	bool m_InhaledEnemy;
 	Enemy* m_pInhaledEnemy;
+
+	Puff m_Puff;
+	StarProjectile m_StarProj;
 
 	bool m_IsSliding{false};
 

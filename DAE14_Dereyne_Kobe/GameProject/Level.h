@@ -15,9 +15,7 @@ public:
 
 	// Constructor & Destructor
 	explicit Level(const std::string& filePath, int nrSubLevels);
-	Level(const Level& other) = delete;
-	~Level();
-	Level& operator=(const Level& rhs) = delete;
+	~Level() = default;
 
 	// Behavioral
 	void	Draw()			const;

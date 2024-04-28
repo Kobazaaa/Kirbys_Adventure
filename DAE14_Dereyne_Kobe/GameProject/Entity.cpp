@@ -1,10 +1,11 @@
 #include "pch.h"
 #include <iostream>
 #include "Entity.h"
+#include "TextureManager.h"
 
 const float Entity::m_GRAVITY{ -300.f };
 
-Entity::Entity(const std::string& spriteFilePath, float width, float height, const Point2f& center, Ability::Type abilityType)
+Entity::Entity(const std::string& textureName, float width, float height, const Point2f& center)
 	: m_CurrentFrame	{ 0 }
 	, m_CurrentFrameRow	{ 0 }
 	, m_Width			{ width }
@@ -16,27 +17,21 @@ Entity::Entity(const std::string& spriteFilePath, float width, float height, con
 	, m_HitInfo			{}
 	, m_SrcRectStart	{ 0, 0 }
 	, m_IsInvincible	{ false }
-	, m_Ability			{ abilityType }
+	, m_pSpriteSheet	{ TextureManager::GetTexture(textureName) }
+	, m_pAbility		{ nullptr }
 {
-	m_pSpriteSheet = new Texture(spriteFilePath);
 }
 
 Entity::~Entity()
 {
-	delete m_pSpriteSheet;
-	m_pSpriteSheet = nullptr;
+	delete m_pAbility;
+	m_pAbility = nullptr;
 }
 
 void Entity::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	m_AccumSec += elapsedSec;
-	UpdateSourceRect();
 	ApplyGravity(elapsedSec);
-
-	if (m_Ability.IsActivated())
-	{
-		m_Ability.Update(elapsedSec, m_Position, static_cast<int>(m_Direction));
-	}
 }
 
 void Entity::Draw(bool flipSprite) const
@@ -49,11 +44,14 @@ void Entity::Draw(bool flipSprite) const
 			glRotatef(-180, 0, 1, 0);
 			glTranslatef(-m_Position.x, 0, 0);
 		}
-		m_pSpriteSheet->Draw(GetDstRect(), m_SrcRect);
-		
-		if (m_Ability.IsActivated()) m_Ability.Draw();
+		m_pSpriteSheet->Draw(GetDstRect(), GetSrcRect());
 	}
-	glPopMatrix();	
+	glPopMatrix();
+
+	if (m_pAbility != nullptr)
+	{
+		m_pAbility->Draw();
+	}
 }
 
 #pragma region Mutators
@@ -71,7 +69,7 @@ void Entity::SetVelocity(const Vector2f& velocity)
 }
 void Entity::InverseDirection()
 {
-	m_Direction = static_cast<Entity::Direction>(-static_cast<int>(m_Direction));
+	m_Direction = static_cast<Direction>(-static_cast<int>(m_Direction));
 }
 #pragma endregion
 
@@ -125,27 +123,31 @@ Rectf Entity::GetHitBox() const
 
 	return hitBox;
 }
-utils::HitInfo& Entity::GetHitInfo()
+const utils::HitInfo& Entity::GetHitInfo() const
 {
 	return m_HitInfo;
 }
-Entity::Direction Entity::GetDirection() const
+Direction Entity::GetDirection() const
 {
 	return m_Direction;
 }
-const Ability& Entity::GetAbility() const
+Ability* Entity::GetAbility() const
 {
-	return m_Ability;
+	return m_pAbility;
 }
 #pragma endregion
 
 #pragma region Update
-void Entity::UpdateSourceRect()
+Rectf Entity::GetSrcRect() const
 {
-	m_SrcRect.left		= m_SrcRectStart.x + m_CurrentFrame		* m_Width;
-	m_SrcRect.bottom	= m_SrcRectStart.y - m_CurrentFrameRow  * m_Height;
-	m_SrcRect.width		= m_Width;
-	m_SrcRect.height	= m_Height;
+	Rectf srcRect
+	{
+		m_SrcRectStart.x + m_CurrentFrame * m_Width,
+		m_SrcRectStart.y - m_CurrentFrameRow * m_Height,
+		m_Width, m_Height
+	};
+	
+	return srcRect;
 }
 void Entity::ApplyGravity(float elapsedSec)
 {

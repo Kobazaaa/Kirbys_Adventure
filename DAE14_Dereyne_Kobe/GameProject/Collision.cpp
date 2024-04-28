@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Collision.h"
+#include "Projectile.h"
 #include "Entity.h"
-#include "Ability.h"
+
 
 Collision::Collision()
 {
@@ -67,21 +68,45 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 	}
 	return false;
 }
+
+bool Collision::WallCollision(Projectile* projectile, const std::vector<std::vector<Point2f>>& world)
+{
+	const Point2f left			{ projectile->GetHitBox().left,										projectile->GetHitBox().bottom + projectile->GetHitBox().height / 2};
+	const Point2f right			{ projectile->GetHitBox().left + projectile->GetHitBox().width,		projectile->GetHitBox().bottom + projectile->GetHitBox().height / 2};
+	utils::HitInfo hitInfo		{ projectile->GetHitInfo() };
+	
+	for (size_t idx{}; idx < world.size(); idx++)
+	{
+		if (utils::Raycast(world[idx], left, right, hitInfo))
+		{
+			projectile->Deactivate();
+			return true;
+		}
+	}
+	return false;
+}
+bool Collision::FloorCollision(Projectile* projectile, const std::vector<std::vector<Point2f>>& world)
+{
+	const Point2f top			{ projectile->GetHitBox().left + projectile->GetHitBox().width / 2,		projectile->GetHitBox().bottom + projectile->GetHitBox().height };
+	const Point2f bottom		{ projectile->GetHitBox().left + projectile->GetHitBox().width / 2,		projectile->GetHitBox().bottom };
+	utils::HitInfo hitInfo		{ projectile->GetHitInfo() };
+
+	for (size_t idx{}; idx < world.size(); idx++)
+	{
+		if (utils::Raycast(world[idx], top, bottom, hitInfo))
+		{
+			projectile->Deactivate();
+			return true;
+		}
+	}
+	return false;
+}
 bool Collision::EntityCollision(Entity* entity1, Entity* entity2)
 {
 	return utils::IsOverlapping(entity1->GetHitBox(), entity2->GetHitBox());
 }
 
-bool Collision::AbilityCollision(Entity* entity, const Ability& ability)
+bool Collision::ProjectileCollision(Entity* entity, Projectile* projectile)
 {
-	std::vector<Rectf> vHitboxes{ ability.GetHitboxes() };
-	
-	for (int index{}; index < vHitboxes.size(); ++index)
-	{
-		if (utils::IsOverlapping(entity->GetHitBox(), vHitboxes[index]))
-		{
-			return true;
-		}
-	}
-	return false;
+	return utils::IsOverlapping(entity->GetHitBox(), projectile->GetHitBox());
 }

@@ -21,14 +21,14 @@ public:
 	void Draw(bool debugMode = false) const;
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 
-	void Add(const std::string& filePath, Point2f center, Ability::Type abilityType = Ability::Type::None);
+	void Add(const std::string& filePath, Point2f center);
 	void Add(Enemy* enemyPtr);
 	void Pop();
 	void Eliminate(Enemy* enemyPtr);
 
 	bool EnemyHitKirbyDetection(Kirby* pKirby);
 	bool KirbyInhaleCollision(Kirby* pKirby, float elapsedSec);
-	bool EnemyAbilityHitKirbyDetection(Kirby* pKirby);
+	bool EnemyKirbyProjectileCollision(Kirby* pKirby);
 
 private:
 	// Function

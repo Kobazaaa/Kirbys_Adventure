@@ -66,9 +66,9 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 }
 
 #pragma region Managing
-void EnemyManager::Add(const std::string& filePath, Point2f center, Ability::Type abilityType)
+void EnemyManager::Add(const std::string& filePath, Point2f center)
 {
-	m_vEnemies.push_back(new Enemy(filePath, center, abilityType));
+	m_vEnemies.push_back(new Enemy(filePath, center));
 }
 void EnemyManager::Add(Enemy* enemyPtr)
 {
@@ -144,16 +144,45 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 	return isEnemyInRect;
 }
 
-bool EnemyManager::EnemyAbilityHitKirbyDetection(Kirby* pKirby)
+bool EnemyManager::EnemyKirbyProjectileCollision(Kirby* pKirby)
 {
+	std::vector<Projectile*> kirbyProj;
+	if (pKirby->GetAbility() != nullptr)
+	{
+		kirbyProj = pKirby->GetAbility()->GetProjectiles();
+	}
+
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
-		if (!enemyPtr->IsEliminated() and enemyPtr->GetAbility().IsActivated())
+		if (!enemyPtr->IsEliminated())
 		{
-			if (Collision::AbilityCollision(pKirby, enemyPtr->GetAbility()))
+			for (Projectile* kirbyProjPtr : kirbyProj)
 			{
-				return true;
+				if (kirbyProjPtr->IsActivated())
+				{
+					if (Collision::ProjectileCollision(enemyPtr, kirbyProjPtr))
+					{
+						Eliminate(enemyPtr);
+					}
+				}
 			}
+
+			std::vector<Projectile*> enemyProj;
+			if (enemyPtr->GetAbility() != nullptr)
+			{
+				enemyProj = enemyPtr->GetAbility()->GetProjectiles();
+			}
+			for (Projectile* enemyProjPtr : enemyProj)
+			{
+				if (enemyProjPtr->IsActivated())
+				{
+					if (Collision::ProjectileCollision(pKirby, enemyProjPtr))
+					{
+						return true;
+					}
+				}
+			}
+
 		}
 	}
 	return false;

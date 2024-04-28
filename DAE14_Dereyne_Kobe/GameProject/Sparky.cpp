@@ -2,7 +2,7 @@
 #include "Sparky.h"
 
 Sparky::Sparky(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("Enemies/Sparky.png", center, Ability::Type::Spark, doesWorldCollsion)
+	: Enemy("Sparky", center, doesWorldCollsion)
 {
 }
 

@@ -2,8 +2,8 @@
 #include "Enemy.h"
 #include <iostream>
 
-Enemy::Enemy(const std::string& filePathName, const Point2f& center, Ability::Type abilityType, bool doesWorldCollsion)
-	: Entity(filePathName, 16, 16, center, abilityType)
+Enemy::Enemy(const std::string& textureName, const Point2f& center, bool doesWorldCollsion)
+	: Entity(textureName, 16, 16, center)
 	, m_IsActivated{true}
 	, m_IsEliminated{true}
 	, m_SpawnPoint{center}
@@ -16,9 +16,14 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 {
 	if (!m_IsEliminated and m_IsActivated)
 	{
-		Entity::Update(elapsedSec, world);
-		if (!m_Ability.IsActivated())
+		if (m_pAbility != nullptr and !m_pAbility->IsActive())
 		{
+			Entity::Update(elapsedSec, world);
+			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
+		}
+		else if (m_pAbility == nullptr)
+		{
+			Entity::Update(elapsedSec, world);
 			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
 		}
 	}
@@ -78,8 +83,7 @@ void Enemy::IsEliminated(bool isEliminated)
 void Enemy::Reset()
 {
 	IsEliminated(true);
-	if (GetDirection() == Entity::Direction::Right) InverseDirection();
+	if (GetDirection() == Direction::Right) InverseDirection();
 	m_AccumSec = 0;
-	m_Ability.Deactivate();
 }
 #pragma endregion

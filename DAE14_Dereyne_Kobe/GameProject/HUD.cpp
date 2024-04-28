@@ -1,19 +1,14 @@
 #include "pch.h"
 #include "HUD.h"
+#include "TextureManager.h"
 
 HUD::HUD(Kirby* kirby, float scale)
 	: m_pKIRBY		 { kirby }
 	, m_AccumSec	 { 0 }
 	, m_Scale		 { scale }
 	, m_CurrentFrame { 0 }
+	, m_pSprites	 { TextureManager::GetTexture("HUD")}
 {
-	m_pSprites = new Texture("HUD/HUD.png");
-}
-
-HUD::~HUD()
-{
-	delete m_pSprites;
-	m_pSprites = nullptr;
 }
 
 void HUD::Draw() const
@@ -55,8 +50,8 @@ void HUD::PrintScore() const
 
 	for (int idx{0}; idx < 7; ++idx)
 	{
-		const Point2f pos	{ m_SCORE_POS.x + (6 - idx) * m_NUMBER_WIDTH, m_SCORE_POS.y};
-		int nrToPrint		{ score / int(powf(10, idx)) % 10};
+		const Point2f pos	{ m_SCORE_POS.x + (6.f - static_cast<float>(idx)) * m_NUMBER_WIDTH, m_SCORE_POS.y};
+		int nrToPrint		{ score / int(powf(10.f, static_cast<float>(idx))) % 10};
 		
 		const Rectf srcRect
 		{
@@ -102,7 +97,7 @@ void HUD::DrawLives() const
 	for (size_t idx{0}; idx < 2; ++idx)
 	{
 		const Point2f pos{ m_KIRBY_LIVES_POS.x + (1 - idx) * m_NUMBER_WIDTH, m_KIRBY_LIVES_POS.y };
-		int nrToPrint{ lives / int(powf(10, idx)) % 10};
+		int nrToPrint{ lives / int(powf(10, static_cast<float>(idx))) % 10};
 		
 		const Rectf srcRect
 		{

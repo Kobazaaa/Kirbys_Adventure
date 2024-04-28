@@ -1,76 +1,33 @@
 #pragma once
+#include <vector>
 #include "Texture.h"
-#include "Matrix2x3.h"
+#include "Projectile.h"
+#include "BeamProjectile.h"
 
-class Ability final
+class Ability
 {
 public:
-	enum class Type
-	{
-		None, Beam, Fire, Spark
-	};
-
-	// Constructor & Destructor
-	explicit Ability(Ability::Type abilityType);
+	explicit Ability();
 	Ability(const Ability& other) = delete;
-	~Ability();
+	Ability(Ability&& other) = delete;
 	Ability& operator=(const Ability& rhs) = delete;
+	Ability& operator=(Ability&& rhs) = delete;
+	virtual ~Ability();
+	
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) = 0;
+	virtual void Draw() const;
 
-	// Behavioral
-	void Update(float elapsedSec, const Point2f& position, int direction);
-	void Draw() const;
-
-	void Use();
-
-	// Accessors
-	Ability::Type GetAbilityType() const;
-	bool IsActivated() const;
-	const std::vector<Rectf>& GetHitboxes() const;
-
-	// Mutators
-	void SetAbility(Ability::Type abilityType);
+	virtual void Activate(const Point2f& position, Projectile::Direction direction) = 0;
 	void Deactivate();
-private:
-	// BEAM
-	void UseBeam(float elapsedSec, const Point2f& position, int direction);
-	void DrawBeam() const;
 
-	const int	m_BEAM_SEGMENTS{ 5 };
-	const float m_ANGLE_RANGE{ 120.f };
-	const float m_BEAM_UPTIME{ 1.f };
+	const std::vector<Projectile*>& GetProjectiles() const;
+	bool IsActive() const;
 
-
-	// FIRE
-	void UseFire(float elapsedSec, const Point2f& position, int direction);
-	void DrawFire() const;
-
-	const int m_FIREBALLS{ 2 };
-	const float m_FIRE_RANGE{ 32.f };
-	const float m_FIRE_UPTIME{ 2.f };
-	const Vector2f m_FIRE_VELOCITY{ 100.f, 1.f };
-
-
-	// GENERAL
-	std::vector<Rectf> m_vHitBoxes{ 5 };
-
-	Matrix2x3 m_TranslationMatrix;
-	Matrix2x3 m_RotationMatrix;
-	Matrix2x3 m_ScalingMatrix;
-	Matrix2x3 m_TransformationMatrix;
-
-	Texture* m_pSpritesheet;
-	Point2f m_Position;
-
-	const float m_SPRITE_WIDTH{16};
-	const float m_SPRITE_HEIGHT{16};
-
-	Type m_Type;
+protected:
+	float m_LifeTime;
 	bool m_IsActive;
+	std::vector<Projectile*> m_vProjectiles;
 	float m_AccumSec;
-
-	// DRAWING
-	Rectf m_DstRect;
-	Rectf m_SrcRect;
-
+private:
 };
 

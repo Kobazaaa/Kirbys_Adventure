@@ -148,6 +148,8 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ability.cpp" />
+    <ClCompile Include="Beam.cpp" />
+    <ClCompile Include="BeamProjectile.cpp" />
     <ClCompile Include="BrontoBurt.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -161,12 +163,18 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Puff.cpp" />
     <ClCompile Include="Sparky.cpp" />
+    <ClCompile Include="StarProjectile.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="WaddleDee.cpp" />
     <ClCompile Include="WaddleDoo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />
+    <ClInclude Include="Beam.h" />
+    <ClInclude Include="BeamProjectile.h" />
     <ClInclude Include="BrontoBurt.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
@@ -179,8 +187,12 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="Level.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="Puff.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sparky.h" />
+    <ClInclude Include="StarProjectile.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="WaddleDee.h" />
     <ClInclude Include="WaddleDoo.h" />
   </ItemGroup>

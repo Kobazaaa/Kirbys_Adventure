@@ -5,7 +5,7 @@ class Enemy : public Entity
 {
 public:
 	// Constructor & Destructor
-	explicit Enemy(const std::string& filePathName, const Point2f& center, Ability::Type abilityType, bool doesWorldCollsion = true);
+	explicit Enemy(const std::string& textureName, const Point2f& center, bool doesWorldCollsion = true);
 	virtual ~Enemy() override = default;
 
 	// Behavioral

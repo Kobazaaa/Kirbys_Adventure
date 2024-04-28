@@ -34,6 +34,12 @@
     <Filter Include="Header Files\Entities\Player">
       <UniqueIdentifier>{51493396-a20e-4b1a-9888-db87a8322d4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Ability">
+      <UniqueIdentifier>{9a9149f2-c353-4c48-be87-739484ad215b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projectiles and Abilities">
+      <UniqueIdentifier>{dbf33952-8a84-4ae5-8421-33b7a64e99e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -84,7 +90,25 @@
     <ClCompile Include="HotHead.cpp">
       <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Source Files\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puff.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StarProjectile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Beam.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Ability.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BeamProjectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,7 +161,25 @@
     <ClInclude Include="Kirby.h">
       <Filter>Header Files\Entities\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puff.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="StarProjectile.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Beam.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
     <ClInclude Include="Ability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BeamProjectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
