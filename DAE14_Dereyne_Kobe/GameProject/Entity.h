@@ -1,15 +1,9 @@
 #pragma once
 #include "utils.h"
 #include "Texture.h"
+#include "Direction.h"
 #include "Collision.h"
 #include "Ability.h"
-#include "Beam.h"
-
-enum class Direction
-{
-	Left = -1,
-	Right = 1,
-};
 
 class Entity
 {

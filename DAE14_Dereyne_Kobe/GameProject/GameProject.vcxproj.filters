@@ -34,11 +34,17 @@
     <Filter Include="Header Files\Entities\Player">
       <UniqueIdentifier>{51493396-a20e-4b1a-9888-db87a8322d4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Ability">
-      <UniqueIdentifier>{9a9149f2-c353-4c48-be87-739484ad215b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Projectiles and Abilities">
       <UniqueIdentifier>{dbf33952-8a84-4ae5-8421-33b7a64e99e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{bd32b728-d9a6-4c49-98b4-b53c7ee79730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Projectiles and Abilities">
+      <UniqueIdentifier>{9a9149f2-c353-4c48-be87-739484ad215b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers">
+      <UniqueIdentifier>{379221f3-4f7c-4dfa-9b4f-0a3b3be17759}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,26 +66,17 @@
     <ClCompile Include="WaddleDee.cpp">
       <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyManager.cpp">
-      <Filter>Source Files\Entities\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\World</Filter>
     </ClCompile>
     <ClCompile Include="Level.cpp">
       <Filter>Source Files\World</Filter>
     </ClCompile>
-    <ClCompile Include="HUD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
     <ClCompile Include="Kirby.cpp">
       <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WaddleDoo.cpp">
       <Filter>Source Files\Entities\Enemies</Filter>
@@ -91,24 +88,39 @@
       <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
-      <Filter>Source Files\Ability</Filter>
+      <Filter>Source Files\Projectiles and Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Puff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StarProjectile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Beam.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Ability.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Projectiles and Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Beam.cpp">
+      <Filter>Source Files\Projectiles and Abilities</Filter>
     </ClCompile>
     <ClCompile Include="BeamProjectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="StarProjectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Puff.cpp">
+      <Filter>Source Files\Projectiles and Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Fire.cpp">
+      <Filter>Source Files\Projectiles and Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="FireProjectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -120,9 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BrontoBurt.h">
-      <Filter>Header Files\Entities\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyManager.h">
       <Filter>Header Files\Entities\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="WaddleDee.h">
@@ -137,17 +146,11 @@
     <ClInclude Include="Level.h">
       <Filter>Header Files\World</Filter>
     </ClInclude>
-    <ClInclude Include="HUD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WaddleDoo.h">
       <Filter>Header Files\Entities\Enemies</Filter>
@@ -164,9 +167,6 @@
     <ClInclude Include="Projectile.h">
       <Filter>Header Files\Projectiles and Abilities</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Puff.h">
       <Filter>Header Files\Projectiles and Abilities</Filter>
     </ClInclude>
@@ -177,9 +177,30 @@
       <Filter>Header Files\Projectiles and Abilities</Filter>
     </ClInclude>
     <ClInclude Include="Ability.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Projectiles and Abilities</Filter>
     </ClInclude>
     <ClInclude Include="BeamProjectile.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Fire.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="FireProjectile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

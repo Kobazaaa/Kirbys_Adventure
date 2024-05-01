@@ -36,6 +36,11 @@ void Entity::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 
 void Entity::Draw(bool flipSprite) const
 {
+	if (m_pAbility != nullptr)
+	{
+		m_pAbility->Draw();
+	}
+
 	glPushMatrix();
 	{
 		if (flipSprite)
@@ -47,11 +52,6 @@ void Entity::Draw(bool flipSprite) const
 		m_pSpriteSheet->Draw(GetDstRect(), GetSrcRect());
 	}
 	glPopMatrix();
-
-	if (m_pAbility != nullptr)
-	{
-		m_pAbility->Draw();
-	}
 }
 
 #pragma region Mutators

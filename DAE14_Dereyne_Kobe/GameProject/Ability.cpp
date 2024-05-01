@@ -2,10 +2,10 @@
 #include "TextureManager.h"
 #include "Ability.h"
 
-Ability::Ability()
+Ability::Ability(float lifeTime)
 	: m_AccumSec{0}
 	, m_IsActive{false}
-	, m_LifeTime{}
+	, m_LifeTime{ lifeTime }
 {
 }
 

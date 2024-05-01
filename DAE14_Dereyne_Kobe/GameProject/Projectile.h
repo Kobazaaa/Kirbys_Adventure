@@ -1,16 +1,12 @@
 #pragma once
 #include "utils.h"
+#include "Direction.h"
 #include "Texture.h"
 #include "Vector2f.h"
 
 class Projectile
 {
 public:
-	enum class Direction
-	{
-		Left = -1,
-		Right = 1
-	};
 
 	explicit Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly = false);
 	virtual ~Projectile() = default;
@@ -24,14 +20,15 @@ public:
 	bool IsActivated();
 	bool IsFriendly();
 	Point2f GetPosition();
-	Projectile::Direction GetDirection();
+	Direction GetDirection();
 
-	void Activate(const Point2f& position, Projectile::Direction direction);
+	void Activate(const Point2f& position, Direction direction);
 	void Hide();
 	void Reveal();
 	void Deactivate();
 	void SetVelocity(const Vector2f& velocity);
 	void SetPosition(const Point2f& position);
+	void SetStartPosition(const Point2f& position);
 
 protected:
 	float			m_TravelTime;

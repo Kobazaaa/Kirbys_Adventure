@@ -699,6 +699,27 @@ int utils::GetSign(double number)
 	else return -1;
 }
 
+bool utils::GetRandomBool()
+{
+	return rand() % 2 == 0 ? true : false;
+}
+
+int utils::GetRandomInt(int minIncl, int maxIncl)
+{
+	if (minIncl < maxIncl)
+	{
+		return (rand() % ((maxIncl - minIncl) + 1)) + minIncl;
+	}
+	else if (minIncl > maxIncl)
+	{
+		return (rand() % ((minIncl - maxIncl) + 1)) + maxIncl;
+	}
+	else if (minIncl == maxIncl)
+	{
+		return minIncl;
+	}
+}
+
 bool utils::IsRectInRect(const Rectf& smallRect, const Rectf& bigRect)
 {
 	if (smallRect.left > bigRect.left and

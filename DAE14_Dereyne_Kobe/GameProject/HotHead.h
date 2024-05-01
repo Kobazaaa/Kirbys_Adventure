@@ -10,7 +10,10 @@ public:
 
 	// Behavioral
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	virtual void Draw() const override;
 
 private:
+	Projectile m_FireShot;
+	float m_AccumSecAbility;
 
 };

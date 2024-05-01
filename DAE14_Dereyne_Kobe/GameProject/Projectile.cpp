@@ -128,12 +128,12 @@ Point2f Projectile::GetPosition()
 	return m_Position;
 }
 
-Projectile::Direction Projectile::GetDirection()
+Direction Projectile::GetDirection()
 {
 	return m_Direction;
 }
 
-void Projectile::Activate(const Point2f& position, Projectile::Direction direction)
+void Projectile::Activate(const Point2f& position, Direction direction)
 {
 	m_Position = position;
 	m_StartPosition = position;
@@ -165,4 +165,9 @@ void Projectile::SetVelocity(const Vector2f& velocity)
 void Projectile::SetPosition(const Point2f& position)
 {
 	m_Position = position;
+}
+
+void Projectile::SetStartPosition(const Point2f& position)
+{
+	m_StartPosition = position;
 }

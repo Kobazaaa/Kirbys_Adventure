@@ -1,21 +1,17 @@
 #pragma once
 #include "Ability.h"
 
-class Beam final : public Ability
+class Fire final : public Ability
 {
 public:
-
-	explicit Beam(bool isFriendly = false);
-	virtual ~Beam() override = default;
+	explicit Fire(bool isFriendly = false);
+	virtual ~Fire() override = default;
 
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, Entity* owner) override;
 	virtual void Activate(const Point2f& position, Direction direction) override;
 
 private:
-	const int m_BEAM_SEGMENTS{ 5 };
-	const float m_SPACING{5.f};
-
-	float m_BeamAccumSec;
-
+	const int m_FIREBALLS{2};
+	const float m_PROJ_TRAVELTIME{0.15f};
 };
 

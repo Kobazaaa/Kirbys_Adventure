@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Beam.h"
 #include "WaddleDoo.h"
 
 WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
@@ -30,9 +31,9 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 	if (m_AccumSecAbility >= 2.f)
 	{
 		m_AccumSecAbility = 0;
-		m_pAbility->Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+		m_pAbility->Activate(m_Position, m_Direction);
 	}
-	m_pAbility->Update(elapsedSec, world);
+	m_pAbility->Update(elapsedSec, world, this);
 }
 
 void WaddleDoo::UpdateAnimation()

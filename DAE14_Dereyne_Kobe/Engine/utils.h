@@ -88,6 +88,9 @@ namespace utils
 	int GetSign(float number);
 	int GetSign(double number);
 
+	bool GetRandomBool();
+	int GetRandomInt(int minIncl, int maxIncl);
+
 	bool IsRectInRect(const Rectf& smallRect, const Rectf& bigRect);
 	Rectf VectorToRect(const std::vector<Point2f>& vector);
 

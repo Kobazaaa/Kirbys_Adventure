@@ -3,7 +3,10 @@
 #include "Kirby.h"
 #include "Enemy.h"
 #include "Level.h"
+#include "Beam.h"
+#include "Fire.h"
 #include <iostream>
+#include <typeinfo>
 
 using namespace utils;
 
@@ -70,7 +73,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	{
 		if (m_pAbility->IsActive()) abilityActive = true;
 		else abilityActive = false;
-		m_pAbility->Update(elapsedSec, world);
+		m_pAbility->Update(elapsedSec, world, this);
 	}
 
 	m_Puff.Update(elapsedSec, world);
@@ -114,7 +117,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_CurrentState = State::Exhaling;
 			if (!m_StarProj.IsActivated())
 			{
-				m_StarProj.Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+				m_StarProj.Activate(m_Position, m_Direction);
 			}
 		}
 		else if (m_CurrentState == State::Flight)
@@ -122,12 +125,12 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_CurrentState = State::Exhaling;
 			if (!m_Puff.IsActivated())
 			{
-				m_Puff.Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+				m_Puff.Activate(m_Position, m_Direction);
 			}
 		}
 		else if (m_pAbility != nullptr)
 		{
-			m_pAbility->Activate(m_Position, static_cast<Projectile::Direction>(m_Direction));
+			m_pAbility->Activate(m_Position, m_Direction);
 		}
 
 		else if (CanInhaleWithCurrentState()) m_CurrentState = State::Inhaling;
@@ -145,7 +148,14 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	if (m_InhaledEnemy and m_CurrentState == State::None and KeyPress(SDL_SCANCODE_DOWN))
 	{
 		// TODO fix copying over ability
-		m_pAbility = m_pInhaledEnemy->GetAbility();
+		delete m_pAbility;
+
+		Ability* pEnemyAbility{ m_pInhaledEnemy->GetAbility() };
+
+		if (typeid(*pEnemyAbility) == typeid(Beam))		m_pAbility = new Beam(true);
+		if (typeid(*pEnemyAbility) == typeid(Fire))		m_pAbility = new Fire(true);
+		//if (typeid(*pEnemyAbility) == typeid(Spark))	m_pAbility = new Spark(true);
+	
 		m_CurrentState = State::Swallow;
 		m_InhaledEnemy = false;
 		m_pInhaledEnemy = nullptr;

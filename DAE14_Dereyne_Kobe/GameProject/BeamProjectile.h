@@ -1,5 +1,6 @@
 #pragma once
 #include "Projectile.h"
+
 class BeamProjectile final : public Projectile
 {
 public:

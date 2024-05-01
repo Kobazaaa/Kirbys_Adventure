@@ -1,17 +1,18 @@
 #include "pch.h"
 #include "Beam.h"
+#include "BeamProjectile.h"
 
 Beam::Beam(bool isFriendly)
-	: m_BeamAccumSec{0}
+	: Ability( 0.5f )
+	, m_BeamAccumSec{0}
 {
-	m_LifeTime = 0.5f;
 	for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 	{
 		m_vProjectiles.push_back(new BeamProjectile(m_LifeTime, 2 * m_SPACING, isFriendly));
 	}
 }
 
-void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, Entity* owner)
 {
 	if (m_IsActive)
 	{
@@ -26,6 +27,8 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 		for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 		{
 			m_vProjectiles[index]->Update(elapsedSec, world, index);
+
+			m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
 		}
 		
 		m_BeamAccumSec += elapsedSec;
@@ -69,7 +72,7 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 	}
 }
 
-void Beam::Activate(const Point2f& position, Projectile::Direction direction)
+void Beam::Activate(const Point2f& position, Direction direction)
 {
 	m_IsActive = true;
 	m_AccumSec = 0;
