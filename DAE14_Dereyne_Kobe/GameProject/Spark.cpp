@@ -1,17 +1,17 @@
 #include "pch.h"
-#include "Fire.h"
-#include "FireProjectile.h"
+#include "Spark.h"
+#include "SparkProjectile.h"
 
-Fire::Fire(bool isFriendly)
+Spark::Spark(bool isFriendly)
 	: Ability(2.5f)
 {
-	for (int index{}; index < m_FIREBALLS; ++index)
+	for (int index{}; index < m_SPARKS; ++index)
 	{
-		m_vProjectiles.push_back(new FireProjectile(m_PROJ_TRAVELTIME, isFriendly));
+		m_vProjectiles.push_back(new SparkProjectile(m_PROJ_TRAVELTIME, isFriendly));
 	}
 }
 
-void Fire::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, Entity* owner)
+void Spark::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, Entity* owner)
 {
 	if (m_IsActive)
 	{
@@ -23,7 +23,7 @@ void Fire::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 		}
 
 
-		for (int index{}; index < m_FIREBALLS; ++index)
+		for (int index{}; index < m_SPARKS; ++index)
 		{
 			if (m_AccumSec >= m_PROJ_TRAVELTIME / 2 * index)
 			{
@@ -43,11 +43,11 @@ void Fire::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 	}
 }
 
-void Fire::Activate(const Point2f& position, Direction direction)
+void Spark::Activate(const Point2f& position, Direction direction)
 {
 	m_IsActive = true;
 	m_AccumSec = 0;
-	for (int index{}; index < m_FIREBALLS; ++index)
+	for (int index{}; index < m_SPARKS; ++index)
 	{
 		m_vProjectiles[index]->Activate(position, direction);
 	}

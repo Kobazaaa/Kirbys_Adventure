@@ -3,7 +3,7 @@
 #include "TextureManager.h"
 #include "Projectile.h"
 
-Projectile::Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly)
+Projectile::Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly, float customHitBoxSize)
 	: m_pTexture	{ TextureManager::GetTexture(textureName) }
 	, m_Width		{ 16 }
 	, m_Height		{ 16 }
@@ -17,6 +17,7 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_CurrentFrameRow	{ 0 }
 	, m_AccumSec		{ 0.f }
 	, m_Hidden			{false}
+	, m_CustomHitBoxSize{customHitBoxSize}
 {
 }
 
@@ -67,7 +68,8 @@ void Projectile::Draw() const
 		}
 		glPopMatrix();
 
-		//utils::DrawRect(GetHitBox());
+		utils::SetColor(Color4f(0, 1, 1, 1));
+		utils::DrawRect(GetHitBox());
 		//utils::DrawRect(GetDstRect());
 
 	}
@@ -76,8 +78,8 @@ void Projectile::Draw() const
 Rectf Projectile::GetHitBox() const
 {
 	Rectf hitBox{};
-	hitBox.width	= 4.f;
-	hitBox.height	= 4.f;
+	hitBox.width	= m_CustomHitBoxSize;
+	hitBox.height	= m_CustomHitBoxSize;
 	hitBox.left		= m_Position.x - hitBox.width /  2;
 	hitBox.bottom	= m_Position.y - hitBox.height / 2;
 
@@ -131,6 +133,16 @@ Point2f Projectile::GetPosition()
 Direction Projectile::GetDirection()
 {
 	return m_Direction;
+}
+
+float Projectile::GetWidth()
+{
+	return m_Width;
+}
+
+float Projectile::GetHeight()
+{
+	return m_Height;
 }
 
 void Projectile::Activate(const Point2f& position, Direction direction)

@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "Beam.h"
 #include "Fire.h"
+#include "Spark.h"
 #include <iostream>
 #include <typeinfo>
 
@@ -21,7 +22,6 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 	, m_Puff			{ Puff()}
 	, m_StarProj		{ StarProjectile() }
 {
-
 }
 
 std::string Kirby::EnumToString(Kirby::State state) const
@@ -154,7 +154,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 		if (typeid(*pEnemyAbility) == typeid(Beam))		m_pAbility = new Beam(true);
 		if (typeid(*pEnemyAbility) == typeid(Fire))		m_pAbility = new Fire(true);
-		//if (typeid(*pEnemyAbility) == typeid(Spark))	m_pAbility = new Spark(true);
+		if (typeid(*pEnemyAbility) == typeid(Spark))	m_pAbility = new Spark(true);
 	
 		m_CurrentState = State::Swallow;
 		m_InhaledEnemy = false;

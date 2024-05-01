@@ -12,5 +12,5 @@ public:
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 
 private:
-
+	float m_AccumSecAbility;
 };

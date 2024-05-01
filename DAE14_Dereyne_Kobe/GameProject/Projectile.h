@@ -8,7 +8,7 @@ class Projectile
 {
 public:
 
-	explicit Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly = false);
+	explicit Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly = false, float customHitBoxSize = 4.f);
 	virtual ~Projectile() = default;
 
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0);
@@ -21,6 +21,8 @@ public:
 	bool IsFriendly();
 	Point2f GetPosition();
 	Direction GetDirection();
+	float GetWidth();
+	float GetHeight();
 
 	void Activate(const Point2f& position, Direction direction);
 	void Hide();
@@ -52,6 +54,6 @@ private:
 
 	float			m_Width;
 	float			m_Height;
-
+	float			m_CustomHitBoxSize;
 };
 

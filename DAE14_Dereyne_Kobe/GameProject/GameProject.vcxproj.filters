@@ -123,6 +123,12 @@
     <ClCompile Include="FireProjectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Spark.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SparkProjectile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -201,6 +207,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Direction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spark.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SparkProjectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

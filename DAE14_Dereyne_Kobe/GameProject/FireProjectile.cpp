@@ -29,7 +29,7 @@ void FireProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 	else
 	{
 		Activate(m_StartPosition, m_Direction);
-		m_Position.x = m_StartPosition.x + static_cast<int>(m_Direction) * 14.f;
-		m_Velocity.y = (rand() % 101) - 50;
+		m_Position.x = m_StartPosition.x + static_cast<int>(m_Direction) * this->GetWidth();
+		m_Velocity.y = utils::GetRandomInt(-50, 50);
 	}
 }
