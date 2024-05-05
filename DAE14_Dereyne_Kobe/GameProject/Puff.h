@@ -5,7 +5,7 @@ class Puff final : public Projectile
 {
 public:
 	explicit Puff(bool isFriendly = true);
-	~Puff() = default;
+	virtual ~Puff() override = default;
 
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0) override;
 

@@ -38,7 +38,7 @@ private:
 
 	const float		m_CARD_WIDTH			{  32.f };
 	const float		m_CARD_HEIGHT			{  40.f };
-	const Point2f	m_CARD_POS				{ 144.f, 16.f };
+	const Point2f	m_CARD_POS				{ 144.f, 15.f };
 
 	const float		m_LEVEL_NAME_WIDTH		{ 169.f };
 	const float		m_LEVEL_NAME_HEIGHT		{  10.f };

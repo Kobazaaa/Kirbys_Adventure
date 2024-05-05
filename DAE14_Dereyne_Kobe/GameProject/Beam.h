@@ -15,7 +15,8 @@ private:
 	const int m_BEAM_SEGMENTS{ 5 };
 	const float m_SPACING{5.f};
 
-	float m_BeamAccumSec;
+	float m_BeamFlickerTimer;
 
+	const float m_DURATION{ 0.5f };
 };
 

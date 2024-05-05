@@ -15,7 +15,8 @@ private:
 	void UpdateAnimation();
 
 	// Variables
-	float m_AccumSecAbility;
-	float m_AccumSecJump;
+	float m_ActionAccumSec;
+	int m_BlinkCounter;
+	bool m_CanMove;
 };
 

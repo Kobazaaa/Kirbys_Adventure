@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "HUD.h"
 #include "TextureManager.h"
+#include <typeinfo>
 
 HUD::HUD(Kirby* kirby, float scale)
 	: m_pKIRBY		 { kirby }
@@ -21,6 +22,7 @@ void HUD::Draw() const
 		DrawHealth();
 		DrawLives();
 		DrawLivesAnim();
+		DrawCard();
 	}
 	glPopMatrix();
 
@@ -127,5 +129,22 @@ void HUD::DrawLivesAnim() const
 
 void HUD::DrawCard() const
 {
+	const Point2f pos{ m_CARD_POS.x, m_CARD_POS.y};
+	Rectf srcRect
+	{
+		0,
+		120,
+		m_CARD_WIDTH,
+		m_CARD_HEIGHT
+	};
 
+	if (m_pKIRBY->GetAbilityType() != Entity::AbilityType::None)
+	{
+		if (m_pKIRBY->GetAbilityType() == Entity::AbilityType::Beam)	  srcRect.left = m_CARD_WIDTH;
+		if (m_pKIRBY->GetAbilityType() == Entity::AbilityType::Fire)	  srcRect.left = 2 * m_CARD_WIDTH;
+		if (m_pKIRBY->GetAbilityType() == Entity::AbilityType::Spark)	  srcRect.left = 3 * m_CARD_WIDTH;
+	}
+	else srcRect.bottom = 120;
+
+	m_pSprites->Draw(pos, srcRect);
 }

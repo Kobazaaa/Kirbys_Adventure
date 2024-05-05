@@ -8,8 +8,11 @@ WaddleDee::WaddleDee(const Point2f& center, bool doesWorldCollsion)
 
 void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	Enemy::Update(elapsedSec, world);
-	UpdateAnimation();
+	if (!this->IsEliminated())
+	{
+		Enemy::Update(elapsedSec, world);
+		UpdateAnimation();
+	}
 }
 
 #pragma region Animation

@@ -19,6 +19,7 @@ Entity::Entity(const std::string& textureName, float width, float height, const 
 	, m_IsInvincible	{ false }
 	, m_pSpriteSheet	{ TextureManager::GetTexture(textureName) }
 	, m_pAbility		{ nullptr }
+	, m_AbilityType		{ AbilityType::None }
 {
 }
 
@@ -131,9 +132,13 @@ Direction Entity::GetDirection() const
 {
 	return m_Direction;
 }
-Ability* Entity::GetAbility() const
+Ability* Entity::GetAbilityPtr() const
 {
 	return m_pAbility;
+}
+Entity::AbilityType Entity::GetAbilityType() const
+{
+	return m_AbilityType;
 }
 #pragma endregion
 

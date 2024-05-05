@@ -720,6 +720,13 @@ int utils::GetRandomInt(int minIncl, int maxIncl)
 	}
 }
 
+float utils::GetRandomFloat(int minIncl, int maxIncl, int precision)
+{
+	float precisionPower{ powf(10, precision)};
+	int randomInt{ utils::GetRandomInt(minIncl * precisionPower, maxIncl * precisionPower) };
+	return randomInt / precisionPower;
+}
+
 bool utils::IsRectInRect(const Rectf& smallRect, const Rectf& bigRect)
 {
 	if (smallRect.left > bigRect.left and
@@ -781,7 +788,8 @@ bool utils::KeyPress(int SDL_SCANCODE)
 bool utils::KeyDown(int SDL_SCANCODE)
 {
 	static const Uint8* pKeyStates = SDL_GetKeyboardState(nullptr);
-	return static_cast<bool>(pKeyStates[SDL_SCANCODE]);
+	bool isDown{ static_cast<bool>(pKeyStates[SDL_SCANCODE]) };
+	return isDown;
 }
 
 static bool m_PrevKeyStatesRelease[256] = {false};

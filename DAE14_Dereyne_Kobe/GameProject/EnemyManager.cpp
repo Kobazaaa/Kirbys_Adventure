@@ -60,7 +60,7 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 {
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
-		if (!enemyPtr->IsEliminated()) enemyPtr->Update(elapsedSec, world);
+		enemyPtr->Update(elapsedSec, world);
 	}
 	ApplyPlaySpace();
 }
@@ -147,9 +147,9 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 bool EnemyManager::EnemyKirbyProjectileCollision(Kirby* pKirby)
 {
 	std::vector<Projectile*> kirbyProj;
-	if (pKirby->GetAbility() != nullptr)
+	if (pKirby->GetAbilityType() != Entity::AbilityType::None)
 	{
-		kirbyProj = pKirby->GetAbility()->GetProjectiles();
+		kirbyProj = pKirby->GetAbilityPtr()->GetProjectiles();
 	}
 
 	for (Enemy* enemyPtr : m_vEnemies)
@@ -168,9 +168,9 @@ bool EnemyManager::EnemyKirbyProjectileCollision(Kirby* pKirby)
 			}
 
 			std::vector<Projectile*> enemyProj;
-			if (enemyPtr->GetAbility() != nullptr)
+			if (enemyPtr->GetAbilityType() != Entity::AbilityType::None)
 			{
-				enemyProj = enemyPtr->GetAbility()->GetProjectiles();
+				enemyProj = enemyPtr->GetAbilityPtr()->GetProjectiles();
 			}
 			for (Projectile* enemyProjPtr : enemyProj)
 			{

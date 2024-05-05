@@ -4,36 +4,53 @@
 
 WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("WaddleDoo", center, doesWorldCollsion)
-	, m_AccumSecAbility{0}
-	, m_AccumSecJump{0}
+	, m_ActionAccumSec{0}
+	, m_BlinkCounter{0}
+	, m_CanMove {true}
 {
 	m_pAbility = new Beam(false);
+	m_AbilityType = AbilityType::Beam;
 }
 
 void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	Enemy::Update(elapsedSec, world);
-
-	UpdateAnimation();
-	m_AccumSecAbility += elapsedSec;
-	m_AccumSecJump += elapsedSec;
-
-	if (m_AccumSecJump >= 3)
+	if (!this->IsEliminated())
 	{
-		m_AccumSecJump = 0;
-		int randIdx{ rand() % 2 };
-		if (randIdx == 1)
+		if (m_CanMove) Enemy::Update(elapsedSec, world);
+
+		UpdateAnimation();
+		
+		m_ActionAccumSec += elapsedSec;
+		if (m_ActionAccumSec >= 2.3f)
 		{
-			m_Velocity.y = 150;
-		}
-	}
+			if (utils::GetRandomBool() and m_CanMove)
+			{
+				m_Velocity.y = 150;
+				m_ActionAccumSec = 0;
+			}
+			else if (!m_pAbility->IsActive())
+			{
+				m_CanMove = false;
+				if (m_ActionAccumSec >= 2.3f + 0.06f)
+				{
+					m_ActionAccumSec -= 0.06f;
+					++m_BlinkCounter;
+					m_Position.y += m_BlinkCounter % 2 == 0 ? 0.7f : -0.7f;
+					m_CurrentFrameRow = (m_CurrentFrameRow + 1) % 2;
 
-	if (m_AccumSecAbility >= 2.f)
-	{
-		m_AccumSecAbility = 0;
-		m_pAbility->Activate(m_Position, m_Direction);
+					if (m_BlinkCounter >= 10)
+					{
+						m_CanMove = true;
+						m_BlinkCounter = 0;
+						m_CurrentFrameRow = 0;
+						m_ActionAccumSec = 0;
+						m_pAbility->Activate(m_Position, m_Direction);
+					}
+				}
+			}
+		}
+		m_pAbility->Update(elapsedSec, world, this);
 	}
-	m_pAbility->Update(elapsedSec, world, this);
 }
 
 void WaddleDoo::UpdateAnimation()

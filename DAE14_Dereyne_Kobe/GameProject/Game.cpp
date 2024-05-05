@@ -4,7 +4,6 @@
 #include "Game.h"
 #include "utils.h"
 #include "Kirby.h"
-#include "TextureManager.h"
 #include <iostream>
 
 Game::Game( const Window& window ) 
@@ -21,7 +20,6 @@ Game::~Game( )
 void Game::Initialize( )
 {
 	// Textures
-	m_pTextureManager = new TextureManager();
 	TextureManager::LoadTexture("Puff",					"Abilities/Puff.png");
 	TextureManager::LoadTexture("StarProjectile",		"Abilities/Star.png");
 	TextureManager::LoadTexture("Beam",					"Abilities/Beam.png");
@@ -42,11 +40,11 @@ void Game::Initialize( )
 	
 	// EnemyManager
 	m_pEnemyMngr = new EnemyManager(m_pCamera);
-
+	
 	// Kirby
 	m_pKirby = new Kirby(Point2f(100, 100), m_pLevel);
 	m_pHUD = new HUD(m_pKirby, m_SCALE);
-
+	
 	// World
 	SVGParser::GetVerticesFromSvgFile("Levels/VegetableValley.svg", m_World);
 }
@@ -63,8 +61,7 @@ void Game::Cleanup( )
 	m_pLevel = nullptr;
 	delete m_pHUD;
 	m_pHUD = nullptr;
-	delete m_pTextureManager;
-	m_pTextureManager = nullptr;
+	TextureManager::DeleteTextures();
 }
 
 void Game::Update( float elapsedSec )
@@ -78,15 +75,18 @@ void Game::Update( float elapsedSec )
 	if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
 	{
 		m_pKirby->HitEnemy();
+		m_pCamera->Shake(0.1f, 0.1f);
 	}
 	if (m_pEnemyMngr->EnemyKirbyProjectileCollision(m_pKirby))
 	{
 		m_pKirby->HitEnemy();
+		m_pCamera->Shake(0.1f, 0.1f);
 	}
-
+	
 	m_pKirby->Update(elapsedSec, m_World);
 	m_pEnemyMngr->Update(elapsedSec, m_World);
 	m_pHUD->Update(elapsedSec);
+	m_pCamera->Update(elapsedSec);
 }
 
 void Game::Draw( ) const
@@ -97,12 +97,12 @@ void Game::Draw( ) const
 	{
 		m_pLevel->Draw();
 		utils::SetColor(Color4f(1, 1, 1, 1));
-
+	
 		m_pKirby->Draw();
 		m_pEnemyMngr->Draw(m_DEBUG_MODE);
-
-
-
+	
+	
+	
 		if (m_DEBUG_MODE)
 		{
 			for (size_t idx{}; idx < m_World.size(); idx++)
@@ -113,11 +113,11 @@ void Game::Draw( ) const
 			utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
 			utils::DrawRect(m_pKirby->GetHitBox());
 			utils::DrawRect(m_pKirby->GetInhaleRect());
-
+	
 		}
 	}
 	m_pCamera->Reset();
-
+	
 	m_pHUD->Draw();
 }
 
@@ -129,11 +129,15 @@ void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 		{
 			std::cout << *m_pKirby;
 		}
+		if (e.keysym.sym == SDLK_s)
+		{
+			m_pCamera->Shake(0.1f, 0.1f);
+		}
 	}
 	if (e.keysym.sym == SDLK_r)
 	{
 		m_pKirby->Reset();
-	}
+	}	
 }
 
 void Game::ProcessKeyUpEvent( const SDL_KeyboardEvent& e )
@@ -151,7 +155,7 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 	{
 		Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE - 64 };
 		clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-
+	
 		if (e.button == SDL_BUTTON_RIGHT)
 		{
 			m_pEnemyMngr->Add(new WaddleDoo(clickPos));
@@ -167,7 +171,7 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 		//}	
 		if (e.button == SDL_BUTTON_MIDDLE)
 		{
-			m_pEnemyMngr->Add(new HotHead(clickPos));
+			m_pEnemyMngr->Add(new BrontoBurt(clickPos, true));
 		}
 	}
 }

@@ -8,9 +8,10 @@ public:
 	virtual ~FireProjectile() override = default;
 
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0) override;
+	virtual void Draw() const override;
 
 private:
-
+	bool m_HorizontalFlip;
 
 };
 

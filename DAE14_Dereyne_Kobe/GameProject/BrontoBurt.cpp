@@ -10,23 +10,26 @@ BrontoBurt::BrontoBurt(const Point2f center, bool doesWorldCollsion)
 
 void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	m_SineTime += elapsedSec;
-
-	Enemy::Update(elapsedSec, world);
-	if (!m_DoesWorldCollision)
+	if (!this->IsEliminated())
 	{
-		if (m_NrCycles < 6)
+		m_SineTime += elapsedSec;
+
+		Enemy::Update(elapsedSec, world);
+		if (!m_DoesWorldCollision)
+		{
+			if (m_NrCycles < 6)
+			{
+				m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
+				if (m_Velocity.y > -0.1f and m_Velocity.y < 0.1f) ++m_NrCycles;
+			}
+			else m_Velocity.y = 200.f;
+		}
+		else
 		{
 			m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
-			if (m_Velocity.y > -0.1f and m_Velocity.y < 0.1f) ++m_NrCycles;
 		}
-		else m_Velocity.y = 200.f;
+		UpdateAnimation();
 	}
-	else
-	{
-		m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
-	}
-	UpdateAnimation();
 }
 
 #pragma region Animation

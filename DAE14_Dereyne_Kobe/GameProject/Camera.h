@@ -8,8 +8,10 @@ public:
 	virtual ~Camera() = default;
 
 	// Behavioral
+	void Update(float elapsedSec);
 	void Aim(float sublevelW, float sublevelH, float sublevelBottom, const Point2f& trackCenter, float hudHeight);
 	void Reset();
+	void Shake(float duration, float magnitude);
 
 	// Accessors
 	Rectf GetCameraView() const;
@@ -25,5 +27,11 @@ private:
 
 	Point2f		m_CameraPos;
 	const float m_SCALE;
+
+	float	m_ShakeTimer;
+	bool	m_IsShaking;
+	float	m_ShakeMagnitude;
+	float	m_ShakeDuration;
+	Point2f m_CameraPosBeforeShake;
 };
 

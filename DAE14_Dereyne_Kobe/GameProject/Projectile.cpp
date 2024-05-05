@@ -16,6 +16,7 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_CurrentFrame	{ 0 }
 	, m_CurrentFrameRow	{ 0 }
 	, m_AccumSec		{ 0.f }
+	, m_AccumSecAnim	{ 0.f }
 	, m_Hidden			{false}
 	, m_CustomHitBoxSize{customHitBoxSize}
 {
@@ -26,6 +27,7 @@ void Projectile::Update(float elapsedSec, const std::vector<std::vector<Point2f>
 	if (m_IsActive)
 	{
 		m_AccumSec += elapsedSec;
+		m_AccumSecAnim += elapsedSec;
 
 		// MOVE
 		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
@@ -68,8 +70,8 @@ void Projectile::Draw() const
 		}
 		glPopMatrix();
 
-		utils::SetColor(Color4f(0, 1, 1, 1));
-		utils::DrawRect(GetHitBox());
+		//utils::SetColor(Color4f(0, 1, 1, 1));
+		//utils::DrawRect(GetHitBox());
 		//utils::DrawRect(GetDstRect());
 
 	}

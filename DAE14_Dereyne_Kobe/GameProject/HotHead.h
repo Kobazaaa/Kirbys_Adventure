@@ -14,6 +14,8 @@ public:
 
 private:
 	Projectile m_FireShot;
-	float m_AccumSecAbility;
+	float m_AbilityActivationTimer;
 
+	float m_AbilityDurationCounter;
+	const float m_ABILITY_DURATION{2.5f};
 };

@@ -16,9 +16,9 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 {
 	if (!m_IsEliminated and m_IsActivated)
 	{
+		Entity::Update(elapsedSec, world);
 		if ((m_pAbility != nullptr and !m_pAbility->IsActive()) or m_pAbility == nullptr)
 		{
-			Entity::Update(elapsedSec, world);
 			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
 		}
 	}

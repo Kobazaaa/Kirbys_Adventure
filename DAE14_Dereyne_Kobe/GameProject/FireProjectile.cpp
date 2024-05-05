@@ -3,7 +3,8 @@
 #include "Collision.h"
 
 FireProjectile::FireProjectile(float travelTime, bool isFriendly)
-	: Projectile("Fire", Vector2f(200, 0), travelTime, isFriendly)
+	: Projectile("Fire", Vector2f(150, 0), travelTime, isFriendly)
+	, m_HorizontalFlip{false}
 {
 }
 
@@ -24,6 +25,14 @@ void FireProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 			m_Position.y += m_Velocity.y * elapsedSec;
 
 			if (Collision::WallCollision(this, world)) Deactivate();
+			
+			m_AccumSecAnim += elapsedSec;
+			if (m_AccumSecAnim >= m_TravelTime)
+			{
+				m_AccumSecAnim = 0;
+				m_CurrentFrame = utils::GetRandomInt(0, 1);
+				m_HorizontalFlip = utils::GetRandomBool();
+			}
 		}
 	}
 	else
@@ -32,4 +41,21 @@ void FireProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 		m_Position.x = m_StartPosition.x + static_cast<int>(m_Direction) * this->GetWidth();
 		m_Velocity.y = utils::GetRandomInt(-50, 50);
 	}
+}
+
+void FireProjectile::Draw() const
+{
+
+	glPushMatrix();
+	{
+		if (m_HorizontalFlip)
+		{
+			glTranslatef(0, m_Position.y, 0);
+			glRotatef(-180, 1, 0, 0);
+			glTranslatef(0, -m_Position.y, 0);
+		}
+		Projectile::Draw();
+	}
+	glPopMatrix();
+
 }

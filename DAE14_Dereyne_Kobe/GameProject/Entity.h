@@ -8,6 +8,10 @@
 class Entity
 {
 public:
+	enum class AbilityType
+	{
+		None, Beam, Fire, Spark
+	};
 
 	// Constructor, Destructor and Operator Overloading
 	explicit Entity(const std::string& textureName, float width, float height, const Point2f& center);
@@ -35,7 +39,8 @@ public:
 	virtual Rectf					GetHitBox()			const final;
 	virtual const utils::HitInfo&	GetHitInfo()		const final;
 	virtual Direction				GetDirection()		const final;
-	virtual Ability*				GetAbility()		const final;
+	virtual AbilityType				GetAbilityType()	const final;
+	virtual Ability*				GetAbilityPtr()		const final;
 protected:
 	// Behavioral Functions
 	
@@ -45,6 +50,7 @@ protected:
 	Direction		m_Direction;
 	utils::HitInfo	m_HitInfo;
 	Ability*		m_pAbility;
+	AbilityType		m_AbilityType;
 
 	int		m_CurrentFrame;
 	int		m_CurrentFrameRow;

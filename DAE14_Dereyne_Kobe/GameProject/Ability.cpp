@@ -2,10 +2,10 @@
 #include "TextureManager.h"
 #include "Ability.h"
 
-Ability::Ability(float lifeTime)
+Ability::Ability(bool canBeCancelled)
 	: m_AccumSec{0}
 	, m_IsActive{false}
-	, m_LifeTime{ lifeTime }
+	, m_CanBeCancelled{canBeCancelled}
 {
 }
 
@@ -29,6 +29,11 @@ void Ability::Draw() const
 	}
 }
 
+void Ability::Activate()
+{
+	m_IsActive = true;
+}
+
 void Ability::Deactivate()
 {
 	for (int index{}; index < m_vProjectiles.size(); ++index)
@@ -48,5 +53,10 @@ const std::vector<Projectile*>& Ability::GetProjectiles() const
 bool Ability::IsActive() const
 {
 	return m_IsActive;
+}
+
+bool Ability::CanBeCancelled() const
+{
+	return m_CanBeCancelled;
 }
 

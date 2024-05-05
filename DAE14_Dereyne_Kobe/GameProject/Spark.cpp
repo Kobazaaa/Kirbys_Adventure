@@ -3,7 +3,7 @@
 #include "SparkProjectile.h"
 
 Spark::Spark(bool isFriendly)
-	: Ability(2.5f)
+	: Ability(true)
 {
 	for (int index{}; index < m_SPARKS; ++index)
 	{
@@ -16,13 +16,6 @@ void Spark::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	if (m_IsActive)
 	{
 		m_AccumSec += elapsedSec;
-		if (m_AccumSec >= m_LifeTime)
-		{
-			m_AccumSec = 0;
-			Deactivate();
-		}
-
-
 		for (int index{}; index < m_SPARKS; ++index)
 		{
 			if (m_AccumSec >= m_PROJ_TRAVELTIME / 2 * index)

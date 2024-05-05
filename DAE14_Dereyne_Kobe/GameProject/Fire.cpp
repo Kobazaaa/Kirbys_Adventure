@@ -3,7 +3,7 @@
 #include "FireProjectile.h"
 
 Fire::Fire(bool isFriendly)
-	: Ability(2.5f)
+	: Ability(true)
 {
 	for (int index{}; index < m_FIREBALLS; ++index)
 	{
@@ -16,12 +16,6 @@ void Fire::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 	if (m_IsActive)
 	{
 		m_AccumSec += elapsedSec;
-		if (m_AccumSec >= m_LifeTime)
-		{
-			m_AccumSec = 0;
-			Deactivate();
-		}
-
 
 		for (int index{}; index < m_FIREBALLS; ++index)
 		{

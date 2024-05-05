@@ -9,8 +9,8 @@ public:
 		Single, Double
 	};
 
-	StarProjectile(bool isFriendly = true);
-	~StarProjectile() = default;
+	explicit StarProjectile(bool isFriendly = true);
+	virtual ~StarProjectile() override = default;
 
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0) override;
 
@@ -18,7 +18,6 @@ public:
 	void SetType(StarProjectile::Type type);
 private:
 
-	float m_AnimationAccumSec;
 	StarProjectile::Type m_Type;
 };
 

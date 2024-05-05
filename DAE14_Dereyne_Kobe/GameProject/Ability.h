@@ -7,7 +7,7 @@
 class Ability
 {
 public:
-	explicit Ability(float lifeTime);
+	explicit Ability(bool canBeCancelled);
 	Ability(const Ability& other) = delete;
 	Ability(Ability&& other) = delete;
 	Ability& operator=(const Ability& rhs) = delete;
@@ -18,16 +18,18 @@ public:
 	virtual void Draw() const;
 
 	virtual void Activate(const Point2f& position, Direction direction) = 0;
+	virtual void Activate();
 	void Deactivate();
 
 	const std::vector<Projectile*>& GetProjectiles() const;
 	bool IsActive() const;
+	bool CanBeCancelled() const;
 
 protected:
-	float m_LifeTime;
 	bool m_IsActive;
 	std::vector<Projectile*> m_vProjectiles;
 	float m_AccumSec;
 private:
+	bool m_CanBeCancelled;
 };
 

@@ -40,16 +40,15 @@ private:
 	void ClearBackground( ) const;
 
 	// VARIABLES
-	const bool m_DEBUG_MODE{false};
-
+	const bool m_DEBUG_MODE{true};
+	
 	Kirby* m_pKirby;
 	EnemyManager* m_pEnemyMngr;
-
+	
 	std::vector<std::vector<Point2f>> m_World;
 	Camera* m_pCamera;
 	Level* m_pLevel;
 	HUD* m_pHUD;
-
+	
 	const float m_SCALE{2.f};
-	TextureManager* m_pTextureManager;
 };

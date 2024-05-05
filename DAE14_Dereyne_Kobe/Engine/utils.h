@@ -90,6 +90,7 @@ namespace utils
 
 	bool GetRandomBool();
 	int GetRandomInt(int minIncl, int maxIncl);
+	float GetRandomFloat(int minIncl, int maxIncl, int precision);
 
 	bool IsRectInRect(const Rectf& smallRect, const Rectf& bigRect);
 	Rectf VectorToRect(const std::vector<Point2f>& vector);

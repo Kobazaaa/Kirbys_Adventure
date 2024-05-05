@@ -12,6 +12,6 @@ public:
 
 private:
 	const int m_FIREBALLS{2};
-	const float m_PROJ_TRAVELTIME{0.15f};
+	const float m_PROJ_TRAVELTIME{0.2f};
 };
 

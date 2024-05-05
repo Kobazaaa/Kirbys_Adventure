@@ -3,12 +3,12 @@
 #include "BeamProjectile.h"
 
 Beam::Beam(bool isFriendly)
-	: Ability( 0.5f )
-	, m_BeamAccumSec{0}
+	: Ability(false)
+	, m_BeamFlickerTimer{0}
 {
 	for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 	{
-		m_vProjectiles.push_back(new BeamProjectile(m_LifeTime, 2 * m_SPACING, isFriendly));
+		m_vProjectiles.push_back(new BeamProjectile(0.5f, 2 * m_SPACING, isFriendly));
 	}
 }
 
@@ -17,13 +17,12 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 	if (m_IsActive)
 	{
 		m_AccumSec += elapsedSec;
-		if (m_AccumSec >= m_LifeTime)
+		if (m_AccumSec >= m_DURATION)
 		{
 			m_AccumSec = 0;
 			Deactivate();
 		}
-		
-		
+
 		for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 		{
 			m_vProjectiles[index]->Update(elapsedSec, world, index);
@@ -31,9 +30,9 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 			m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
 		}
 		
-		m_BeamAccumSec += elapsedSec;
+		m_BeamFlickerTimer += elapsedSec;
 		const float time{0.03f};
-		if (m_BeamAccumSec > time)
+		if (m_BeamFlickerTimer > time)
 		{
 			for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 			{
@@ -46,9 +45,9 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 					m_vProjectiles[index]->Reveal();
 				}
 			}
-			if (m_BeamAccumSec > time * 2)
+			if (m_BeamFlickerTimer > time * 2)
 			{
-				m_BeamAccumSec = 0;
+				m_BeamFlickerTimer = 0;
 				for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 				{
 					if (index % 2 == 0)
@@ -67,7 +66,7 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 	else
 	{
 		m_AccumSec = 0;
-		m_BeamAccumSec = 0;
+		m_BeamFlickerTimer = 0;
 		Deactivate();
 	}
 }
@@ -76,7 +75,7 @@ void Beam::Activate(const Point2f& position, Direction direction)
 {
 	m_IsActive = true;
 	m_AccumSec = 0;
-	m_BeamAccumSec = 0;
+	m_BeamFlickerTimer = 0;
 	for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 	{
 		m_vProjectiles[index]->Activate(position, direction);

@@ -44,6 +44,7 @@ protected:
 	int				m_CurrentFrame;
 	int				m_CurrentFrameRow;
 	float			m_AccumSec;	
+	float			m_AccumSecAnim;	
 	Direction		m_Direction;
 private:
 	Rectf	GetDstRect()		const;

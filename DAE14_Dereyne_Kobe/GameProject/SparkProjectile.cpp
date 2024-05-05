@@ -21,6 +21,21 @@ void SparkProjectile::Update(float elapsedSec, const std::vector<std::vector<Poi
 
 			m_Position.x += m_Velocity.x * elapsedSec;
 			m_Position.y += m_Velocity.y * elapsedSec;
+
+			if (m_IsFriendly)
+			{
+				m_CurrentFrameRow = 1;
+				m_AccumSecAnim += elapsedSec;
+				if (m_AccumSecAnim >= m_TravelTime)
+				{
+					m_AccumSecAnim = 0;
+					m_CurrentFrame = (m_CurrentFrame + 1) % 2;
+				}
+			}
+			else
+			{
+				m_CurrentFrameRow = 0;
+			}
 		}
 	}
 	else

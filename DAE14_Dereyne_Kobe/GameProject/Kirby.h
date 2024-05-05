@@ -5,6 +5,9 @@
 #include "Texture.h"
 #include "Puff.h"
 #include "StarProjectile.h"
+#include "Beam.h"
+#include "Fire.h"
+#include "Spark.h"
 
 class Enemy;
 class Level;
@@ -14,8 +17,13 @@ class Kirby final : public Entity
 public:
 	enum class State
 	{
-		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow
+		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability
 	};
+	enum class Card
+	{
+		Ability, Nothing, Damaged
+	};
+
 
 	// Constructor & Destructor
 	explicit Kirby(const Point2f& center, Level* const level);
@@ -38,6 +46,7 @@ public:
 	int			 GetHealth()		const;
 	int			 GetLives()			const;
 	int			 GetScore()			const;
+	Kirby::Card  GetCard()			const;
 
 	// Mutators
 
@@ -57,6 +66,7 @@ private:
 	void AnimateInhaling();
 	void AnimateExhaling();
 	void AnimateSwallow();
+	void AnimateAbility();
 
 	// Functions that check whether or not Kirby can perform a certain action in his current state
 	bool CanMoveWithCurrentState()		const;
@@ -113,12 +123,15 @@ private:
 	int			m_Score;
 
 	float m_InvincibleAccumSec{};
+	float m_AbilityActivationAccumSec{};
 
 	bool m_InhaledEnemy;
 	Enemy* m_pInhaledEnemy;
 
 	Puff m_Puff;
 	StarProjectile m_StarProj;
+
+	Card m_Card;
 
 	bool m_IsSliding{false};
 
