@@ -6,6 +6,7 @@
 #include "Level.h"
 #include "EnemyManager.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 #include <vector>
 
 class Kirby;
@@ -38,6 +39,8 @@ private:
 	void Initialize();
 	void Cleanup( );
 	void ClearBackground( ) const;
+
+	void LoadTextures();
 
 	// VARIABLES
 	const bool m_DEBUG_MODE{true};

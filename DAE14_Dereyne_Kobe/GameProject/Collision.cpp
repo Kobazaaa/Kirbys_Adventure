@@ -51,7 +51,7 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 		or  (utils::Raycast(world[idx], bottomLeft,   topLeft,	 hitInfo)
 		or  (utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))))
 		{
-			if (hitInfo.lambda <= 0.2f)
+			if (hitInfo.lambda <= 0.3f)
 			{
 				Vector2f newVelocity{ entity->GetVelocity().x, 0 };
 				entity->SetVelocity(newVelocity);

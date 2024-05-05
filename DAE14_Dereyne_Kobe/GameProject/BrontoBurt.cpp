@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "BrontoBurt.h"
 
-BrontoBurt::BrontoBurt(const Point2f center, bool doesWorldCollsion)
+BrontoBurt::BrontoBurt(const Point2f center, Tactic tactic, bool doesWorldCollsion)
 	: Enemy("BrontoBurt", center, doesWorldCollsion)
 	, m_SineTime{0}
 	, m_NrCycles{0}
+	, m_Tactic{ tactic }
 {
 }
 
@@ -12,24 +13,38 @@ void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>
 {
 	if (!this->IsEliminated())
 	{
-		m_SineTime += elapsedSec;
-
 		Enemy::Update(elapsedSec, world);
-		if (!m_DoesWorldCollision)
+
+
+		m_SineTime += elapsedSec;
+		if (m_Tactic == Tactic::AscendingWave)
 		{
-			if (m_NrCycles < 6)
-			{
-				m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
-				if (m_Velocity.y > -0.1f and m_Velocity.y < 0.1f) ++m_NrCycles;
-			}
-			else m_Velocity.y = 200.f;
+			AscendingWave();
 		}
-		else
-		{
-			m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
-		}
+
+
+
+
+
+
+
+
+
+
+
+
 		UpdateAnimation();
 	}
+}
+
+void BrontoBurt::AscendingWave()
+{
+	if (m_NrCycles < 6)
+	{
+		m_Velocity.y = 50 * sinf(2 * M_PI / 2.f * m_SineTime);
+		if (m_Velocity.y > -0.1f and m_Velocity.y < 0.1f) ++m_NrCycles;
+	}
+	else m_Velocity.y = 200.f;
 }
 
 #pragma region Animation

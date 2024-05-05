@@ -37,7 +37,7 @@ void Entity::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 
 void Entity::Draw(bool flipSprite) const
 {
-	if (m_pAbility != nullptr)
+	if (m_AbilityType != AbilityType::None)
 	{
 		m_pAbility->Draw();
 	}

@@ -14,11 +14,8 @@ public:
 		TextureObj& operator=(TextureObj&& rhs) = delete;
 		~TextureObj();
 
-	public:
 		std::string m_Name;
 		Texture* m_pTexture;
-
-	private:
 		std::string m_FilePath;
 	};
 

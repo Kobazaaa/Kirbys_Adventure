@@ -222,7 +222,10 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	{
 		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_InhaledEnemy)
 		{
-			m_CurrentState = State::Falling;
+ 			if (m_pAbility == nullptr or !m_pAbility->IsActive())
+			{
+				m_CurrentState = State::Falling;
+			}
 		}
 
 		if (m_Velocity.y < 0.f and
@@ -230,7 +233,8 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_CurrentState != State::Exhaling and
 			m_CurrentState != State::Inhaling and
 			m_CurrentState != State::Jump and
-			m_CurrentState != State::Falling)
+			m_CurrentState != State::Falling and
+			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_CurrentState = State::None;
 			m_CurrentFrameRow = static_cast<int>(State::Jump);
@@ -252,7 +256,7 @@ void Kirby::Draw() const
 
 void Kirby::MovementUpdate(float elapsedSec)
 {
-	if (m_pAbility != nullptr and m_pAbility->IsActive())
+	if (m_AbilityType != AbilityType::None and m_pAbility->IsActive())
 	{
 		m_IsSliding = false;
 
@@ -266,7 +270,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
 	}
 
-	if ((m_pAbility != nullptr and !m_pAbility->IsActive()) or m_pAbility == nullptr)
+	if (m_AbilityType == AbilityType::None or !m_pAbility->IsActive())
 	{
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~			SLIDE			~~
@@ -401,6 +405,7 @@ void Kirby::Reset()
 	m_pInhaledEnemy = nullptr;
 	delete m_pAbility;
 	m_pAbility = nullptr;
+	m_AbilityType = AbilityType::None;
 	m_CurrentState = State::None;
 	m_AccumSec = 0;
 	m_InvincibleAccumSec = 0;

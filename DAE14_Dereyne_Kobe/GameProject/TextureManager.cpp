@@ -17,7 +17,7 @@ bool TextureManager::LoadTexture(const std::string& name, const std::string& fil
 		}
 	}
 	
-	std::cout << m_vTextures.size() << std::endl;
+	std::cout << m_vTextures.size() << "\t Texture" << std::endl;
 
 	return true;
 }
@@ -61,35 +61,32 @@ bool TextureManager::IsTextureLoaded(const std::string& name)
 	return false;
 }
 
+#pragma region TextureObject
 TextureManager::TextureObj::TextureObj(const std::string& name, const std::string& filepath)
-	: m_Name{ name }
-	, m_pTexture{ new Texture(filepath) }
-	, m_FilePath {filepath}
+	: m_Name		{ name }
+	, m_pTexture	{ new Texture(filepath) }
+	, m_FilePath	{ filepath }
 {
 }
 
 TextureManager::TextureObj::TextureObj(const TextureObj& other)
 {
-	std::cout << "BEFORE CC: " << this->m_pTexture;
-
-	this->m_Name = other.m_Name;
 	delete this->m_pTexture;
-	this->m_pTexture = new Texture(other.m_FilePath);
 
-	std::cout << "AFTER CC: " << this->m_pTexture;
-
+	this->m_Name		=		other.m_Name;
+	this->m_pTexture	=		new Texture(other.m_FilePath);
+	this->m_FilePath	=		other.m_FilePath;
 }
 
 TextureManager::TextureObj::TextureObj(TextureObj&& other) noexcept
 {
-	std::cout << "BEFORE MC: " << this->m_pTexture;
-	this->m_Name = std::move(other.m_Name);
-	this->m_FilePath = std::move(other.m_FilePath);
 	delete this->m_pTexture;
-	this->m_pTexture = std::move(other.m_pTexture);
 
-	other.m_pTexture = nullptr;
-	std::cout << "AFTER MC: " << this->m_pTexture;
+	this->m_Name		=		std::move(other.m_Name);
+	this->m_FilePath	=		std::move(other.m_FilePath);
+	this->m_pTexture	=		std::move(other.m_pTexture);
+
+	other.m_pTexture	=		nullptr;
 }
 
 TextureManager::TextureObj::~TextureObj()
@@ -97,5 +94,6 @@ TextureManager::TextureObj::~TextureObj()
 	delete m_pTexture;
 	m_pTexture = nullptr;
 	
-	std::cout << m_Name << std::endl;
+	std::cout << m_Name << "\t Texture" << std::endl;
 }
+#pragma endregion

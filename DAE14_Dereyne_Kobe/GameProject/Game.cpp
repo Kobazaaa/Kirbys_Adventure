@@ -19,20 +19,15 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
+	// Sounds
+	SoundManager::LoadSoundEffect("effect1", "Sound/SoundEffects/0C.wav");
+	SoundManager::LoadSoundEffect("effect2", "Sound/SoundEffects/0C.wav");
+
+	SoundManager::LoadSoundStream("stream1", "Sound/Music/Vegetable_Valley_Hub.mp3");
+	SoundManager::LoadSoundStream("stream2", "Sound/Music/Vegetable_Valley_Hub.mp3");
+
 	// Textures
-	TextureManager::LoadTexture("Puff",					"Abilities/Puff.png");
-	TextureManager::LoadTexture("StarProjectile",		"Abilities/Star.png");
-	TextureManager::LoadTexture("Beam",					"Abilities/Beam.png");
-	TextureManager::LoadTexture("Fire",					"Abilities/Fire.png");
-	TextureManager::LoadTexture("Spark",				"Abilities/Spark.png");
-	TextureManager::LoadTexture("BrontoBurt",			"Enemies/BrontoBurt.png");
-	TextureManager::LoadTexture("HotHead",				"Enemies/HotHead.png");
-	TextureManager::LoadTexture("Sparky",				"Enemies/Sparky.png");
-	TextureManager::LoadTexture("WaddleDee",			"Enemies/WaddleDee.png");
-	TextureManager::LoadTexture("WaddleDoo",			"Enemies/WaddleDoo.png");
-	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
-	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
-	TextureManager::LoadTexture("VegetableValley",		"Levels/VegetableValley.png");
+	LoadTextures();
 
 	// Camera + Level + HUD
 	m_pLevel =	new Level("Levels/VegetableValley.png", 3);
@@ -61,6 +56,8 @@ void Game::Cleanup( )
 	m_pLevel = nullptr;
 	delete m_pHUD;
 	m_pHUD = nullptr;
+
+	SoundManager::DeleteAllSound();
 	TextureManager::DeleteTextures();
 }
 
@@ -133,6 +130,35 @@ void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 		{
 			m_pCamera->Shake(0.1f, 0.1f);
 		}
+		
+		if (e.keysym.sym == SDLK_1)
+		{
+			SoundManager::PlayStream("stream1");
+		}
+		if (e.keysym.sym == SDLK_2)
+		{
+			SoundManager::PlayStream("stream2");
+		}
+		if (e.keysym.sym == SDLK_3)
+		{
+			SoundManager::PlayEffect("effect1");
+		}
+		if (e.keysym.sym == SDLK_4)
+		{
+			SoundManager::PlayEffect("effect2");
+		}
+		if (e.keysym.sym == SDLK_5)
+		{
+			SoundManager::PauseAll();
+		}
+		if (e.keysym.sym == SDLK_6)
+		{
+			SoundManager::ResumeAll();
+		}
+		if (e.keysym.sym == SDLK_7)
+		{
+			SoundManager::StopAll();
+		}
 	}
 	if (e.keysym.sym == SDLK_r)
 	{
@@ -171,7 +197,7 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 		//}	
 		if (e.button == SDL_BUTTON_MIDDLE)
 		{
-			m_pEnemyMngr->Add(new BrontoBurt(clickPos, true));
+			m_pEnemyMngr->Add(new BrontoBurt(clickPos, static_cast<BrontoBurt::Tactic>(rand() % 4), true));
 		}
 	}
 }
@@ -197,4 +223,21 @@ void Game::ClearBackground( ) const
 {
 	glClearColor( 0.0f, 0.0f, 0.3f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
+}
+
+void Game::LoadTextures()
+{
+	TextureManager::LoadTexture("Puff",					"Abilities/Puff.png");
+	TextureManager::LoadTexture("StarProjectile",		"Abilities/Star.png");
+	TextureManager::LoadTexture("Beam",					"Abilities/Beam.png");
+	TextureManager::LoadTexture("Fire",					"Abilities/Fire.png");
+	TextureManager::LoadTexture("Spark",				"Abilities/Spark.png");
+	TextureManager::LoadTexture("BrontoBurt",			"Enemies/BrontoBurt.png");
+	TextureManager::LoadTexture("HotHead",				"Enemies/HotHead.png");
+	TextureManager::LoadTexture("Sparky",				"Enemies/Sparky.png");
+	TextureManager::LoadTexture("WaddleDee",			"Enemies/WaddleDee.png");
+	TextureManager::LoadTexture("WaddleDoo",			"Enemies/WaddleDoo.png");
+	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
+	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
+	TextureManager::LoadTexture("VegetableValley",		"Levels/VegetableValley.png");
 }
