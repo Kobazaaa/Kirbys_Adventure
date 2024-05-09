@@ -104,6 +104,8 @@ void Game::Draw( ) const
 		{
 			for (size_t idx{}; idx < m_World.size(); idx++)
 			{
+				if (idx == 1) utils::SetColor(Color4f(1, 0, 0, 1));
+				else utils::SetColor(Color4f(1, 1, 1, 1));
 				utils::DrawPolygon(m_World[idx]);
 			}
 			utils::SetColor(Color4f(1, 1, 1, 1));

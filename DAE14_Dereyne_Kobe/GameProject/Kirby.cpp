@@ -326,10 +326,14 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~			JUMPING			~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if (KeyPress(SDL_SCANCODE_SPACE) and CanJumpWithCurrentState())
+		if (KeyPress(SDL_SCANCODE_SPACE))
 		{
-			m_CurrentState = State::Jump;
-			m_Velocity.y = m_JUMP_SPEED;
+			m_Position.y += 1;
+			if (CanJumpWithCurrentState())
+			{
+				m_CurrentState = State::Jump;
+				m_Velocity.y = m_JUMP_SPEED;
+			}
 		}
 		else if (KeyRelease(SDL_SCANCODE_SPACE))
 		{
@@ -341,11 +345,17 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~			FLIGHT			~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if ((KeyPress(SDL_SCANCODE_UP) and CanFlyWithCurrentState()))
+		{
+			m_Position.y += 1;
+		}
 		if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
 		{
 			m_CurrentState = State::Flight;
 			m_Velocity.y = m_FLIGHT_SPEED;
 		}
+		if (m_CurrentState == State::Flight) m_GravityMultiplier = 0.5f;
+		else m_GravityMultiplier = 1.f;
 	}
 }
 

@@ -2,6 +2,7 @@
 #include "Collision.h"
 #include "Projectile.h"
 #include "Entity.h"
+#include <iostream>
 
 
 Collision::Collision()
@@ -42,31 +43,59 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 	const Point2f topMiddle		{ entity->GetHitBox().left + entity->GetHitBox().width / 2, entity->GetHitBox().bottom + (entity->GetHitBox().height) };
 	const Point2f bottomLeft	{ entity->GetHitBox().left,									entity->GetHitBox().bottom };
 	const Point2f bottomRight	{ entity->GetHitBox().left + entity->GetHitBox().width,		entity->GetHitBox().bottom };
-	const Point2f bottomMiddle	{ entity->GetHitBox().left + entity->GetHitBox().width / 2,	entity->GetHitBox().bottom };
+	const Point2f bottomMiddle	{ entity->GetHitBox().left + entity->GetHitBox().width / 2,	entity->GetHitBox().bottom - 1};
+
 	utils::HitInfo hitInfo		{ entity->GetHitInfo() };
+	bool hasCollision{false};
 
 	for (size_t idx{}; idx < world.size(); idx++)
 	{
-		if  (utils::Raycast(world[idx], bottomRight,  topRight,	 hitInfo)
-		or  (utils::Raycast(world[idx], bottomLeft,   topLeft,	 hitInfo)
-		or  (utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))))
+		// Is the entity on a slope?
+		bool isOnSlope	{false};
+		if (utils::Raycast(world[idx], bottomLeft, topLeft, hitInfo))
 		{
-			if (hitInfo.lambda <= 0.3f)
-			{
-				Vector2f newVelocity{ entity->GetVelocity().x, 0 };
-				entity->SetVelocity(newVelocity);
+			if (1.f - abs(hitInfo.normal.y) > 0.001f) isOnSlope = true;
+		}
+		if (utils::Raycast(world[idx], bottomRight, topRight, hitInfo))
+		{
+			if (1.f - abs(hitInfo.normal.y) > 0.001f) isOnSlope = true;
+		}
+		if (utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))
+		{
+			if (1.f - abs(hitInfo.normal.y) > 0.001f) isOnSlope = true;
+		}
 
-				Point2f newPosition
-				{
-					entity->GetPosition().x,
-					hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (entity->GetHitBox().height / 2)
-				};
-				entity->SetPosition(newPosition);
-				return true;
+		// If the entity is on a slope, use the middle ray for terrain collision checking/handling
+		if (isOnSlope)
+		{
+			if (utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))
+			{
+				hasCollision = true;
 			}
 		}
+		// Otherwise, use the left or right ray for terrain collision checking/handling
+		else if (world[idx].size() > 2 or entity->GetVelocity().y < 0.f)
+		{
+			if ((utils::Raycast(world[idx], bottomRight, topRight, hitInfo)
+				or utils::Raycast(world[idx], bottomLeft, topRight, hitInfo)
+				or utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))) hasCollision = true;
+		}
 	}
-	return false;
+
+	if (hasCollision)
+	{
+		Vector2f newVelocity{ entity->GetVelocity().x, 0 };
+		entity->SetVelocity(newVelocity);
+
+		Point2f newPosition
+		{
+			entity->GetPosition().x,
+			hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (entity->GetHitBox().height / 2)
+		};
+		entity->SetPosition(newPosition);
+	}
+
+	return hasCollision;
 }
 
 bool Collision::WallCollision(Projectile* projectile, const std::vector<std::vector<Point2f>>& world)

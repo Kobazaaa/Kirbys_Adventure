@@ -6,20 +6,21 @@
 const float Entity::m_GRAVITY{ -300.f };
 
 Entity::Entity(const std::string& textureName, float width, float height, const Point2f& center)
-	: m_CurrentFrame	{ 0 }
-	, m_CurrentFrameRow	{ 0 }
-	, m_Width			{ width }
-	, m_Height			{ height }
-	, m_AccumSec		{ 0 }
-	, m_Position		{ center }
-	, m_Direction		{ Direction::Right }
-	, m_Velocity		{ 30.f, 0.f }
-	, m_HitInfo			{}
-	, m_SrcRectStart	{ 0, 0 }
-	, m_IsInvincible	{ false }
-	, m_pSpriteSheet	{ TextureManager::GetTexture(textureName) }
-	, m_pAbility		{ nullptr }
-	, m_AbilityType		{ AbilityType::None }
+	: m_CurrentFrame		{ 0 }
+	, m_CurrentFrameRow		{ 0 }
+	, m_Width				{ width }
+	, m_Height				{ height }
+	, m_AccumSec			{ 0 }
+	, m_Position			{ center }
+	, m_Direction			{ Direction::Right }
+	, m_Velocity			{ 30.f, 0.f }
+	, m_HitInfo				{}
+	, m_SrcRectStart		{ 0, 0 }
+	, m_IsInvincible		{ false }
+	, m_pSpriteSheet		{ TextureManager::GetTexture(textureName) }
+	, m_pAbility			{ nullptr }
+	, m_AbilityType			{ AbilityType::None }
+	, m_GravityMultiplier	{ 1.f }
 {
 }
 
@@ -156,7 +157,7 @@ Rectf Entity::GetSrcRect() const
 }
 void Entity::ApplyGravity(float elapsedSec)
 {
-	m_Velocity.y += m_GRAVITY * elapsedSec;
+	m_Velocity.y += (m_GRAVITY * m_GravityMultiplier) * elapsedSec;
 	if (m_Velocity.y <= m_GRAVITY) m_Velocity.y = m_GRAVITY;
 	m_Position.y += m_Velocity.y * elapsedSec;
 }
