@@ -9,7 +9,7 @@ public:
 	virtual ~Enemy() override = default;
 
 	// Behavioral
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos);
 	virtual void Draw() const;
 
 	// Accessors
@@ -25,6 +25,7 @@ public:
 
 protected:
 	bool m_DoesWorldCollision;
+	bool m_CanMove;
 
 	const float m_WALK_SPEED{30.f};
 

@@ -6,25 +6,25 @@ WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("WaddleDoo", center, doesWorldCollsion)
 	, m_ActionAccumSec{0}
 	, m_BlinkCounter{0}
-	, m_CanMove {true}
 {
 	m_pAbility = new Beam(false);
 	m_AbilityType = AbilityType::Beam;
 }
 
-void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
 {
-	if (!this->IsEliminated())
-	{
-		if (m_CanMove) Enemy::Update(elapsedSec, world);
+	Enemy::Update(elapsedSec, world, kirbyPos);
 
+	if (!IsEliminated())
+	{
 		UpdateAnimation();
-		
+
 		m_ActionAccumSec += elapsedSec;
 		if (m_ActionAccumSec >= 2.3f)
 		{
 			if (utils::GetRandomBool() and m_CanMove)
 			{
+				m_Position.y += 1;
 				m_Velocity.y = 150;
 				m_ActionAccumSec = 0;
 			}

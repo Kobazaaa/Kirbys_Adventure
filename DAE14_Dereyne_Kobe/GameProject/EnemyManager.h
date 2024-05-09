@@ -19,7 +19,7 @@ public:
 
 	// Behavioral
 	void Draw(bool debugMode = false) const;
-	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
+	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos);
 
 	void Add(const std::string& filePath, Point2f center);
 	void Add(Enemy* enemyPtr);

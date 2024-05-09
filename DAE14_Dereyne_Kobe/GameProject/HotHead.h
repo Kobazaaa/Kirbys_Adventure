@@ -9,12 +9,18 @@ public:
 	virtual ~HotHead() override = default;
 
 	// Behavioral
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos) override;
 	virtual void Draw() const override;
 
 private:
+	//Animation
+	void UpdateAnimation();
+
+	// Variables
 	Projectile m_FireShot;
-	float m_AbilityActivationTimer;
+	float m_ActionAccumSec;
+	int m_BlinkCounter;
+	bool m_UsedFireShot;
 
 	float m_AbilityDurationCounter;
 	const float m_ABILITY_DURATION{2.5f};

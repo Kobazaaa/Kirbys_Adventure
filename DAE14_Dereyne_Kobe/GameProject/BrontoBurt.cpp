@@ -9,13 +9,11 @@ BrontoBurt::BrontoBurt(const Point2f center, Tactic tactic, bool doesWorldCollsi
 {
 }
 
-void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
 {
-	if (!this->IsEliminated())
+	Enemy::Update(elapsedSec, world, kirbyPos);
+	if (!IsEliminated())
 	{
-		Enemy::Update(elapsedSec, world);
-
-
 		m_SineTime += elapsedSec;
 		if (m_Tactic == Tactic::AscendingWave)
 		{
@@ -35,6 +33,7 @@ void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>
 
 		UpdateAnimation();
 	}
+	
 }
 
 void BrontoBurt::AscendingWave()

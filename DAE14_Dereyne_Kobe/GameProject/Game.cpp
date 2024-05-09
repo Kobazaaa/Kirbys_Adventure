@@ -81,7 +81,7 @@ void Game::Update( float elapsedSec )
 	}
 	
 	m_pKirby->Update(elapsedSec, m_World);
-	m_pEnemyMngr->Update(elapsedSec, m_World);
+	m_pEnemyMngr->Update(elapsedSec, m_World, m_pKirby->GetPosition());
 	m_pHUD->Update(elapsedSec);
 	m_pCamera->Update(elapsedSec);
 }
@@ -186,7 +186,7 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 	
 		if (e.button == SDL_BUTTON_RIGHT)
 		{
-			m_pEnemyMngr->Add(new WaddleDoo(clickPos));
+			m_pEnemyMngr->Add(new Sparky(clickPos));
 			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 		}
 		if (e.button == SDL_BUTTON_LEFT)
@@ -196,10 +196,12 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 		//if (e.button == SDL_BUTTON_MIDDLE)
 		//{
 		//	m_pEnemyMngr->Add(new BrontoBurt(clickPos));
+		//	clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 		//}	
 		if (e.button == SDL_BUTTON_MIDDLE)
 		{
-			m_pEnemyMngr->Add(new BrontoBurt(clickPos, static_cast<BrontoBurt::Tactic>(rand() % 4), true));
+			m_pEnemyMngr->Add(new HotHead(clickPos, true));
+			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 		}
 	}
 }

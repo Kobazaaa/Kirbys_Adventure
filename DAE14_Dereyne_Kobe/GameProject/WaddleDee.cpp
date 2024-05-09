@@ -6,11 +6,12 @@ WaddleDee::WaddleDee(const Point2f& center, bool doesWorldCollsion)
 {
 }
 
-void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
 {
-	if (!this->IsEliminated())
+	Enemy::Update(elapsedSec, world, kirbyPos);
+
+	if (!IsEliminated())
 	{
-		Enemy::Update(elapsedSec, world);
 		UpdateAnimation();
 	}
 }

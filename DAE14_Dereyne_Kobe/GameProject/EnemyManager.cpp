@@ -56,11 +56,11 @@ void EnemyManager::Draw(bool debugMode) const
 	}
 }
 
-void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
 {
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
-		enemyPtr->Update(elapsedSec, world);
+		enemyPtr->Update(elapsedSec, world, kirbyPos);
 	}
 	ApplyPlaySpace();
 }
@@ -226,10 +226,13 @@ void EnemyManager::ApplyPlaySpace()
 		}
 
 		// If the Enemy has been reset, revive it if it's in Camera View
-		if (utils::IsRectInRect(enemyPtr->GetSpawnRect(), m_pCamera->GetCameraView()))
+		if (utils::IsRectInRect(enemyPtr->GetSpawnRect(), m_pCamera->GetCameraView()) and enemyPtr->IsEliminated())
 		{
-			if (enemyPtr->GetPosition().x == enemyPtr->GetSpawnPoint().x and
-				enemyPtr->GetPosition().y == enemyPtr->GetSpawnPoint().y)
+			float test1{abs(enemyPtr->GetPosition().x - enemyPtr->GetSpawnPoint().x)};
+			float test2{abs(enemyPtr->GetPosition().y - enemyPtr->GetSpawnPoint().y)};
+
+			if (abs(enemyPtr->GetPosition().x - enemyPtr->GetSpawnPoint().x) <= 0.001f  and
+				abs(enemyPtr->GetPosition().y - enemyPtr->GetSpawnPoint().y) <= 0.001f )
 			{
 				enemyPtr->IsEliminated(false);
 				enemyPtr->IsActivated(true);

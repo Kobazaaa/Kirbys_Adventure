@@ -74,11 +74,32 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 			}
 		}
 		// Otherwise, use the left or right ray for terrain collision checking/handling
-		else if (world[idx].size() > 2 or entity->GetVelocity().y < 0.f)
+		else if (world[idx].size() > 2)
 		{
 			if ((utils::Raycast(world[idx], bottomRight, topRight, hitInfo)
 				or utils::Raycast(world[idx], bottomLeft, topRight, hitInfo)
 				or utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))) hasCollision = true;
+		}
+		else if (entity->GetVelocity().y < 0.f)
+		{
+			if ((utils::Raycast(world[idx], bottomRight, topRight, hitInfo)
+				or utils::Raycast(world[idx], bottomLeft, topRight, hitInfo)
+				or utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo)))
+			{
+				if (hitInfo.lambda <= 0.3f)
+				{
+					Vector2f newVelocity{ entity->GetVelocity().x, 0 };
+					entity->SetVelocity(newVelocity);
+
+					Point2f newPosition
+					{
+						entity->GetPosition().x,
+						hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (entity->GetHitBox().height / 2)
+					};
+					entity->SetPosition(newPosition);
+					return true;
+				}
+			}
 		}
 	}
 

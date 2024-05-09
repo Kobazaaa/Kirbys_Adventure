@@ -36,11 +36,8 @@ void Projectile::Update(float elapsedSec, const std::vector<std::vector<Point2f>
 		// RESET
 		if (m_AccumSec >= m_TravelTime)
 		{
-			if (m_AccumSec >= m_TravelTime + 0.3f)
-			{
-				m_IsActive = false;
-				m_AccumSec = 0;
-			}
+			m_IsActive = false;
+			m_AccumSec = 0;
 		}
 
 		// COLLSION

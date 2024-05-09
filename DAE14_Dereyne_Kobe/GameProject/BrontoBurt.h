@@ -13,7 +13,7 @@ public:
 	virtual ~BrontoBurt() override = default;
 
 	// Behavioral
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos) override;
 
 	void Wave();
 	void AscendingWave();

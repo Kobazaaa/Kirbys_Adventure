@@ -8,28 +8,32 @@ Enemy::Enemy(const std::string& textureName, const Point2f& center, bool doesWor
 	, m_IsEliminated{true}
 	, m_SpawnPoint{center}
 	, m_DoesWorldCollision{ doesWorldCollsion }
+	, m_CanMove{true}
 {
 	m_Direction = Direction::Left;
 }
 
-void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
 {
 	if (!m_IsEliminated and m_IsActivated)
 	{
 		Entity::Update(elapsedSec, world);
-		if ((m_pAbility != nullptr and !m_pAbility->IsActive()) or m_pAbility == nullptr)
+		if (m_CanMove and ((m_pAbility != nullptr and !m_pAbility->IsActive()) or m_pAbility == nullptr))
 		{
 			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
 		}
-	}
 
-	if (m_DoesWorldCollision)
+		if (m_DoesWorldCollision)
+		{
+			//m_Velocity.x = m_WALK_SPEED;
+			Collision::FloorCollision(this, world);
+			if (Collision::WallCollision(this, world)) InverseDirection();
+		}
+	}
+	else if (m_IsEliminated)
 	{
-		m_Velocity.x = m_WALK_SPEED;
-		Collision::FloorCollision(this, world);
-		if (Collision::WallCollision(this, world)) InverseDirection();
+		m_Direction = m_Position.x <= kirbyPos.x ? Direction::Right : Direction::Left;
 	}
-
 }
 
 void Enemy::Draw() const

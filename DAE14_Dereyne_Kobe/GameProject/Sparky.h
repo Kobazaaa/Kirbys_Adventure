@@ -9,11 +9,20 @@ public:
 	virtual ~Sparky() override = default;
 
 	// Behavioral
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos) override;
 
 private:
-	float m_AbilityActivationTimer;
+	//Animation
+	void UpdateAnimation();
+
+	// Variables
+	float m_ActionAccumSec;
+	int m_BlinkCounter;
+	bool m_AboutToJump;
 
 	float m_AbilityDurationCounter;
 	const float m_ABILITY_DURATION{ 2.5f };
+
+	const float m_JUMP_CD{ 0.5f };
+	std::vector<Vector2f> m_vVelocities{4};
 };

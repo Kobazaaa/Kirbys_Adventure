@@ -2,7 +2,7 @@
 #include "StarProjectile.h"
 
 StarProjectile::StarProjectile(bool isFriendly)
-	: Projectile("StarProjectile", Vector2f(200.f, 0.f), 1.f, isFriendly)
+	: Projectile("StarProjectile", Vector2f(200.f, 0.f), 1.2f, isFriendly)
 	, m_Type{ StarProjectile::Type::Single }
 {
 	m_CurrentFrameRow = 0;

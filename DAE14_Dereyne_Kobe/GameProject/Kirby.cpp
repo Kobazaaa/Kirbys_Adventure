@@ -213,6 +213,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			}
 			else
 			{
+				m_Position.y += 1;
 				m_Velocity.y = m_JUMP_SPEED / 2;
 				bounced = true;
 			}
