@@ -22,6 +22,7 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 	, m_InvincibleAccumSec{0}
 	, m_AbilityActivationAccumSec{0}
 {
+
 }
 
 std::string Kirby::EnumToString(Kirby::State state) const
@@ -165,7 +166,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			SWALLOW			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if (m_InhaledEnemy and m_CurrentState == State::None and KeyPress(SDL_SCANCODE_DOWN))
+	if (m_InhaledEnemy and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN))
 	{
 		delete m_pAbility;
 
@@ -300,17 +301,46 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~	DIRECTIONAL MOVEMENT	~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if (m_CurrentState == State::None or m_CurrentState == State::Walk)
+		{
+			if (KeyPress(SDL_SCANCODE_RIGHT) and m_Velocity.x >= 5.f)
+			{
+				if (m_Direction == Direction::Left)	m_IsTurning = true;
+				else m_IsTurning = false;
+				if (m_Direction == Direction::Right and !m_IsTurning) m_IsRunning = true;
+				else m_IsRunning = false;
+			}
+			if (KeyPress(SDL_SCANCODE_LEFT) and m_Velocity.x >= 5.f)
+			{
+				if (m_Direction == Direction::Right) m_IsTurning = true;
+				else m_IsTurning = false;
+				if (m_Direction == Direction::Left and !m_IsTurning) m_IsRunning = true;
+				else m_IsRunning = false;
+			}
+		}
+		else m_IsRunning = false;
+
 		if ((KeyDown(SDL_SCANCODE_RIGHT) or KeyDown(SDL_SCANCODE_LEFT)) and CanMoveWithCurrentState())
 		{
 			if (m_CurrentState != State::Falling)
 			{
-				m_Velocity.x += m_WALK_SPEED * (elapsedSec * 5);
-				if (m_Velocity.x >= m_WALK_SPEED) m_Velocity.x = m_WALK_SPEED;
+				if (!m_IsRunning)
+				{
+					m_Velocity.x += m_WALK_SPEED * (elapsedSec * 5);
+					if (m_Velocity.x >= m_WALK_SPEED) m_Velocity.x = m_WALK_SPEED;
+				}
+				else
+				{
+					m_Velocity.x = m_RUN_SPEED;
+				}
 				m_Direction = KeyDown(SDL_SCANCODE_RIGHT) ? Direction::Right : Direction::Left;
 			}
 		}
 		else
 		{
+			//m_IsTurning = false;
+			m_IsRunning = false;
+
 			const float FRICTION{ -250.f };
 			m_Velocity.x += elapsedSec * FRICTION;
 			if (m_Velocity.x <= 0.f)
@@ -321,7 +351,6 @@ void Kirby::MovementUpdate(float elapsedSec)
 
 		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
 		if (m_Velocity.x >= 5.f and m_CurrentState == State::None) m_CurrentState = State::Walk;
-
 
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -533,12 +562,21 @@ void Kirby::AnimateIdle()
 }
 void Kirby::AnimateWalk()
 {
+	float delayMultiplier{};
+	if (m_IsRunning) delayMultiplier = 0.75f;
+	else delayMultiplier = 1.f;
+
 	//if (!m_InhaledEnemy)
 	//{
-		if (m_AccumSec >= m_WALKING_FRAME_DELAY)
+		if (m_AccumSec >= m_WALKING_FRAME_DELAY * delayMultiplier)
 		{
 			m_AccumSec = 0;
 			++m_CurrentFrame %= m_NR_WALK_FRAMES;
+			if (m_IsTurning and !m_InhaledEnemy)
+			{
+				m_IsTurning = false;
+				m_CurrentFrame = 4;
+			}
 		}
 	//}
 	//else

@@ -114,8 +114,8 @@ private:
 
 	const float		m_JUMP_SPEED	{ 20.f - m_GRAVITY / 2.f};
 	const float		m_WALK_SPEED	{ 60.f };
-	const float		m_RUN_SPEED		{ 2 * m_WALK_SPEED };
-	const float		m_SLIDE_SPEED	{ m_RUN_SPEED };
+	const float		m_RUN_SPEED		{ 1.5f * m_WALK_SPEED };
+	const float		m_SLIDE_SPEED	{ 2 * m_WALK_SPEED };
 	const float		m_FLIGHT_SPEED	{ 50.f };
 	
 	int			m_Health;
@@ -134,6 +134,8 @@ private:
 	Card m_Card;
 
 	bool m_IsSliding{false};
+	bool m_IsRunning{false};
+	bool m_IsTurning{false};
 
 	Level* const m_pLevel;
 };
