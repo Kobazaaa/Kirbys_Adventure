@@ -6,21 +6,19 @@
 const float Entity::m_GRAVITY{ -300.f };
 
 Entity::Entity(const std::string& textureName, float width, float height, const Point2f& center)
-	: m_CurrentFrame		{ 0 }
-	, m_CurrentFrameRow		{ 0 }
-	, m_Width				{ width }
+	: m_Width				{ width }
 	, m_Height				{ height }
 	, m_AccumSec			{ 0 }
 	, m_Position			{ center }
 	, m_Direction			{ Direction::Right }
 	, m_Velocity			{ 30.f, 0.f }
 	, m_HitInfo				{}
-	, m_SrcRectStart		{ 0, 0 }
 	, m_IsInvincible		{ false }
-	, m_pSpriteSheet		{ TextureManager::GetTexture(textureName) }
 	, m_pAbility			{ nullptr }
 	, m_AbilityType			{ AbilityType::None }
 	, m_GravityMultiplier	{ 1.f }
+	, m_pAnimationManager	{ m_pAnimationManager = new AnimationManager(textureName)}
+	, m_CurrentAnimation	{}
 {
 }
 
@@ -28,12 +26,18 @@ Entity::~Entity()
 {
 	delete m_pAbility;
 	m_pAbility = nullptr;
+
+	delete m_pAnimationManager;
+	m_pAnimationManager = nullptr;
 }
 
 void Entity::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	m_AccumSec += elapsedSec;
 	ApplyGravity(elapsedSec);
+
+	// TODO remove this check, was only for while making the animations for ever entity
+	if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 }
 
 void Entity::Draw(bool flipSprite) const
@@ -51,7 +55,8 @@ void Entity::Draw(bool flipSprite) const
 			glRotatef(-180, 0, 1, 0);
 			glTranslatef(-m_Position.x, 0, 0);
 		}
-		m_pSpriteSheet->Draw(GetDstRect(), GetSrcRect());
+		// TODO remove this check, was only for while making the animations for ever entity
+		if(m_pAnimationManager != nullptr) m_pAnimationManager->Draw(m_Position, m_CurrentAnimation);
 	}
 	glPopMatrix();
 }
@@ -85,28 +90,6 @@ Vector2f Entity::GetVelocity() const
 	return m_Velocity;
 }
 
-Rectf Entity::GetDstRect() const
-{
-	const Rectf dstRect
-	{
-		GetDstCenter().x - m_Width  / 2,
-		GetDstCenter().y - m_Height / 2,
-		m_Width,
-		m_Height,
-	};
-	return dstRect;
-}
-Point2f Entity::GetDstCenter() const
-{
-	Point2f dstCenter
-	{
-		GetHitBox().left + GetHitBox().width / 2,
-		GetHitBox().bottom + m_Height / 2
-	};
-
-	return dstCenter;
-}
-
 float Entity::GetWidth() const
 {
 	return m_Width;
@@ -118,8 +101,8 @@ float Entity::GetHeight() const
 Rectf Entity::GetHitBox() const
 {
 	Rectf hitBox{};
-	hitBox.width	= 14.f;
-	hitBox.height	= 14.f;
+	hitBox.width	= m_Width;
+	hitBox.height	= m_Height;
 	hitBox.left		= m_Position.x - hitBox.width / 2;
 	hitBox.bottom	= m_Position.y - hitBox.height / 2;
 
@@ -144,17 +127,6 @@ Entity::AbilityType Entity::GetAbilityType() const
 #pragma endregion
 
 #pragma region Update
-Rectf Entity::GetSrcRect() const
-{
-	Rectf srcRect
-	{
-		m_SrcRectStart.x + m_CurrentFrame * m_Width,
-		m_SrcRectStart.y - m_CurrentFrameRow * m_Height,
-		m_Width, m_Height
-	};
-	
-	return srcRect;
-}
 void Entity::ApplyGravity(float elapsedSec)
 {
 	m_Velocity.y += (m_GRAVITY * m_GravityMultiplier) * elapsedSec;

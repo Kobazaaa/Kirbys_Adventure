@@ -20,8 +20,9 @@ Game::~Game( )
 void Game::Initialize( )
 {
 	// Sounds
-	SoundManager::LoadSoundEffect("effect1", "Sound/SoundEffects/0C.wav");
-	SoundManager::LoadSoundEffect("effect2", "Sound/SoundEffects/0C.wav");
+	SoundManager::LoadSoundEffect("Turn", "Sound/SoundEffects/23.wav");
+	SoundManager::LoadSoundEffect("Jump", "Sound/SoundEffects/Jump.wav");
+	SoundManager::LoadSoundEffect("Inhaling", "Sound/SoundEffects/Inhaling.wav");
 
 	SoundManager::LoadSoundStream("stream1", "Sound/Music/Vegetable_Valley_Hub.mp3");
 	SoundManager::LoadSoundStream("stream2", "Sound/Music/Vegetable_Valley_Hub.mp3");
@@ -71,12 +72,10 @@ void Game::Update( float elapsedSec )
 	m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
 	if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
 	{
-		m_pKirby->HitEnemy();
 		m_pCamera->Shake(0.1f, 0.1f);
 	}
 	if (m_pEnemyMngr->EnemyKirbyProjectileCollision(m_pKirby))
 	{
-		m_pKirby->HitEnemy();
 		m_pCamera->Shake(0.1f, 0.1f);
 	}
 	
@@ -231,6 +230,7 @@ void Game::ClearBackground( ) const
 
 void Game::LoadTextures()
 {
+	TextureManager::LoadTexture("Kirby2",				"Kirby/Kirby2.png");
 	TextureManager::LoadTexture("Puff",					"Abilities/Puff.png");
 	TextureManager::LoadTexture("StarProjectile",		"Abilities/Star.png");
 	TextureManager::LoadTexture("Beam",					"Abilities/Beam.png");

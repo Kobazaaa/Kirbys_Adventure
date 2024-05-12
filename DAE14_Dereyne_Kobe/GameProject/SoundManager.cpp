@@ -77,6 +77,17 @@ void SoundManager::PlayEffect(const std::string& name, int loops)
 	}
 }
 
+void SoundManager::StopEffect(const std::string& name)
+{
+//for (int index{}; index < m_vSoundEffects.size(); ++index)
+//{
+//	if (m_vSoundEffects[index]->m_Name == name)
+//	{
+//		m_vSoundEffects[index]->m_pSoundEffect->Stop();
+//	}
+//}
+}
+
 void SoundManager::PauseAll()
 {
 	SoundEffect::PauseAll();

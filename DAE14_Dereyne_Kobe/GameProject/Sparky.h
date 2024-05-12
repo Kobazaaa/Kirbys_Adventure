@@ -18,7 +18,7 @@ private:
 	// Variables
 	float m_ActionAccumSec;
 	int m_BlinkCounter;
-	bool m_AboutToJump;
+	bool m_CanJump;
 
 	float m_AbilityDurationCounter;
 	const float m_ABILITY_DURATION{ 2.5f };

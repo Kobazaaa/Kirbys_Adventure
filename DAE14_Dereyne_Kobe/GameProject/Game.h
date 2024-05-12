@@ -43,7 +43,7 @@ private:
 	void LoadTextures();
 
 	// VARIABLES
-	const bool m_DEBUG_MODE{false};
+	const bool m_DEBUG_MODE{true};
 	
 	Kirby* m_pKirby;
 	EnemyManager* m_pEnemyMngr;

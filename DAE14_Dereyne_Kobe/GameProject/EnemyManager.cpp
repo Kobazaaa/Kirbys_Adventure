@@ -97,7 +97,11 @@ bool EnemyManager::EnemyHitKirbyDetection(Kirby* pKirby)
 			{
 				Eliminate(enemyPtr);
 
-				if (enemyPtr->IsActivated()) return true;
+				if (enemyPtr->IsActivated())
+				{
+					pKirby->HitEnemy(enemyPtr->GetPosition());
+					return true;
+				}
 				else return false;
 			}
 		}
@@ -178,6 +182,7 @@ bool EnemyManager::EnemyKirbyProjectileCollision(Kirby* pKirby)
 				{
 					if (Collision::ProjectileCollision(pKirby, enemyProjPtr))
 					{
+						pKirby->HitEnemy(enemyProjPtr->GetPosition());
 						return true;
 					}
 				}

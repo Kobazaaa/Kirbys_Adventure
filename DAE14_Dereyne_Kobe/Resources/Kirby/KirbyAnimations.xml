@@ -1,0 +1,136 @@
+<Idle>
+	<Frame00>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="1.0"
+	</Frame00>
+	<Frame01>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame01>
+	<Frame02>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame02>
+	<Frame03>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame03>
+	<Frame04>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame04>
+	<Frame05>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame05>
+
+	loop="true"
+
+</Idle>
+<Walk>
+	<Frame00>
+		position="0,16"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame00>
+	<Frame01>
+		position="16,16"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame01>
+	<Frame02>
+		position="32,16"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame02>
+	<Frame03>
+		position="48,16"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame03>
+
+	loop="true"
+
+</Walk>
+<Jump>
+	<Frame00>
+        position="0,32"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame00>
+    
+    loop="false"
+    
+
+</Jump>
+<Flip>
+	<Frame00>
+        position="16,32"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame00>
+	<Frame01>
+        position="32,32"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame01>
+	<Frame02>
+        position="48,32"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame02>
+	<Frame02>
+        position="64,32"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame02>
+
+    loop="false"
+    
+
+</Flip>
+<Fall>
+	<Frame00>
+        position="16,32"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame00>
+    
+    loop="false"
+    
+
+</Fall>
+<Duck>
+	<Frame00>
+        position="0,48"
+        width="16"
+        height="16"
+        duration="0.1"
+    </Frame00>
+    
+    loop="false"
+
+
+</Duck>

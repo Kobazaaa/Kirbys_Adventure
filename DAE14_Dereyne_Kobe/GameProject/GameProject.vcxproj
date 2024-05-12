@@ -148,6 +148,8 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ability.cpp" />
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="Beam.cpp" />
     <ClCompile Include="BeamProjectile.cpp" />
     <ClCompile Include="BrontoBurt.cpp" />
@@ -178,6 +180,8 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="Beam.h" />
     <ClInclude Include="BeamProjectile.h" />
     <ClInclude Include="BrontoBurt.h" />

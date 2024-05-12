@@ -41,6 +41,9 @@ public:
 	static void PlayStream(const std::string& name, bool loop = false);
 	static void PlayEffect(const std::string& name, int loops = 0);
 
+	static void StopEffect(const std::string& name);
+
+
 	static void PauseAll();
 	static void ResumeAll();
 	static void StopAll();

@@ -34,7 +34,7 @@ public:
 	// Behavioral
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 	void Draw() const;
-	void HitEnemy();
+	void HitEnemy(const Point2f& enemyPos);
 	void InhaledEnemy(Enemy* enemy);
 	bool DoDoorChecks();
 

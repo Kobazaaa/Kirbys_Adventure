@@ -52,7 +52,7 @@ void BrontoBurt::UpdateAnimation()
 	if ((m_Velocity.y < -20.f) and m_AccumSec >= 0.065f)
 	{
 		m_AccumSec = 0;
-		++m_CurrentFrame %= 2;
+	//	++m_CurrentFrame %= 2;
 	}
 }
 #pragma endregion

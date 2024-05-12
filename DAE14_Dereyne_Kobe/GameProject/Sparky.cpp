@@ -7,12 +7,13 @@ Sparky::Sparky(const Point2f& center, bool doesWorldCollsion)
 	, m_ActionAccumSec{0}
 	, m_AbilityDurationCounter{0}
 	, m_BlinkCounter{0}
-	, m_AboutToJump{false}
+	, m_CanJump{true}
 {
 	m_Velocity = Vector2f(0.f, 0.f);
 	m_pAbility = new Spark(false);
 	m_AbilityType = AbilityType::Spark;
 
+	m_pAnimationManager->LoadFromFile("Enemies/Sparky.xml");
 
 	const Vector2f m_VELOCITY_BIG_STAT		{ 0.f, 110.f };
 	const Vector2f m_VELOCITY_SMALL_STAT	{ 0.f, m_VELOCITY_BIG_STAT.y / 2 };
@@ -29,37 +30,43 @@ void Sparky::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 	Enemy::Update(elapsedSec, world, kirbyPos);
 	if (!IsEliminated())
 	{
-		UpdateAnimation();
-
 		float xDistanceToKirby{ abs(m_Position.x - kirbyPos.x) };
 		float yDistanceToKirby{ abs(m_Position.y - kirbyPos.y) };
 
 		if (Collision::FloorCollision(this, world))
 		{
+			// TODO fix animation
 			m_ActionAccumSec += elapsedSec;
 			m_Velocity.x = 0;
-			if (m_ActionAccumSec >= m_JUMP_CD - 0.15f and !m_pAbility->IsActive() and !m_AboutToJump)
-			{
-				m_AboutToJump = true;
-			}
-			
+
 			if (m_ActionAccumSec >= m_JUMP_CD and !m_pAbility->IsActive())
 			{
-				m_AboutToJump = false;
-				m_Direction = m_Position.x <= kirbyPos.x ? Direction::Right : Direction::Left;
-				m_ActionAccumSec = 0;
-				m_Velocity = m_vVelocities[rand() % m_vVelocities.size()];
-				m_Position.y += 1;
+				if (m_CanJump) m_CurrentAnimation = "Windup";
+				m_CanJump = false;
+				if (m_pAnimationManager->IsDone("WindUp"))
+				{
+					m_CanJump = true;
+					m_ActionAccumSec = 0;
+					m_Direction = m_Position.x <= kirbyPos.x ? Direction::Right : Direction::Left;
+					m_Velocity = m_vVelocities[rand() % m_vVelocities.size()];
+					m_Position.y += 1;
+				}
 			}
+			//else m_CurrentAnimation = "Idle";
+
 
 			if (m_CanMove and (xDistanceToKirby <= 40.f or (xDistanceToKirby <= 64.f and m_ActionAccumSec >= 3.f)) and yDistanceToKirby <= 64.f)
 			{
 				m_ActionAccumSec = 0;
 				m_pAbility->Activate(m_Position, m_Direction);
 				m_CanMove = false;
+				m_CurrentAnimation = "Ability";
 			}
 
 		}
+		else m_CurrentAnimation = "Jump";
+
+		//if (m_pAbility->IsActive()) m_CurrentAnimation = "Ability";
 
 		m_AbilityDurationCounter += elapsedSec;
 		if (m_AbilityDurationCounter >= m_ABILITY_DURATION)
@@ -78,18 +85,18 @@ void Sparky::UpdateAnimation()
 {
 	if (!m_pAbility->IsActive())
 	{
-		m_CurrentFrameRow = 0;
-		if (m_Velocity.y > 0.f) m_CurrentFrame = 0;
-		if (abs(m_Velocity.y) < 0.001f) m_CurrentFrame = 1;
-		if (m_AboutToJump) m_CurrentFrame = 2;
+		//m_CurrentFrameRow = 0;
+		//if (m_Velocity.y > 0.f) m_CurrentFrame = 0;
+		//if (abs(m_Velocity.y) < 0.001f) m_CurrentFrame = 1;
+		//if (m_CanJump) m_CurrentFrame = 2;
 	}
 	else
 	{
-		m_CurrentFrameRow = 1;
-		if (m_AccumSec > 0.05f)
-		{
-			m_AccumSec = 0;
-			m_CurrentFrame = (m_CurrentFrame + 1) % 2;
-		}
+	//	m_CurrentFrameRow = 1;
+		//if (m_AccumSec > 0.05f)
+		//{
+		//	m_AccumSec = 0;
+		//	m_CurrentFrame = (m_CurrentFrame + 1) % 2;
+		//}
 	}
 }

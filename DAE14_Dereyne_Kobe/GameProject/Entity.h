@@ -1,6 +1,8 @@
 #pragma once
 #include "utils.h"
 #include "Texture.h"
+#include "AnimationManager.h"
+#include "SoundManager.h"
 #include "Direction.h"
 #include "Collision.h"
 #include "Ability.h"
@@ -45,6 +47,9 @@ protected:
 	// Behavioral Functions
 	
 	// Protected Data Members
+	AnimationManager* m_pAnimationManager;
+	std::string m_CurrentAnimation;
+
 	Point2f			m_Position;
 	Vector2f		m_Velocity;
 	Direction		m_Direction;
@@ -52,8 +57,6 @@ protected:
 	Ability*		m_pAbility;
 	AbilityType		m_AbilityType;
 
-	int		m_CurrentFrame;
-	int		m_CurrentFrameRow;
 	float	m_AccumSec;
 
 	float	m_Width;
@@ -61,19 +64,10 @@ protected:
 
 	bool	m_IsInvincible;
 
-	Point2f  m_SrcRectStart;
-
 	static const float m_GRAVITY;
 	float m_GravityMultiplier;
 
 private:
 	void ApplyGravity(float elapsedSec);
-
-	Rectf	GetSrcRect()			const;
-	Rectf	GetDstRect()			const;
-	Point2f GetDstCenter()			const;
-
-	// Private Data Members
-	Texture*		m_pSpriteSheet;
 };
 
