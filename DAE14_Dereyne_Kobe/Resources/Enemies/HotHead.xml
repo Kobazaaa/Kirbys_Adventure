@@ -1,0 +1,63 @@
+<Walk>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+
+
+	loop="true"
+
+</Walk>
+<BlinkStart>
+	<Frame>
+		position="0,16"
+		width="16"
+		height="16"
+		duration="0.06"
+	</Frame>
+	<Frame>
+		position="16,16"
+		width="16"
+		height="16"
+		duration="0.06"
+	</Frame>
+
+	loop="true"
+
+</BlinkStart>
+<Blink>
+	<Frame>
+		position="0,32"
+		width="16"
+		height="16"
+		duration="0.06"
+	</Frame>
+	<Frame>
+		position="16,32"
+		width="16"
+		height="16"
+		duration="0.06"
+	</Frame>
+
+	loop="true"
+
+</Blink>
+<Ability>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+
+	loop="true"
+
+</Ability>

@@ -16,13 +16,12 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 	, m_pInhaledEnemy	{ nullptr }
 	, m_Score			{ 0 }
 	, m_pLevel			{ level }
-	, m_Puff			{ Puff()}
-	, m_StarProj		{ StarProjectile() }
+	, m_Puff			{ }
+	, m_StarProj		{ }
 	, m_Card			{ Card::Ability }
 	, m_InvincibleAccumSec{0}
 	, m_AbilityActivationAccumSec{0}
 {
-	m_pAnimationManager->LoadFromFile("Kirby/KirbyAnimations.xml");
 }
 
 std::string Kirby::EnumToString(Kirby::State state) const
@@ -132,7 +131,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		}
 		else if (m_AbilityType != AbilityType::None)
 		{
-			m_pAbility->Activate(m_Position, m_Direction);
+			if (!m_pAbility->IsActive()) m_pAbility->Activate(m_Position, m_Direction);
 		}
 		else if (CanInhaleWithCurrentState())
 		{
@@ -169,11 +168,6 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		m_CurrentState = State::None;
 	}
 
-	if (m_CurrentState != State::Inhaling)
-	{
-		SoundManager::StopAll();
-	}
-
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			SWALLOW			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -204,8 +198,12 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		m_IsSliding = false;
 		if (m_CurrentState == State::Walk and !m_InhaledEnemy)
 		{
-			//m_CurrentFrame = 9;
-			m_CurrentState = State::None;
+			m_CurrentAnimation = "Wall";
+			if (m_pAnimationManager->IsDone("Wall"))
+			{
+				//m_CurrentAnimation = "Walk";
+			}
+				m_CurrentState = State::None;
 		}
 	}
 	if (Collision::FloorCollision(this, world))
@@ -215,6 +213,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_CurrentState != State::Inhaling and
 			m_CurrentState != State::Falling and
 			m_CurrentState != State::Swallow and
+			m_CurrentState != State::EnterDoor and
 			(m_Velocity.x >= 0.f )) m_CurrentState = State::None;
 
 		if (m_CurrentState == State::Falling)
@@ -253,11 +252,13 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		{
 			m_CurrentState = State::None;
 			//m_CurrentFrameRow = static_cast<int>(State::Jump);
-			//if (!m_InhaledEnemy) m_CurrentFrame = 4;
+			if (!m_InhaledEnemy) m_CurrentAnimation = "EndFlip";
 			//else m_CurrentFrame = 2;
 		}
 
 	}
+
+	std::cout << m_CurrentAnimation << std::endl;
 }
 
 void Kirby::Draw() const
@@ -318,28 +319,34 @@ void Kirby::MovementUpdate(float elapsedSec)
 		{
 			if (KeyPress(SDL_SCANCODE_RIGHT) and m_Velocity.x >= 5.f)
 			{
-				if (m_Direction == Direction::Left)
+				if (m_Direction == Direction::Left and !m_InhaledEnemy)
 				{
 					m_IsTurning = true;
 					SoundManager::PlayEffect("Turn");
 				}
 				else m_IsTurning = false;
-				if (m_Direction == Direction::Right and !m_IsTurning) m_IsRunning = true;
+				if (m_Direction == Direction::Right and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
 				else m_IsRunning = false;
 			}
 			if (KeyPress(SDL_SCANCODE_LEFT) and m_Velocity.x >= 5.f)
 			{
-				if (m_Direction == Direction::Right)
+				if (m_Direction == Direction::Right and !m_InhaledEnemy)
 				{
 					m_IsTurning = true;
 					SoundManager::PlayEffect("Turn");
 				}
 				else m_IsTurning = false;
-				if (m_Direction == Direction::Left and !m_IsTurning) m_IsRunning = true;
+				if (m_Direction == Direction::Left and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
 				else m_IsRunning = false;
 			}
 		}
 		else if (m_CurrentState != State::Jump) m_IsRunning = false;
+
+		if (m_IsTurning)
+		{
+			m_CurrentAnimation = "Turn";
+			if (m_pAnimationManager->IsDone("Turn")) m_IsTurning = false;
+		}
 
 		if ((KeyDown(SDL_SCANCODE_RIGHT) or KeyDown(SDL_SCANCODE_LEFT)) and CanMoveWithCurrentState())
 		{
@@ -414,12 +421,16 @@ void Kirby::MovementUpdate(float elapsedSec)
 		if ((KeyPress(SDL_SCANCODE_UP) and CanFlyWithCurrentState()))
 		{
 			m_Position.y += 1;
-			if (m_CurrentState != State::Flight) m_CurrentAnimation = "FlightStart";
 		}
+
 		if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
 		{
-			m_CurrentState = State::Flight;
-			m_Velocity.y = m_FLIGHT_SPEED;
+			if (m_CurrentState != State::EnterDoor)
+			{
+				if (m_CurrentState != State::Flight) m_CurrentAnimation = "FlightStart";
+				m_CurrentState = State::Flight;
+				m_Velocity.y = m_FLIGHT_SPEED;
+			}
 		}
 		if (m_CurrentState == State::Flight) m_GravityMultiplier = 0.5f;
 		else m_GravityMultiplier = 1.f;
@@ -455,15 +466,58 @@ bool Kirby::DoDoorChecks()
 		{
 			if (KeyPress(SDL_SCANCODE_UP) and !door.isFinalDoor)
 			{
-
-				if (m_CurrentState != State::Flight and !m_InhaledEnemy and m_CurrentState != State::Exhaling)
+				m_CurrentState = State::EnterDoor;
+				m_Velocity.x = 0;
+				if (m_OldState != State::Flight and !m_InhaledEnemy)
 				{
-					if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
-					else m_pLevel->DecreaseSubLevel();
+					m_CurrentAnimation = "EnterDoor";
+				}
+				else
+				{
+					m_CurrentAnimation = "Exhaling";
+					if (m_InhaledEnemy)
+					{
+						if (!m_StarProj.IsActivated())
+						{
+							m_StarProj.Activate(m_Position, m_Direction);
+						}
+					}
+					else if (m_OldState == State::Flight)
+					{
+						if (!m_Puff.IsActivated())
+						{
+							m_Puff.Activate(m_Position, m_Direction);
+						}
+					}
+				}
+			}
+
+			if (m_CurrentState == State::EnterDoor)
+			{
+				if(m_pAnimationManager->IsDone("Exhaling"))
+				{
+						m_CurrentAnimation = "EnterDoor";
+				}
+				if (m_pAnimationManager->IsDone("EnterDoor"))
+				{
+					m_CurrentState = State::None;
+					if (door.outcomePos.y > m_Position.y)
+					{
+						m_pLevel->IncreaseSubLevel();
+						m_Direction = Direction::Right;
+					}
+					else
+					{
+						m_Direction = Direction::Left;
+						m_pLevel->DecreaseSubLevel();
+					}
 					m_Position = door.outcomePos;
+
+					m_InhaledEnemy = false;
+					m_pInhaledEnemy = nullptr;
+
 					return true;
 				}
-				m_CurrentState = State::Exhaling;
 			}
 		}
 	}
@@ -552,24 +606,20 @@ void Kirby::UpdateSprite()
 		m_AccumSec = 0;
 	}
 
-
 	// Play the correct animation according to Kirby's state
 	switch (m_CurrentState)
 	{
 	case Kirby::State::None:
 		if (!m_InhaledEnemy) m_CurrentAnimation = "Idle";
 		else m_CurrentAnimation = "InhaledIdle";
-		//AnimateIdle();
 		break;
 	case Kirby::State::Walk:
 		if (!m_InhaledEnemy) m_CurrentAnimation = "Walk";
 		else m_CurrentAnimation = "InhaledWalk";
-		//AnimateWalk();
 		break;
 	case Kirby::State::Slide:
 		if (m_Velocity.x > m_WALK_SPEED) m_CurrentAnimation = "Slide";
 		else m_CurrentAnimation = "Duck";
-		//AnimateSlide();
 		break;
 	case Kirby::State::Jump:
 		if (!m_InhaledEnemy)
@@ -578,14 +628,11 @@ void Kirby::UpdateSprite()
 			else m_CurrentAnimation = "Flip";
 		}
 		else m_CurrentAnimation = "InhaledJump";
-		//AnimateJump();
 		break;
 	case Kirby::State::Falling:
 		m_CurrentAnimation = "Falling";
-		//AnimateFall();
 		break;
 	case Kirby::State::Flight:
-		//m_CurrentAnimation = "FlightStart";
 		if (m_pAnimationManager->IsDone("FlightStart"))
 		{
 			m_CurrentAnimation = "Flight";
@@ -594,11 +641,9 @@ void Kirby::UpdateSprite()
 				m_CurrentAnimation = "FlightSlow";
 			}
 		}
-		//AnimateFlight();
 		break;
 	case Kirby::State::Inhaling:
 		m_CurrentAnimation = "Inhaling";
-		//AnimateInhaling();
 		break;
 	case Kirby::State::Exhaling:
 		if (m_pAnimationManager->IsDone("Exhaling"))
@@ -607,26 +652,16 @@ void Kirby::UpdateSprite()
 			m_pInhaledEnemy = nullptr;
 			m_InhaledEnemy = false;
 		}
-		//if (m_pAnimationManager->IsDone("Exhaling"))
-		//{
-		//	m_pInhaledEnemy = nullptr;
-		//	m_InhaledEnemy = false;
-		//	m_CurrentState = State::None;
-		//}
-		//AnimateExhaling();
 		break;
 	case Kirby::State::Swallow:
-		// TODO: fix the fact that animations on STOP need to stop the animations/state as well
 		if (m_pAnimationManager->IsDone("Swallow"))
 		{
 			m_CurrentState = State::None;
 			m_pInhaledEnemy = nullptr;
 			m_InhaledEnemy = false;
 		}
-		//AnimateSwallow();
 		break;
 	case Kirby::State::Ability:
-		//AnimateAbility();
 		if(m_AbilityType == AbilityType::Beam) m_CurrentAnimation = "Beam";
 		if(m_AbilityType == AbilityType::Fire) m_CurrentAnimation = "Fire";
 		if(m_AbilityType == AbilityType::Spark) m_CurrentAnimation = "Spark";
@@ -634,12 +669,6 @@ void Kirby::UpdateSprite()
 	default:
 		break;
 	}
-	//if (m_Velocity.y < -5.f) m_CurrentAnimation = "Falling";
-
-}
-void Kirby::AnimateIdle()
-{
-	//m_CurrentFrame = 0;
 }
 void Kirby::AnimateWalk()
 {
@@ -649,7 +678,7 @@ void Kirby::AnimateWalk()
 
 	//if (!m_InhaledEnemy)
 	//{
-		if (m_AccumSec >= m_WALKING_FRAME_DELAY * delayMultiplier)
+		if (m_AccumSec >= /*m_WALKING_FRAME_DELAY **/ delayMultiplier)
 		{
 			m_AccumSec = 0;
 			//++m_CurrentFrame %= m_NR_WALK_FRAMES;
@@ -669,120 +698,6 @@ void Kirby::AnimateWalk()
 	//	}
 	//}
 }
-void Kirby::AnimateJump()
-{
-	//f (!m_InhaledEnemy)
-	//
-	//	if (m_Velocity.y >= 0.f) m_CurrentAnimation = "Jump";
-	//	else m_CurrentAnimation = "Flip";
-	//
-	//	{
-	//		if (m_CurrentFrame < m_NR_FLIP_FRAMES and m_AccumSec >= m_FLIP_FRAME_DELAY)
-	//		{
-	//			m_AccumSec = 0.f;
-	//		//	m_CurrentFrame = (m_CurrentFrame % m_NR_FLIP_FRAMES) + 1;
-	//		}
-	//		//if (m_CurrentFrame >= m_NR_FLIP_FRAMES and m_AccumSec >= m_FALLING_DELAY)
-	//		//{
-	//		//	m_AccumSec = 0.f;
-	//		//	m_CurrentState = State::Falling;
-	//		//}
-	//	}
-	//
-	//lse
-	//
-	//	if (m_AccumSec >= m_JUMP_FRAME_DELAY_FULL)
-	//	{
-	//		m_AccumSec = 0;
-	//	//	++m_CurrentFrame;
-	//	//	if (m_CurrentFrame > m_NR_JUMP_FRAMES_FULL) m_CurrentFrame = m_NR_JUMP_FRAMES_FULL;
-	//	}
-	//
-}
-void Kirby::AnimateSlide()
-{
-	//if (m_Velocity.x > m_WALK_SPEED) m_CurrentAnimation = "Duck";
-	//else m_CurrentAnimation = "Slide";
-}
-void Kirby::AnimateFall()
-{
-	//m_CurrentFrame = 0;
-}
-void Kirby::AnimateFlight()
-{
-	if (m_Velocity.y <= 0.f)
-	{
-		if (m_AccumSec >= 3 * m_FLIGHT_FRAME_DELAY)
-		{
-			m_AccumSec = 0;
-	//		m_CurrentFrame = (m_CurrentFrame + 1) % 2 + 4;
-		}
-	}
-	else if (m_AccumSec >= m_FLIGHT_FRAME_DELAY)
-	{
-		m_AccumSec = 0;
-	//	++m_CurrentFrame %= m_NR_FLIGHT_FRAMES;
-		//if (m_Velocity.y > 0.f and m_CurrentFrame > 5) m_CurrentFrame = 4;
-
-	}
-}
-void Kirby::AnimateInhaling()
-{
-	if (m_AccumSec > m_INHALE_FRAME_DELAY)
-	{
-		//if (m_CurrentFrame == 1) m_CurrentFrame = 1;
-		//else
-		{
-			m_AccumSec = 0;
-			//++m_CurrentFrame;
-		}
-	}
-}
-void Kirby::AnimateExhaling()
-{
-	if (m_AccumSec >= m_EXHALE_FRAME_DELAY)
-	{
-		m_AccumSec -= 0.1f;
-		//++m_CurrentFrame;
-		//if (m_CurrentFrame >= 4)
-		{
-			m_InhaledEnemy = false;
-			m_pInhaledEnemy = nullptr;
-			m_CurrentState = State::None;
-		}
-	}
-}
-void Kirby::AnimateSwallow()
-{
-	if (m_AccumSec >= m_SWALLOW_FRAME_DELAY)
-	{
-		m_AccumSec = 0;
-		//++m_CurrentFrame;
-
-		//if (m_CurrentFrame >= m_NR_SWALLOW_FRAMES) m_CurrentState = State::None;
-	}
-}
-void Kirby::AnimateAbility()
-{
-	if (m_AccumSec >= 0.1)
-	{
-		if (m_AbilityType == AbilityType::Beam)
-		{
-			m_AccumSec = 0;
-		//	m_CurrentFrame = (m_CurrentFrame + 1) % 2;
-		}
-		if (m_AbilityType == AbilityType::Spark)
-		{
-			m_AccumSec = 0;
-			//m_CurrentFrame = ((m_CurrentFrame + 1) % 3) + 2;
-		}
-		if (m_AbilityType == AbilityType::Fire)
-		{
-			m_AccumSec = 0;
-			//m_CurrentFrame = ((m_CurrentFrame + 1) % 2) + 5;
-		}
-	}
-}
 #pragma endregion
 
 #pragma region CanXxWithCurrentState
@@ -790,6 +705,7 @@ bool Kirby::CanMoveWithCurrentState() const
 {
 	if (m_CurrentState == State::Slide or
 		m_CurrentState == State::Swallow or
+		m_CurrentState == State::EnterDoor or
 		m_CurrentState == State::Inhaling) return false;
 	else return true;
 }
@@ -798,6 +714,7 @@ bool Kirby::CanJumpWithCurrentState() const
 	if (m_CurrentState == State::Slide		or
 		m_CurrentState == State::Inhaling	or
 		m_CurrentState == State::Falling	or
+		m_CurrentState == State::EnterDoor	or
 		m_CurrentState == State::Jump		or
 		m_CurrentState == State::Flight		or
 		m_CurrentState == State::Exhaling	or
@@ -817,6 +734,7 @@ bool Kirby::CanFlyWithCurrentState() const
 	if (m_CurrentState == State::Slide or
 		m_CurrentState == State::Exhaling or
 		m_CurrentState == State::Swallow or
+		m_CurrentState == State::EnterDoor or
 		m_InhaledEnemy) return false;
 	else return true;
 }
@@ -826,6 +744,7 @@ bool Kirby::CanInhaleWithCurrentState() const
 		m_CurrentState == State::Flight or
 		m_CurrentState == State::Exhaling or
 		m_CurrentState == State::Swallow or
+		m_CurrentState == State::EnterDoor or
 		m_InhaledEnemy) return false;
 	else return true;
 }

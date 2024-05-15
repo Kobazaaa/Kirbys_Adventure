@@ -4,10 +4,8 @@
 
 HotHead::HotHead(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("HotHead", center, doesWorldCollsion)
-	, m_FireShot{ Projectile("Fire", Vector2f(60, 0), 2.f, false)}
-	, m_ActionAccumSec{0}
+	, m_FireShot{ 2.f, false }
 	, m_AbilityDurationCounter{0}
-	, m_BlinkCounter{0}
 	, m_UsedFireShot{false}
 {
 	m_pAbility = new Fire(false);
@@ -20,18 +18,14 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 	
 	if (!IsEliminated())
 	{
-		// TODO make animation w/ file
-		UpdateAnimation();
-
-		m_ActionAccumSec += elapsedSec;
-		if (m_ActionAccumSec >= 2.f)
+		if (m_AccumSec >= 2.f)
 		{
 			if (m_CanMove) m_Direction = m_Position.x <= kirbyPos.x ? Direction::Right : Direction::Left;
 			m_CanMove = false;
-			//m_CurrentFrameRow = 1;
-			if (m_ActionAccumSec >= 2.f + 0.3f)
+			m_CurrentAnimation = "BlinkStart";
+			if (m_AccumSec >= 2.f + 0.3f)
 			{
-				//m_CurrentFrameRow = 2;
+				m_CurrentAnimation = "Blink";
 				if (utils::GetRandomBool() and !m_pAbility->IsActive() and !m_FireShot.IsActivated())
 				{
 					const Vector2f newVelocity
@@ -44,41 +38,27 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 
 					m_FireShot.Activate(m_Position, m_Direction);
 					m_UsedFireShot = true;
-					m_ActionAccumSec = 0;
+					m_AccumSec = 0;
 				}
 				else if (!m_pAbility->IsActive() and !m_FireShot.IsActivated())
 				{
 					m_pAbility->Activate(m_Position, m_Direction);
 				}
 
-				if (m_ActionAccumSec >= 2.f + 0.3f + 0.04f)
-				{
-					m_ActionAccumSec -= 0.04f;
-					++m_BlinkCounter;
-					//m_CurrentFrame = m_BlinkCounter % 2;
-				}
-				if(m_pAbility->IsActive()) m_Position.x += m_BlinkCounter % 2 == 0 ? 0.5f : -0.5f;
+				if (m_pAbility->IsActive()) m_Position.x += m_pAnimationManager->GetCurrentFrame("Blink") % 2 == 0 ? 0.2f : -0.2f;
 			}
 		}
 		
+		if (m_CanMove) m_CurrentAnimation = "Walk";
 
-		if (m_UsedFireShot and !m_FireShot.IsActivated())
+		if (m_UsedFireShot)
 		{
-			m_UsedFireShot = false;
-		//	m_CurrentFrameRow = 0;
-			//m_CurrentFrame = 0;
-			m_CanMove = true;
-			m_ActionAccumSec = 0;
-		}
-		else if (m_UsedFireShot)
-		{
-			if (m_ActionAccumSec >= 0.5f)
+			if (!m_FireShot.IsActivated() or m_AccumSec >= 0.5f)
 			{
 				m_UsedFireShot = false;
-				//m_CurrentFrameRow = 0;
-				//m_CurrentFrame = 0;
+				m_CurrentAnimation = "Walk";
 				m_CanMove = true;
-				m_ActionAccumSec = 0;
+				m_AccumSec = 0;
 			}
 		}
 
@@ -87,11 +67,10 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 			m_AbilityDurationCounter += elapsedSec;
 			if (m_AbilityDurationCounter >= m_ABILITY_DURATION)
 			{
-				//m_CurrentFrameRow = 0;
-				//m_CurrentFrame = 0;
+				m_CurrentAnimation = "Walk";
 				m_CanMove = true;
 				m_AbilityDurationCounter = 0;
-				m_ActionAccumSec = 0;
+				m_AccumSec = 0;
 				m_pAbility->Deactivate();
 			}
 		}
@@ -105,14 +84,4 @@ void HotHead::Draw() const
 {
 	Enemy::Draw();
 	m_FireShot.Draw();
-}
-
-void HotHead::UpdateAnimation()
-{
-	if (m_AccumSec >= m_WALK_FRAME_DELAY)
-	{
-		m_AccumSec = 0;
-		//++m_CurrentFrame;
-		//m_CurrentFrame = m_CurrentFrame % 2;
-	}
 }

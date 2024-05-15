@@ -4,8 +4,7 @@
 #include "Projectile.h"
 
 Projectile::Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly, float customHitBoxSize)
-	: m_pTexture	{ TextureManager::GetTexture(textureName) }
-	, m_Width		{ 16 }
+	: m_Width		{ 16 }
 	, m_Height		{ 16 }
 	, m_Velocity	{ velocity}
 	, m_Direction	{ Direction::Right }
@@ -13,40 +12,19 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_IsActive	{ false }
 	, m_IsFriendly	{ isFriendly }
 	, m_TravelTime	{ travelTime }
-	, m_CurrentFrame	{ 0 }
-	, m_CurrentFrameRow	{ 0 }
 	, m_AccumSec		{ 0.f }
-	, m_AccumSecAnim	{ 0.f }
 	, m_Hidden			{false}
 	, m_CustomHitBoxSize{customHitBoxSize}
+	, m_pAnimationManager{new AnimationManager(textureName)}
+	, m_CurrentAnimation{}
 {
+	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 }
 
-void Projectile::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index)
+Projectile::~Projectile()
 {
-	if (m_IsActive)
-	{
-		m_AccumSec += elapsedSec;
-		m_AccumSecAnim += elapsedSec;
-
-		// MOVE
-		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
-		m_Position.y += m_Velocity.y * elapsedSec;
-
-		// RESET
-		if (m_AccumSec >= m_TravelTime)
-		{
-			m_IsActive = false;
-			m_AccumSec = 0;
-		}
-
-		// COLLSION
-		if (Collision::WallCollision(this, world))
-		{
-			m_IsActive = false;
-			m_AccumSec = 0;
-		}
-	}
+	delete m_pAnimationManager;
+	m_pAnimationManager = nullptr;
 }
 
 void Projectile::Draw() const
@@ -63,7 +41,8 @@ void Projectile::Draw() const
 				glRotatef(-180, 0, 1, 0);
 				glTranslatef(-m_Position.x, 0, 0);
 			}
-			m_pTexture->Draw(GetDstRect(), GetSrcRect());
+			// TODO remove this check, was only for while making the animations for ever entity
+			if (m_pAnimationManager != nullptr) m_pAnimationManager->Draw(m_Position, m_CurrentAnimation);
 		}
 		glPopMatrix();
 
@@ -88,30 +67,6 @@ Rectf Projectile::GetHitBox() const
 const utils::HitInfo& Projectile::GetHitInfo() const
 {
 	return m_HitInfo;
-}
-
-Rectf Projectile::GetDstRect() const
-{
-	const Rectf dstRect
-	{
-		m_Position.x - m_Width / 2,
-		m_Position.y - m_Height / 2,
-		m_Width,
-		m_Height,
-	};
-	return dstRect;
-}
-
-Rectf Projectile::GetSrcRect() const
-{
-	Rectf srcRect
-	{
-		m_CurrentFrame * m_Width,
-		m_CurrentFrameRow * m_Height,
-		m_Width, m_Height
-	};
-
-	return srcRect;
 }
 
 bool Projectile::IsActivated()
@@ -166,6 +121,7 @@ void Projectile::Reveal()
 void Projectile::Deactivate()
 {
 	m_IsActive = false;
+	m_AccumSec = 0;
 }
 
 void Projectile::SetVelocity(const Vector2f& velocity)

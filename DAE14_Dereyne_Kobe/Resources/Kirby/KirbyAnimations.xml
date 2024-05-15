@@ -1,136 +1,412 @@
 <Idle>
-	<Frame00>
+	<Frame>
 		position="0,0"
 		width="16"
 		height="16"
 		duration="1.0"
-	</Frame00>
-	<Frame01>
+	</Frame>
+	<Frame>
 		position="16,0"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame01>
-	<Frame02>
+	</Frame>
+	<Frame>
 		position="0,0"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame02>
-	<Frame03>
+	</Frame>
+	<Frame>
 		position="16,0"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame03>
-	<Frame04>
+	</Frame>
+	<Frame>
 		position="0,0"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame04>
-	<Frame05>
+	</Frame>
+	<Frame>
 		position="16,0"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame05>
+	</Frame>
 
 	loop="true"
 
 </Idle>
+
+
 <Walk>
-	<Frame00>
+	<Frame>
 		position="0,16"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame00>
-	<Frame01>
+	</Frame>
+	<Frame>
 		position="16,16"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame01>
-	<Frame02>
+	</Frame>
+	<Frame>
 		position="32,16"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame02>
-	<Frame03>
+	</Frame>
+	<Frame>
 		position="48,16"
 		width="16"
 		height="16"
 		duration="0.1"
-	</Frame03>
+	</Frame>
 
 	loop="true"
 
 </Walk>
 <Jump>
-	<Frame00>
-        position="0,32"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame00>
-    
-    loop="false"
-    
+	<Frame>
+		position="0,32"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
 
 </Jump>
 <Flip>
-	<Frame00>
-        position="16,32"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame00>
-	<Frame01>
-        position="32,32"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame01>
-	<Frame02>
-        position="48,32"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame02>
-	<Frame02>
-        position="64,32"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame02>
+	<Frame>
+		position="16,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+	<Frame>
+		position="32,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+	<Frame>
+		position="48,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+	<Frame>
+		position="64,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
 
-    loop="false"
-    
+	loop="false"
 
 </Flip>
-<Fall>
-	<Frame00>
-        position="16,32"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame00>
-    
-    loop="false"
-    
+<Falling>
+	<Frame>
+		position="16,32"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
 
-</Fall>
+	loop="false"
+
+</Falling>
 <Duck>
-	<Frame00>
-        position="0,48"
-        width="16"
-        height="16"
-        duration="0.1"
-    </Frame00>
-    
-    loop="false"
+	<Frame>
+		position="0,48"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
 
+	loop="false"
 
 </Duck>
+<Slide>
+	<Frame>
+		position="16,48"
+		width="22"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Slide>
+<Wall>
+	<Frame>
+		position="32,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Wall>
+<FlightStart>
+	<Frame>
+		position="0,64"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="16,64"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="32,64"
+		width="16"
+		height="22"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="48,64"
+		width="22"
+		height="24"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</FlightStart>
+<Flight>
+	<Frame>
+		position="70,64"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="94,64"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+
+</Flight>
+<FlightSlow>
+	<Frame>
+		position="70,64"
+		width="24"
+		height="24"
+		duration="0.3"
+	</Frame>
+	<Frame>
+		position="94,64"
+		width="24"
+		height="24"
+		duration="0.3"
+	</Frame>
+
+	loop="true"
+
+</FlightSlow>
+<Inhaling>
+	<Frame>
+		position="16,64"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="32,64"
+		width="16"
+		height="22"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Inhaling>
+<Exhaling>
+	<Frame>
+		position="48,64"
+		width="22"
+		height="24"
+		duration="0.15"
+	</Frame>
+	<Frame>
+		position="32,64"
+		width="16"
+		height="22"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="16,64"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="0,64"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Exhaling>
+<Swallow>
+	<Frame>
+		position="0,80"
+		width="24"
+		height="24"
+		duration="0.15"
+	</Frame>
+	<Frame>
+		position="0,104"
+		width="16"
+		height="16"
+		duration="0.15"
+	</Frame>
+	<Frame>
+		position="0,48"
+		width="16"
+		height="16"
+		duration="0.15"
+	</Frame>
+
+	loop="false"
+</Swallow>
+<InhaledIdle>
+	<Frame>
+		position="96,0"
+		width="24"
+		height="24"
+		duration="0.15"
+	</Frame>
+
+	loop="true"
+</InhaledIdle>
+<InhaledWalk>
+	<Frame>
+		position="96,24"
+		width="24"
+		height="24"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="120,24"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="144,24"
+		width="24"
+		height="24"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="120,24"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+</InhaledWalk>
+<InhaledJump>
+	<Frame>
+		position="96,24"
+		width="24"
+		height="24"
+		duration="0.05"
+	</Frame>
+
+	<Frame>
+		position="144,24"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="120,24"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="96,24"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+	
+	loop="false"
+</InhaledJump>
+<SparkStart>
+	<Frame>
+		position="32,96"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	
+	loop="false"
+</SparkStart>
+<Spark>
+	<Frame>
+		position="48,96"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="48,112"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+</Spark>
+<Fire>
+	<Frame>
+		position="64,96"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="64,112"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+</Fire>
+<Beam>
+	<Frame>
+		position="80,96"
+		width="19"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="80,112"
+		width="19"
+		height="16"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+</Beam>

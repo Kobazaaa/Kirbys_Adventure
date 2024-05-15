@@ -24,19 +24,16 @@ void SparkProjectile::Update(float elapsedSec, const std::vector<std::vector<Poi
 
 			if (m_IsFriendly)
 			{
-				m_CurrentFrameRow = 1;
-				m_AccumSecAnim += elapsedSec;
-				if (m_AccumSecAnim >= m_TravelTime)
-				{
-					m_AccumSecAnim = 0;
-					m_CurrentFrame = (m_CurrentFrame + 1) % 2;
-				}
+				m_CurrentAnimation = "Friendly";
 			}
 			else
 			{
-				m_CurrentFrameRow = 0;
+				m_CurrentAnimation = "Evil";
 			}
 		}
+
+		// TODO remove this check, was only for while making the animations for ever entity
+		if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
 	else
 	{

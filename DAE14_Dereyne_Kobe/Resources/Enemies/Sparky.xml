@@ -1,0 +1,46 @@
+<Jump>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.15"
+	</Frame>
+
+	loop="false"
+
+</Jump>
+<Idle>
+	<Frame>
+		position="32,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.15"
+	</Frame>
+
+	loop="false"
+
+</Idle>
+
+<Ability>
+	<Frame>
+		position="0,16"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+	<Frame>
+		position="16,16"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+
+	loop="true"
+
+</Ability>

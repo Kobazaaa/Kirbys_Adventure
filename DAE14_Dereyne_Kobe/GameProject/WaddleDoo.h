@@ -11,7 +11,5 @@ public:
 	// Behavioral
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos) override;
 private:
-	// Variables
-	float m_ActionAccumSec;
 };
 

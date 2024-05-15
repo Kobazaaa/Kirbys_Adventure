@@ -29,6 +29,7 @@ void Animation::Update(float elapsedSec)
 					m_CurrentFrame = m_vFrames.size() - 1;
 					m_IsDone = true;
 				}
+				else m_IsDone = false;
 			}
 		}
 	}
@@ -58,7 +59,7 @@ bool Animation::IsActive() const
 
 bool Animation::IsDone() const
 {
-	return m_IsDone;
+	return m_IsDone /*&& m_IsActivated*/;
 }
 
 int Animation::GetCurrentFrame() const
@@ -68,7 +69,7 @@ int Animation::GetCurrentFrame() const
 
 void Animation::Activate()
 {
-	m_IsDone = false;
+	//if (!m_IsActivated) m_IsDone = false;
 	m_IsActivated = true;
 }
 void Animation::Deactivate()
@@ -76,6 +77,7 @@ void Animation::Deactivate()
 	m_AccumSec = 0;
 	m_CurrentFrame = 0;
 	m_IsActivated = false;
+	m_IsDone = false;
 }
 
 Frame::Frame(const Rectf frameRect, float frameDur)

@@ -28,6 +28,7 @@ void Spark::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 				m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
 			}
 		}
+
 	}
 	else
 	{

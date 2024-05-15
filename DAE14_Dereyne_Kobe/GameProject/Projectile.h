@@ -3,15 +3,20 @@
 #include "Direction.h"
 #include "Texture.h"
 #include "Vector2f.h"
+#include "AnimationManager.h"
 
 class Projectile
 {
 public:
 
 	explicit Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly = false, float customHitBoxSize = 4.f);
-	virtual ~Projectile() = default;
+	Projectile(const Projectile& other) = delete;
+	Projectile(Projectile&& other) = delete;
+	Projectile& operator=(const Projectile& rhs) = delete;
+	Projectile& operator=(Projectile&& rhs) = delete;
+	virtual ~Projectile();
 
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0);
+	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0) = 0;
 	virtual void Draw() const;
 
 	Rectf GetHitBox() const;
@@ -41,16 +46,12 @@ protected:
 	Point2f			m_Position;
 	Point2f			m_StartPosition;
 	Vector2f		m_Velocity;
-	int				m_CurrentFrame;
-	int				m_CurrentFrameRow;
 	float			m_AccumSec;	
-	float			m_AccumSecAnim;	
 	Direction		m_Direction;
-private:
-	Rectf	GetDstRect()		const;
-	Rectf	GetSrcRect()		const;
 
-	Texture*		m_pTexture;
+	AnimationManager* m_pAnimationManager;
+	std::string m_CurrentAnimation;
+private:
 	utils::HitInfo	m_HitInfo;
 
 	float			m_Width;

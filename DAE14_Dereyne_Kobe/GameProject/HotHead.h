@@ -1,5 +1,6 @@
 #pragma once
 #include "Enemy.h"
+#include "Fireball.h"
 
 class HotHead final : public Enemy
 {
@@ -13,13 +14,8 @@ public:
 	virtual void Draw() const override;
 
 private:
-	//Animation
-	void UpdateAnimation();
-
 	// Variables
-	Projectile m_FireShot;
-	float m_ActionAccumSec;
-	int m_BlinkCounter;
+	Fireball m_FireShot;
 	bool m_UsedFireShot;
 
 	float m_AbilityDurationCounter;

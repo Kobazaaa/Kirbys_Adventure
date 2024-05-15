@@ -13,6 +13,7 @@ void BeamProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 {
 	if (m_IsActive)
 	{
+		m_CurrentAnimation = "Beam";
 		if (m_AccumSec >= m_TravelTime)
 		{
 			m_AccumSec = 0;
@@ -32,5 +33,8 @@ void BeamProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 			m_Position.y = m_StartPosition.y - m_Velocity.y;
 
 		}
+
+		// TODO remove this check, was only for while making the animations for ever entity
+		if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
 }

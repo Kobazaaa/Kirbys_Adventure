@@ -4,12 +4,9 @@
 
 WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("WaddleDoo", center, doesWorldCollsion)
-	, m_ActionAccumSec{0}
 {
 	m_pAbility = new Beam(false);
 	m_AbilityType = AbilityType::Beam;
-
-	m_pAnimationManager->LoadFromFile("Enemies/WaddleDoo.xml");
 }
 
 void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
@@ -18,14 +15,15 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 
 	if (!IsEliminated())
 	{
-		m_ActionAccumSec += elapsedSec;
-		if (m_ActionAccumSec >= 2.3f)
+
+		m_AccumSec += elapsedSec;
+		if (m_AccumSec >= 2.3f)
 		{
 			if (utils::GetRandomBool() and m_CanMove)
 			{
 				m_Position.y += 1;
 				m_Velocity.y = 150;
-				m_ActionAccumSec = 0;
+				m_AccumSec = 0;
 			}
 			else if (!m_pAbility->IsActive())
 			{
@@ -35,12 +33,17 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 				if (m_pAnimationManager->IsDone("Blink"))
 				{
 					m_CanMove = true;
-					m_ActionAccumSec = 0;
+					m_AccumSec = 0;
 					m_pAbility->Activate(m_Position, m_Direction);
 				}
 			}
 		}
-		else m_CurrentAnimation = "Walk";
+		
+		if (m_CanMove)
+		{
+			m_CurrentAnimation = "Walk";
+		}
+
 		m_pAbility->Update(elapsedSec, world, this);
 	}
 }

@@ -66,7 +66,6 @@ protected:
 
 	static const float m_GRAVITY;
 	float m_GravityMultiplier;
-
 private:
 	void ApplyGravity(float elapsedSec);
 };

@@ -12,6 +12,7 @@ void Puff::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 {
 	if (m_IsActive)
 	{
+		m_CurrentAnimation = "Puff";
 		m_AccumSec += elapsedSec;
 
 		if (m_CanMove)
@@ -44,5 +45,8 @@ void Puff::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 			m_IsActive = false;
 			m_AccumSec = 0;
 		}
+
+		// TODO remove this check, was only for while making the animations for ever entity
+		if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
 }

@@ -64,9 +64,11 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
+
 	if (m_pKirby->DoDoorChecks())
 	{
 		m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
+		
 	}
 	
 	m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);

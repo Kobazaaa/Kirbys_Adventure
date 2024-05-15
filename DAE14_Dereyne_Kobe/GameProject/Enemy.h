@@ -29,7 +29,6 @@ protected:
 
 	const float m_WALK_SPEED{30.f};
 
-	const float m_WALK_FRAME_DELAY{0.2f};
 private:
 	// Variables
 	bool m_IsEliminated;

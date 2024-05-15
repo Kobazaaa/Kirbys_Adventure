@@ -20,6 +20,7 @@ Entity::Entity(const std::string& textureName, float width, float height, const 
 	, m_pAnimationManager	{ m_pAnimationManager = new AnimationManager(textureName)}
 	, m_CurrentAnimation	{}
 {
+	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 }
 
 Entity::~Entity()
