@@ -5,27 +5,35 @@
 class HUD final
 {
 public:
-	// Constructor & Destructor
-	HUD(Kirby* kirby, float scale = 1);
-	~HUD() = default;
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	explicit HUD(Kirby* kirby, float scale = 1);
+	virtual ~HUD() noexcept = default;
 
-	// Behavioral
-	void Draw()						const;
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	void Draw() const;
 	void Update(float elapsedSec);
 
-	// Accessorts
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	float GetHeight() const;
 private:
-	// Private Draw
+	// Private Draw Functions
 	void PrintScore()				const;
 	void DrawHealth()				const;
 	void DrawLives()				const;
 	void DrawLivesAnim()			const;
 	void DrawCard()					const;
 
-	// Variables
+	// Private Variables
 	Texture*  m_pSprites;
-	Kirby*	 m_pKIRBY;
+	Kirby*	  m_pKIRBY;
 
 	float	 m_AccumSec;
 	float	 m_Scale;

@@ -7,6 +7,8 @@ BrontoBurt::BrontoBurt(const Point2f center, Tactic tactic, bool doesWorldCollsi
 	, m_NrCycles{0}
 	, m_Tactic{ tactic }
 {
+	// TODO fix this so it gets taken by entity/enemy ctor (for all enemy types)
+	m_Score = 300;
 }
 
 void BrontoBurt::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)

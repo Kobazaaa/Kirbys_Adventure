@@ -13,25 +13,14 @@ void Fireball::Update(float elapsedSec, const std::vector<std::vector<Point2f>>&
 	{
 		m_CurrentAnimation = "Spin";
 
-		m_AccumSec += elapsedSec;
-
-		// MOVE
 		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
 		m_Position.y += m_Velocity.y * elapsedSec;
 
-		// RESET
-		if (m_AccumSec >= m_TravelTime)
-		{
-			Deactivate();
-		}
+		m_AccumSec += elapsedSec;
+		if (m_AccumSec >= m_TravelTime) Deactivate();
+		if (Collision::WallCollision(this, world))	Deactivate();
 
-		// COLLSION
-		if (Collision::WallCollision(this, world))
-		{
-			Deactivate();
-		}
 
-		// TODO remove this check, was only for while making the animations for ever entity
-		if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
+		m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
 }

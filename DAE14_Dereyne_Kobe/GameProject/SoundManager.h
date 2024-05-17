@@ -3,7 +3,7 @@
 #include "SoundEffect.h"
 #include <vector>
 
-class SoundManager
+class SoundManager final
 {
 public:
 	struct SoundStreamObj
@@ -34,23 +34,26 @@ public:
 		std::string m_FilePath;
 	};
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	static bool LoadSoundStream(const std::string& name, const std::string& filePath);
 	static bool LoadSoundEffect(const std::string& name, const std::string& filePath);
-	static void DeleteAllSound();
+	static void DeleteAllSound() noexcept;
 
 	static void PlayStream(const std::string& name, bool loop = false);
 	static void PlayEffect(const std::string& name, int loops = 0);
-
-	static void StopEffect(const std::string& name);
-
 
 	static void PauseAll();
 	static void ResumeAll();
 	static void StopAll();
 private:
+	// Private Accessors
 	static bool IsStreamLoaded(const std::string& name);
 	static bool IsEffectloaded(const std::string& name);
 
+	// Private Data Members
 	static std::vector<SoundStreamObj*> m_vSoundStreams;
 	static std::vector<SoundEffectObj*> m_vSoundEffects;
 };

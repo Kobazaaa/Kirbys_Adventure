@@ -19,8 +19,16 @@ public:
 		std::string m_FilePath;
 	};
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	static bool LoadTexture(const std::string& name, const std::string& filePath);
-	static void DeleteTextures();
+	static void DeleteTextures() noexcept;
+
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	static Texture* GetTexture(int index);
 	static Texture* GetTexture(const std::string& name);
 

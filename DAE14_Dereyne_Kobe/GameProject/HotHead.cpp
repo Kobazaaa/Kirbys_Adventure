@@ -4,12 +4,14 @@
 
 HotHead::HotHead(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("HotHead", center, doesWorldCollsion)
-	, m_FireShot{ 2.f, false }
-	, m_AbilityDurationCounter{0}
-	, m_UsedFireShot{false}
+	, m_FireShot				{ 2.f, false }
+	, m_AbilityDurationCounter	{ 0.f }
+	, m_UsedFireShot			{ false }
 {
 	m_pAbility = new Fire(false);
 	m_AbilityType = AbilityType::Fire;
+
+	m_Score = 300;
 }
 
 void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
@@ -18,14 +20,17 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 	
 	if (!IsEliminated())
 	{
-		if (m_AccumSec >= 2.f)
+		if (m_AccumSec >= m_ABILITY_COOLDOWN)
 		{
 			if (m_CanMove) m_Direction = m_Position.x <= kirbyPos.x ? Direction::Right : Direction::Left;
 			m_CanMove = false;
 			m_CurrentAnimation = "BlinkStart";
-			if (m_AccumSec >= 2.f + 0.3f)
+
+			if (m_AccumSec >= m_ABILITY_COOLDOWN + 0.3f)
 			{
 				m_CurrentAnimation = "Blink";
+
+				// Randomly Use Fireshot
 				if (utils::GetRandomBool() and !m_pAbility->IsActive() and !m_FireShot.IsActivated())
 				{
 					const Vector2f newVelocity
@@ -35,11 +40,11 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 					};
 					m_FireShot.SetVelocity(newVelocity);
 
-
 					m_FireShot.Activate(m_Position, m_Direction);
 					m_UsedFireShot = true;
 					m_AccumSec = 0;
 				}
+				// Else Use Ability
 				else if (!m_pAbility->IsActive() and !m_FireShot.IsActivated())
 				{
 					m_pAbility->Activate(m_Position, m_Direction);
@@ -61,7 +66,6 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 				m_AccumSec = 0;
 			}
 		}
-
 		if (m_pAbility->IsActive())
 		{
 			m_AbilityDurationCounter += elapsedSec;

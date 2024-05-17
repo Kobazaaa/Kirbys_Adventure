@@ -32,8 +32,7 @@ void SparkProjectile::Update(float elapsedSec, const std::vector<std::vector<Poi
 			}
 		}
 
-		// TODO remove this check, was only for while making the animations for ever entity
-		if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
+		m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
 	else
 	{

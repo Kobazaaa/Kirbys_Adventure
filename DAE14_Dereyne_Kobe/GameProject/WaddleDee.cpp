@@ -4,6 +4,7 @@
 WaddleDee::WaddleDee(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("WaddleDee", center, doesWorldCollsion)
 {
+	m_Score = 200;
 }
 
 void WaddleDee::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)

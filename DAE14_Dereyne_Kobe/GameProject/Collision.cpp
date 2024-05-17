@@ -5,10 +5,6 @@
 #include <iostream>
 
 
-Collision::Collision()
-{
-}
-
 bool Collision::WallCollision(Entity* entity, const std::vector<std::vector<Point2f>>& world)
 {
 	const Point2f left		{ entity->GetHitBox().left								- 1, entity->GetHitBox().bottom + 1};
@@ -28,7 +24,6 @@ bool Collision::WallCollision(Entity* entity, const std::vector<std::vector<Poin
 					entity->GetPosition().y
 				};
 				entity->SetPosition(newPosition);
-				//entity->SetVelocity(Vector2f(0, entity->GetVelocity().y));
 
 				return true;
 			}

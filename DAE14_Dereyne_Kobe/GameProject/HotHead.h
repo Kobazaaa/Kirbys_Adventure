@@ -5,19 +5,27 @@
 class HotHead final : public Enemy
 {
 public:
-	// Constructor & Destructor
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit HotHead(const Point2f& center, bool doesWorldCollsion = true);
-	virtual ~HotHead() override = default;
+	virtual ~HotHead() noexcept override = default;
 
-	// Behavioral
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos) override;
 	virtual void Draw() const override;
 
+
 private:
-	// Variables
+	// Private Variables
 	Fireball m_FireShot;
 	bool m_UsedFireShot;
 
 	float m_AbilityDurationCounter;
-	const float m_ABILITY_DURATION{2.5f};
+	// Private Constants
+	const float m_ABILITY_DURATION{ 2.5f };
+	const float m_ABILITY_COOLDOWN{ 2.f };
 };

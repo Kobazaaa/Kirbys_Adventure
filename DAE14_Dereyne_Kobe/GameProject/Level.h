@@ -12,15 +12,22 @@ struct Door
 class Level final
 {
 public:
-
-	// Constructor & Destructor
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Level(const std::string& filePath, int nrSubLevels);
-	~Level() = default;
+	virtual ~Level() noexcept = default;
 
-	// Behavioral
-	void	Draw()			const;
 
-	// Accessors
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	void	Draw() const;
+
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	float	GetWidth()			 const;
 	float	GetHeight()			 const;
 	float	GetSubLevelHeight()	 const;
@@ -30,13 +37,16 @@ public:
 
 	std::vector<Door>& GetDoors();
 
-	// Mutators
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			MUTATORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void IncreaseSubLevel();
 	void DecreaseSubLevel();
 	void SetSubLevel(int subLevel);
 
 private:
-	// Variables
+	// Private Variables
 	Point2f m_Position;
 	Texture* m_pTexture;
 	std::vector<Door> m_vDoors;

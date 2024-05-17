@@ -11,13 +11,19 @@ class Camera;
 class EnemyManager final
 {
 public:
-	// Constructor & Destructor
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit EnemyManager(Camera* camera);
 	EnemyManager(const EnemyManager& other) = delete;
-	~EnemyManager();
+	EnemyManager(const EnemyManager&& other) = delete;
 	EnemyManager& operator=(const EnemyManager& rhs) = delete;
+	EnemyManager& operator=(const EnemyManager&& rhs) = delete;
+	~EnemyManager() noexcept;
 
-	// Behavioral
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Draw(bool debugMode = false) const;
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos);
 

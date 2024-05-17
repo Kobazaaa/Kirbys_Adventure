@@ -30,12 +30,6 @@ EnemyManager::~EnemyManager()
 		delete enemyPtr;
 		enemyPtr = nullptr;
 	}
-
-	//for (size_t i = 0; i < m_vEnemies.size(); i++)
-	//{
-	//	if (m_vEnemies[i] == nullptr) std::cout << "DELETED ENEMY NR " << i << std::endl;
-	//}
-	
 }
 
 void EnemyManager::Draw(bool debugMode) const

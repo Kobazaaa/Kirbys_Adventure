@@ -6,9 +6,11 @@ Sparky::Sparky(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("Sparky", center, doesWorldCollsion)
 	, m_AbilityDurationCounter{0}
 {
-	m_Velocity = Vector2f(0.f, 0.f);
+	m_Velocity.x = 0.f;
 	m_pAbility = new Spark(false);
 	m_AbilityType = AbilityType::Spark;
+
+	m_Score = 300;
 
 	const Vector2f m_VELOCITY_BIG_STAT		{ 0.f, 110.f };
 	const Vector2f m_VELOCITY_SMALL_STAT	{ 0.f, m_VELOCITY_BIG_STAT.y / 2 };
@@ -23,6 +25,7 @@ Sparky::Sparky(const Point2f& center, bool doesWorldCollsion)
 void Sparky::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
 {
 	Enemy::Update(elapsedSec, world, kirbyPos);
+
 	if (!IsEliminated())
 	{
 		float xDistanceToKirby{ abs(m_Position.x - kirbyPos.x) };
@@ -31,9 +34,9 @@ void Sparky::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 		if (Collision::FloorCollision(this, world))
 		{
 			m_Velocity.x = 0;
-
 			m_CurrentAnimation = "Idle";
-			if (m_AccumSec >= m_JUMP_CD and !m_pAbility->IsActive())
+
+			if (m_AccumSec >= m_JUMP_COOLDOWN and !m_pAbility->IsActive())
 			{
 				if (m_pAnimationManager->IsDone("Idle"))
 				{
@@ -44,7 +47,7 @@ void Sparky::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 				}
 			}
 
-			if (m_CanMove and (xDistanceToKirby <= 40.f or (xDistanceToKirby <= 64.f and m_AccumSec >= 3.f)) and yDistanceToKirby <= 64.f)
+			if (m_CanMove and (xDistanceToKirby <= 40.f or (xDistanceToKirby <= 128.f and m_AccumSec >= 3.f)) and yDistanceToKirby <= 64.f)
 			{
 				m_pAbility->Activate(m_Position, m_Direction);
 				m_CanMove = false;

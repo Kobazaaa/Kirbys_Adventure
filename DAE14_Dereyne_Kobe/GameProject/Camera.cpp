@@ -4,10 +4,10 @@
 #include <iostream>
 
 Camera::Camera(float screenWidth, float screenHeight, float scale)
-	: m_CameraWidth				{screenWidth / scale }
-	, m_CameraHeight			{screenHeight / scale}
-	, m_CameraPos				{0.f, 0.f}
-	, m_SCALE					{scale}
+	: m_CameraWidth				{ screenWidth / scale }
+	, m_CameraHeight			{ screenHeight / scale }
+	, m_CameraPos				{ 0.f, 0.f }
+	, m_SCALE					{ scale }
 	, m_ShakeTimer				{ 0.f }
 	, m_IsShaking				{ false }
 	, m_ShakeDuration			{ 0.f }

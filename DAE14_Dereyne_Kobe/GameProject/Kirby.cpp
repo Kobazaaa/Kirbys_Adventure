@@ -10,18 +10,17 @@ using namespace utils;
 
 Kirby::Kirby( const Point2f& center, Level* const level)
 	: Entity("Kirby2", 16, 16, center)
-	, m_Health			{ 6 }
-	, m_Lives			{ 4 }
-	, m_InhaledEnemy	{ false }
-	, m_pInhaledEnemy	{ nullptr }
-	, m_Score			{ 0 }
-	, m_pLevel			{ level }
-	, m_Puff			{ }
-	, m_StarProj		{ }
-	, m_Card			{ Card::Ability }
-	, m_InvincibleAccumSec{0}
-	, m_AbilityActivationAccumSec{0}
-	, m_WalkSpeedMultiplier{1.f}
+	, m_Health						{ 6 }
+	, m_Lives						{ 4 }
+	, m_InhaledEnemy				{ false }
+	, m_pInhaledEnemy				{ nullptr }
+	, m_pLevel						{ level }
+	, m_Puff						{ }
+	, m_StarProj					{ }
+	, m_Card						{ Card::Ability }
+	, m_InvincibleAccumSec			{ 0 }
+	, m_AbilityActivationAccumSec	{ 0 }
+	, m_WalkSpeedMultiplier			{ 1.f }
 {
 }
 
@@ -68,45 +67,180 @@ std::string Kirby::EnumToString(Kirby::State state) const
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	// Ability Usage
-	if (m_AbilityType != AbilityType::None)
-	{
-		m_pAbility->Update(elapsedSec, world, this);
-		if (m_pAbility->IsActive())
-		{
-			m_AbilityActivationAccumSec += elapsedSec;
-			m_CurrentState = State::Ability;
-		}
-	}
+	AbilityUpdate(elapsedSec, world);
 
-	m_Puff.Update(elapsedSec, world);
-	m_StarProj.Update(elapsedSec, world);
+	if (m_IsInvincible) Invincibility(elapsedSec);
+	if (m_Health <= 0) Death();
 
-	// Invincibility
-	if (m_IsInvincible) m_InvincibleAccumSec += elapsedSec;
-	if (m_IsInvincible and m_InvincibleAccumSec >= m_INVINCIBILITY_TIME)
-	{
-		m_InvincibleAccumSec = 0;
-		m_IsInvincible = false;
-	}
+	SlopeHandling();
 
-	if (m_Health <= 0)
-	{
-		--m_Lives;
-		m_Health = 6;
-		if (m_Lives <= 0)
-		{
-			Reset();
-		}
-	}
-
-	// Movement
 	MovementUpdate(elapsedSec);
 	Entity::Update(elapsedSec, world);
-	// Animate
-	UpdateSprite();
+	Animate();
+
+	MechanicUpdate(elapsedSec);
+
+	Collisions(world);
+
+}
+
+void Kirby::Draw() const
+{
+	m_Puff.Draw();
+	m_StarProj.Draw();
+
+	if (m_Direction == Direction::Left) Entity::Draw(true);
+	else Entity::Draw(false);
+}
+
+void Kirby::MovementUpdate(float elapsedSec)
+{
+	if (m_AbilityType != AbilityType::None and m_pAbility->IsActive())
+	{
+		m_IsSliding = false;
+		ApplyFriction(elapsedSec);
+		m_Position.x += m_Velocity.x * elapsedSec;
+	}
+
+	if (m_AbilityType == AbilityType::None or !m_pAbility->IsActive())
+	{
+#pragma region Slide
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~			SLIDE			~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if ((KeyDown(SDL_SCANCODE_DOWN) and CanSlideWithCurrentState()) or m_IsSliding)
+		{
+			m_CurrentState = State::Slide;
+			if (KeyPress(SDL_SCANCODE_SPACE) and !m_IsSliding)
+			{
+				m_AccumSec = 0;
+				m_IsSliding = true;
+			}
+			if (m_IsSliding)
+			{
+				if (m_AccumSec >= m_SLIDING_TIME)
+				{
+					m_Velocity.x = static_cast<int>(m_Direction) * 3.f;
+					m_IsSliding = false;
+				}
+				else m_Velocity.x = static_cast<int>(m_Direction) * m_SLIDE_SPEED;
+			}
+		}
+#pragma endregion
+
+#pragma region DirectionalMovement
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~	   RUNNING & TURNING	~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if (m_CurrentState == State::None or m_CurrentState == State::Walk)
+		{
+			if (KeyPress(SDL_SCANCODE_RIGHT) and abs(m_Velocity.x) >= 5.f)
+			{
+				if (m_Direction == Direction::Left and !m_InhaledEnemy)
+				{
+					m_IsTurning = true;
+					SoundManager::PlayEffect("Turn");
+				}
+				else m_IsTurning = false;
+				if (m_Direction == Direction::Right and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
+				else m_IsRunning = false;
+			}
+			if (KeyPress(SDL_SCANCODE_LEFT) and abs(m_Velocity.x) >= 5.f)
+			{
+				if (m_Direction == Direction::Right and !m_InhaledEnemy)
+				{
+					m_IsTurning = true;
+					SoundManager::PlayEffect("Turn");
+				}
+				else m_IsTurning = false;
+				if (m_Direction == Direction::Left and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
+				else m_IsRunning = false;
+			}
+		}
+		else if (m_CurrentState != State::Jump) m_IsRunning = false;
+
+		if (m_IsTurning)
+		{
+			m_CurrentAnimation = "Turn";
+			if (m_pAnimationManager->IsDone("Turn")) m_IsTurning = false;
+		}
 
 
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~	DIRECTIONAL MOVEMENT	~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if ((KeyDown(SDL_SCANCODE_RIGHT) or KeyDown(SDL_SCANCODE_LEFT)) and CanMoveWithCurrentState())
+		{
+			if (!m_IsRunning)
+			{
+				m_Velocity.x += static_cast<int>(m_Direction) * m_WalkSpeedMultiplier * m_WALK_SPEED * (elapsedSec * 5);
+				if (abs(m_Velocity.x) >= m_WalkSpeedMultiplier * m_WALK_SPEED)
+				{ 
+					m_Velocity.x = static_cast<int>(m_Direction) * m_WALK_SPEED * m_WalkSpeedMultiplier; 
+				}
+			}
+			else
+			{
+				m_Velocity.x = static_cast<int>(m_Direction) * m_WalkSpeedMultiplier * m_RUN_SPEED;
+			}
+			m_Direction = KeyDown(SDL_SCANCODE_RIGHT) ? Direction::Right : Direction::Left;
+		}
+		else
+		{
+			m_IsRunning = false;
+			ApplyFriction(elapsedSec);
+		}
+		
+		if (abs(m_Velocity.x) >= 5.f and m_CurrentState == State::None) m_CurrentState = State::Walk;
+		m_Position.x += m_Velocity.x * elapsedSec;
+#pragma endregion
+
+#pragma region Jumping
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~			JUMPING			~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if (KeyPress(SDL_SCANCODE_SPACE))
+		{
+			m_Position.y += 1;
+			if (CanJumpWithCurrentState())
+			{
+				m_CurrentState = State::Jump;
+				m_Velocity.y = m_JUMP_SPEED;
+				SoundManager::PlayEffect("Jump");
+			}
+		}
+		else if (KeyRelease(SDL_SCANCODE_SPACE))
+		{
+			if (m_Velocity.y >= 0) m_Velocity.y = 0;
+		}
+#pragma endregion
+
+#pragma region Flight
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~			FLIGHT			~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if ((KeyPress(SDL_SCANCODE_UP) and CanFlyWithCurrentState()))
+		{
+			m_Position.y += 1;
+		}
+
+		if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
+		{
+			if (m_CurrentState != State::EnterDoor)
+			{
+				if (m_CurrentState != State::Flight) m_CurrentAnimation = "FlightStart";
+				m_CurrentState = State::Flight;
+				m_Velocity.y = m_FLIGHT_SPEED;
+			}
+		}
+		if (m_CurrentState == State::Flight) m_GravityMultiplier = 0.5f;
+		else m_GravityMultiplier = 1.f;
+	}
+#pragma endregion
+}
+void Kirby::MechanicUpdate(float elapsedSec)
+{
+#pragma region In/Exhaling
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~		 IN/EXHALING		~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -140,7 +274,6 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_CurrentState = State::Inhaling;
 		}
 	}
-
 	if (KeyDown(SDL_SCANCODE_LSHIFT))
 	{
 		if (m_AbilityType != AbilityType::None and m_pAbility->IsActive() and m_pAbility->CanBeCancelled())
@@ -155,26 +288,32 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_AbilityActivationAccumSec = 0;
 			m_pAbility->Deactivate();
 		}
-	}
 
+		if (m_CurrentState == State::Inhaling and m_AccumSec >= 0.40f)
+		{
+			m_CurrentState = State::None;
+		}
+	}
+#pragma endregion
+
+#pragma region RemoveAbility
 	if (KeyPress(SDL_SCANCODE_RSHIFT))
 	{
 		delete m_pAbility;
 		m_pAbility = nullptr;
 		m_AbilityType = AbilityType::None;
 	}
+#pragma endregion
 
-	if (!KeyDown(SDL_SCANCODE_LSHIFT) and m_CurrentState == State::Inhaling and m_AccumSec >= 0.40f)
-	{
-		m_CurrentState = State::None;
-	}
-
+#pragma region Swallow
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			SWALLOW			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if (m_InhaledEnemy and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN))
 	{
+		m_InhaledEnemy = false;
 		m_CurrentAnimation = "Swallow";
+		m_CurrentState = State::Swallow;
 		delete m_pAbility;
 
 		if (m_pInhaledEnemy->GetAbilityType() != AbilityType::None)
@@ -185,14 +324,14 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_AbilityType = m_pInhaledEnemy->GetAbilityType();
 
 		}
-
-		m_CurrentState = State::Swallow;
-		m_InhaledEnemy = false;
 		m_pInhaledEnemy = nullptr;
 	}
-	if (m_CurrentState != State::Swallow and m_OldState == State::Swallow and m_AbilityType != AbilityType::None) m_pAbility->Activate(m_Position, m_Direction);
 
-	// World Collision
+	if (m_CurrentState != State::Swallow and m_OldState == State::Swallow and m_AbilityType != AbilityType::None) m_pAbility->Activate(m_Position, m_Direction);
+#pragma endregion
+}
+void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
+{
 	ApplyPlaySpace();
 	if (Collision::WallCollision(this, world))
 	{
@@ -200,13 +339,16 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		if (m_CurrentState == State::Walk and !m_InhaledEnemy)
 		{
 			m_CurrentAnimation = "Wall";
-			if (m_pAnimationManager->IsDone("Wall"))
+			if (!m_pAnimationManager->IsActive("Walk") or m_pAnimationManager->IsDone("Wall"))
 			{
-				//m_CurrentAnimation = "Walk";
+				m_CurrentAnimation = "Idle";
 			}
-				m_CurrentState = State::None;
+			m_CurrentState = State::None;
 		}
 	}
+
+	m_IsOn45 = false;
+	m_IsOn30 = false;
 	if (Collision::FloorCollision(this, world))
 	{
 		if (m_CurrentState != State::Exhaling and
@@ -215,24 +357,25 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_CurrentState != State::Falling and
 			m_CurrentState != State::Swallow and
 			m_CurrentState != State::EnterDoor and
-			(m_Velocity.x >= 0.f )) m_CurrentState = State::None;
+			(abs(m_Velocity.x) >= 0.f)) m_CurrentState = State::None;
 
+		// Bounce Kirby when Falling
 		if (m_CurrentState == State::Falling)
 		{
-			static bool bounced{false};
-			if (bounced)
+			if (m_Bounced)
 			{
 				m_CurrentState = State::None;
-				bounced = false;
+				m_Bounced = false;
 			}
 			else
 			{
 				m_Position.y += 1;
 				m_Velocity.y = m_JUMP_SPEED / 2;
-				bounced = true;
+				m_Bounced = true;
 			}
 		}
 
+		// Determine on what type of slope, if any
 		if (m_HitInfo.normal.DotProduct(Vector2f(0, 1)) >= sqrtf(2) / 2 + 0.1f and m_HitInfo.normal.DotProduct(Vector2f(0, 1)) < sqrtf(3) / 2 + 0.1f)
 		{
 			m_IsOn45 = false;
@@ -243,25 +386,12 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_IsOn45 = true;
 			m_IsOn30 = false;
 		}
-		else
-		{
-			m_IsOn45 = false;
-			m_IsOn30 = false;
-		}
-
-		if (m_IsOn30 or m_IsOn45)
-		{
-			m_IsSlopeDown = m_HitInfo.normal.DotProduct(Vector2f(static_cast<int>(m_Direction), 0)) > 0;
-		}
-		if (m_IsOn30) std::cout << "30\n";
-		if (m_IsOn45) std::cout << "45\n";
-		if (!m_IsOn30 and !m_IsOn45) std::cout << "0\n";
 	}
 	else
 	{
 		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_InhaledEnemy)
 		{
- 			if (m_pAbility == nullptr or !m_pAbility->IsActive())
+			if (m_pAbility == nullptr or !m_pAbility->IsActive())
 			{
 				m_CurrentState = State::Falling;
 			}
@@ -276,199 +406,43 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_CurrentState = State::None;
-			//m_CurrentFrameRow = static_cast<int>(State::Jump);
 			if (!m_InhaledEnemy) m_CurrentAnimation = "EndFlip";
-			//else m_CurrentFrame = 2;
 		}
 
 	}
-
-	//std::cout << m_CurrentAnimation << std::endl;
 }
-
-void Kirby::Draw() const
+void Kirby::SlopeHandling()
 {
-	m_Puff.Draw();
-	m_StarProj.Draw();
+	if (m_IsOn30 or m_IsOn45)
+	{
+		m_IsSlopeDown = m_HitInfo.normal.DotProduct(Vector2f(static_cast<int>(m_Direction), 0)) > 0;
+	}
 
-	if (m_Direction == Direction::Left) Entity::Draw(true);
-	else Entity::Draw(false);
+	if (m_CurrentState == State::Flight) m_WalkSpeedMultiplier = 0.75f;
+	else
+	{
+		if (m_IsOn30 and m_IsSlopeDown)			m_WalkSpeedMultiplier = 1.25f;
+		else if (m_IsOn30 and !m_IsSlopeDown)	m_WalkSpeedMultiplier = 0.75f;
+		else if (m_IsOn45 and m_IsSlopeDown)	m_WalkSpeedMultiplier = 1.5f;
+		else if (m_IsOn45 and !m_IsSlopeDown)	m_WalkSpeedMultiplier = 0.5f;
+		else m_WalkSpeedMultiplier = 1.f;
+	}
 }
 
-void Kirby::MovementUpdate(float elapsedSec)
+void Kirby::ApplyFriction(float elapsedSec)
 {
-	if (m_AbilityType != AbilityType::None and m_pAbility->IsActive())
+	float friction{-250.f};
+	if (m_Velocity.x > 0.f)
 	{
-		m_IsSliding = false;
-
-		const float FRICTION{ -250.f };
-		m_Velocity.x += elapsedSec * FRICTION;
-		if (m_Velocity.x <= 0.f)
-		{
-			m_Velocity.x = 0;
-
-		}
-		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
+		m_Velocity.x += friction * elapsedSec;
+		if (m_Velocity.x <= 0.f) m_Velocity.x = 0.f;
 	}
-
-	if (m_AbilityType == AbilityType::None or !m_pAbility->IsActive())
+	else if (m_Velocity.x < 0.f)
 	{
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~			SLIDE			~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if ((KeyDown(SDL_SCANCODE_DOWN) and CanSlideWithCurrentState()) or m_IsSliding)
-		{
-			m_CurrentState = State::Slide;
-			if (KeyPress(SDL_SCANCODE_SPACE) and !m_IsSliding)
-			{
-				m_AccumSec = 0;
-				m_IsSliding = true;
-			}
-			if (m_IsSliding)
-			{
-				if (m_AccumSec >= m_SLIDING_TIME)
-				{
-					m_Velocity.x = 0;
-					m_IsSliding = false;
-				}
-				else m_Velocity.x = m_SLIDE_SPEED;
-			}
-		}
-
-
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~	DIRECTIONAL MOVEMENT	~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if (m_CurrentState == State::None or m_CurrentState == State::Walk)
-		{
-
-			if (KeyPress(SDL_SCANCODE_RIGHT) and m_Velocity.x >= 5.f)
-			{
-				if (m_Direction == Direction::Left and !m_InhaledEnemy)
-				{
-					m_IsTurning = true;
-					SoundManager::PlayEffect("Turn");
-				}
-				else m_IsTurning = false;
-				if (m_Direction == Direction::Right and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
-				else m_IsRunning = false;
-			}
-			if (KeyPress(SDL_SCANCODE_LEFT) and m_Velocity.x >= 5.f)
-			{
-				if (m_Direction == Direction::Right and !m_InhaledEnemy)
-				{
-					m_IsTurning = true;
-					SoundManager::PlayEffect("Turn");
-				}
-				else m_IsTurning = false;
-				if (m_Direction == Direction::Left and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
-				else m_IsRunning = false;
-			}
-		}
-		else if (m_CurrentState != State::Jump) m_IsRunning = false;
-
-		if (m_IsTurning)
-		{
-			m_CurrentAnimation = "Turn";
-			if (m_pAnimationManager->IsDone("Turn")) m_IsTurning = false;
-		}
-
-		if ((KeyDown(SDL_SCANCODE_RIGHT) or KeyDown(SDL_SCANCODE_LEFT)) and CanMoveWithCurrentState())
-		{
-			if (m_CurrentState != State::Falling)
-			{
-				if (!m_IsRunning)
-				{
-					m_Velocity.x += m_WalkSpeedMultiplier * m_WALK_SPEED * (elapsedSec * 5);
-					if (m_Velocity.x >= m_WalkSpeedMultiplier * m_WALK_SPEED) m_Velocity.x = m_WALK_SPEED * m_WalkSpeedMultiplier;
-				}
-				else
-				{
-					m_Velocity.x = m_WalkSpeedMultiplier * m_RUN_SPEED;
-				}
-				m_Direction = KeyDown(SDL_SCANCODE_RIGHT) ? Direction::Right : Direction::Left;
-
-				if (m_IsOn30 and m_IsSlopeDown)			m_WalkSpeedMultiplier = 1.25f;
-				else if (m_IsOn30 and !m_IsSlopeDown)	m_WalkSpeedMultiplier = 0.75f;
-				else if (m_IsOn45 and m_IsSlopeDown)	m_WalkSpeedMultiplier = 1.5f;
-				else if (m_IsOn45 and !m_IsSlopeDown)	m_WalkSpeedMultiplier = 0.5f;
-				else									m_WalkSpeedMultiplier = 1.f;
-			}
-		}
-		else
-		{
-			//m_IsTurning = false;
-			m_IsRunning = false;
-
-			// TODO friction
-			float friction;
-			if (m_Velocity.x > 0.f)
-			{
-				friction = -250.f;
-				m_Velocity.x += elapsedSec * friction;
-				if (m_Velocity.x <= 0.f)
-				{
-					m_Velocity.x = 0;
-				}
-			}
-			else if (m_Velocity.x < 0.f)
-			{
-				friction = 250.f;
-				m_Velocity.x += elapsedSec * friction;
-				if (m_Velocity.x >= 0.f)
-				{
-					m_Velocity.x = 0;
-				}
-			}
-		}
-
-		if (m_Velocity.x >= 5.f and m_CurrentState == State::None) m_CurrentState = State::Walk;
-		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
-
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~			JUMPING			~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if (KeyPress(SDL_SCANCODE_SPACE))
-		{
-			m_Position.y += 1;
-			if (CanJumpWithCurrentState())
-			{
-				m_CurrentState = State::Jump;
-				m_Velocity.y = m_JUMP_SPEED;
-				SoundManager::PlayEffect("Jump");
-			}
-		}
-		else if (KeyRelease(SDL_SCANCODE_SPACE))
-		{
-			if (m_Velocity.y >= 0) m_Velocity.y = 0;
-		}
-
-
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~			FLIGHT			~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if ((KeyPress(SDL_SCANCODE_UP) and CanFlyWithCurrentState()))
-		{
-			m_Position.y += 1;
-		}
-
-		if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
-		{
-			if (m_CurrentState != State::EnterDoor)
-			{
-				if (m_CurrentState != State::Flight) m_CurrentAnimation = "FlightStart";
-				m_CurrentState = State::Flight;
-				m_Velocity.y = m_FLIGHT_SPEED;
-			}
-		}
-		if (m_CurrentState == State::Flight) m_GravityMultiplier = 0.5f;
-		else m_GravityMultiplier = 1.f;
+		m_Velocity.x -= friction * elapsedSec;
+		if (m_Velocity.x >= 0.f) m_Velocity.x = 0.f;
 	}
 }
-
 void Kirby::ApplyPlaySpace()
 {
 	Rectf subLevel
@@ -486,7 +460,7 @@ void Kirby::ApplyPlaySpace()
 		m_Position.y = subLevel.bottom + subLevel.height - GetHitBox().height / 2;
 		m_Velocity.y = 0;
 	}
-	if (m_Position.y + GetHitBox().height / 2 < subLevel.bottom)						m_Health = 0;
+	if (m_Position.y + GetHitBox().height / 2 < subLevel.bottom) m_Health = 0;
 }
 
 bool Kirby::DoDoorChecks()
@@ -533,16 +507,9 @@ bool Kirby::DoDoorChecks()
 				if (m_pAnimationManager->IsDone("EnterDoor"))
 				{
 					m_CurrentState = State::None;
-					if (door.outcomePos.y > m_Position.y)
-					{
-						m_pLevel->IncreaseSubLevel();
-						m_Direction = Direction::Right;
-					}
-					else
-					{
-						m_Direction = Direction::Left;
-						m_pLevel->DecreaseSubLevel();
-					}
+					m_Direction = Direction::Right;
+					if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
+					else m_pLevel->DecreaseSubLevel();
 					m_Position = door.outcomePos;
 
 					m_InhaledEnemy = false;
@@ -579,25 +546,60 @@ void Kirby::HitEnemy(const Point2f& enemyPos)
 	if (!m_IsInvincible)
 	{
 		--m_Health;
-		m_IsInvincible = true;
+		//m_IsInvincible = true;
 
 		Direction hitDirection{ static_cast<Direction>(utils::GetSign(enemyPos.x - m_Position.x)) };
-		m_Velocity.x = -static_cast<int>(m_Direction) * static_cast<int>(hitDirection) * 100.f;
+		m_Velocity.x = -static_cast<int>(hitDirection) * 100.f;
 
-		// Only works when facing the enemy, bc velocity backwards, check walk
-		//m_CurrentState = State::Jump;
+		// No animation working yet?
+		m_CurrentState = State::Jump;
 		m_CurrentAnimation = "Flip";
 	}
 
 	// TODO: knockback, also check friction
 }
-
 void Kirby::InhaledEnemy(Enemy* enemy)
 {
 	m_pInhaledEnemy = enemy;
 	m_InhaledEnemy = true;
 	m_CurrentState = State::None;
-	m_Score += ((rand() % 5) + 1) * 100;
+	m_Score += enemy->GetScore();
+}
+
+void Kirby::AbilityUpdate(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
+{
+	if (m_AbilityType != AbilityType::None)
+	{
+		m_pAbility->Update(elapsedSec, world, this);
+		if (m_pAbility->IsActive())
+		{
+			m_AbilityActivationAccumSec += elapsedSec;
+			m_CurrentState = State::Ability;
+		}
+	}
+	m_Puff.Update(elapsedSec, world);
+	m_StarProj.Update(elapsedSec, world);
+}
+void Kirby::Death()
+{
+	--m_Lives;
+	m_Health = 6;
+	if (m_Lives <= 0)
+	{
+		Reset();
+	}
+}
+void Kirby::Invincibility(float elapsedSec)
+{
+	m_InvincibleAccumSec += elapsedSec;
+	if (m_InvincibleAccumSec >= m_INVINCIBILITY_TIME)
+	{
+		m_InvincibleAccumSec = 0;
+		m_IsInvincible = false;
+	}
+}
+void Kirby::UserInput()
+{
 }
 
 #pragma region Accessors
@@ -612,10 +614,6 @@ int Kirby::GetHealth() const
 int Kirby::GetLives() const
 {
 	return m_Lives;
-}
-int Kirby::GetScore() const
-{
-	return m_Score;
 }
 Kirby::Card Kirby::GetCard() const
 {
@@ -638,7 +636,7 @@ Rectf Kirby::GetInhaleRect() const
 #pragma endregion
 
 #pragma region Animation
-void Kirby::UpdateSprite()
+void Kirby::Animate()
 {
 	if (m_CurrentState != m_OldState)
 	{
@@ -695,7 +693,7 @@ void Kirby::UpdateSprite()
 		}
 		break;
 	case Kirby::State::Slide:
-		if (m_Velocity.x > m_WALK_SPEED) m_CurrentAnimation = "Slide";
+		if (abs(m_Velocity.x) > m_WALK_SPEED) m_CurrentAnimation = "Slide";
 		else
 		{
 			if (m_IsOn30)
@@ -760,34 +758,6 @@ void Kirby::UpdateSprite()
 		break;
 	}
 }
-void Kirby::AnimateWalk()
-{
-	float delayMultiplier{};
-	if (m_IsRunning) delayMultiplier = 0.75f;
-	else delayMultiplier = 1.f;
-
-	//if (!m_InhaledEnemy)
-	//{
-		if (m_AccumSec >= /*m_WALKING_FRAME_DELAY **/ delayMultiplier)
-		{
-			m_AccumSec = 0;
-			//++m_CurrentFrame %= m_NR_WALK_FRAMES;
-			if (m_IsTurning and !m_InhaledEnemy)
-			{
-				m_IsTurning = false;
-				//m_CurrentFrame = 4;
-			}
-		}
-	//}
-	//else
-	//{
-	//	if (m_AccumSec >= m_WALKING_FRAME_DELAY)
-	//	{
-	//		m_AccumSec = 0;
-	//		++m_CurrentFrame %= m_NR_WALK_FRAMES;
-	//	}
-	//}
-}
 #pragma endregion
 
 #pragma region CanXxWithCurrentState
@@ -795,6 +765,7 @@ bool Kirby::CanMoveWithCurrentState() const
 {
 	if (m_CurrentState == State::Slide or
 		m_CurrentState == State::Swallow or
+		m_CurrentState == State::Falling or
 		m_CurrentState == State::EnterDoor or
 		m_CurrentState == State::Inhaling) return false;
 	else return true;
@@ -849,7 +820,7 @@ std::ostream& operator<<(std::ostream& out, const Kirby& kirby)
 	out << "Position: (" << kirby.m_Position.x << ", " << kirby.m_Position.y << ")\n"
 		<< "Current State:" << currentState << "\tOld State: " << oldState << std::endl
 		<< "Lives: " << kirby.m_Lives << "\tHealth: " << kirby.m_Health << "\t Score: " << kirby.m_Score << std::endl
-		<< "Invinclibe: " << std::boolalpha << kirby.m_IsInvincible << std::endl << std::endl << std::endl;
+		<< "Invincible: " << std::boolalpha << kirby.m_IsInvincible << std::endl << std::endl << std::endl;
 
 	return out;
 }

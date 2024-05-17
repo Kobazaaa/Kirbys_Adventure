@@ -4,19 +4,19 @@
 #include "Projectile.h"
 
 Projectile::Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly, float customHitBoxSize)
-	: m_Width		{ 16 }
-	, m_Height		{ 16 }
-	, m_Velocity	{ velocity}
-	, m_Direction	{ Direction::Right }
-	, m_Position	{ Point2f(0,0) }
-	, m_IsActive	{ false }
-	, m_IsFriendly	{ isFriendly }
-	, m_TravelTime	{ travelTime }
-	, m_AccumSec		{ 0.f }
-	, m_Hidden			{false}
-	, m_CustomHitBoxSize{customHitBoxSize}
-	, m_pAnimationManager{new AnimationManager(textureName)}
-	, m_CurrentAnimation{}
+	: m_Width				{ 16 }
+	, m_Height				{ 16 }
+	, m_Velocity			{ velocity}
+	, m_Direction			{ Direction::Right }
+	, m_Position			{ Point2f(0,0) }
+	, m_IsActive			{ false }
+	, m_IsFriendly			{ isFriendly }
+	, m_TravelTime			{ travelTime }
+	, m_AccumSec			{ 0.f }
+	, m_Hidden				{ false }
+	, m_CustomHitBoxSize	{ customHitBoxSize }
+	, m_pAnimationManager	{ new AnimationManager(textureName) }
+	, m_CurrentAnimation	{ "" }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 }
@@ -41,15 +41,9 @@ void Projectile::Draw() const
 				glRotatef(-180, 0, 1, 0);
 				glTranslatef(-m_Position.x, 0, 0);
 			}
-			// TODO remove this check, was only for while making the animations for ever entity
-			if (m_pAnimationManager != nullptr) m_pAnimationManager->Draw(m_Position, m_CurrentAnimation);
+			m_pAnimationManager->Draw(m_Position, m_CurrentAnimation);
 		}
 		glPopMatrix();
-
-		//utils::SetColor(Color4f(0, 1, 1, 1));
-		//utils::DrawRect(GetHitBox());
-		//utils::DrawRect(GetDstRect());
-
 	}
 }
 
@@ -69,32 +63,32 @@ const utils::HitInfo& Projectile::GetHitInfo() const
 	return m_HitInfo;
 }
 
-bool Projectile::IsActivated()
+bool Projectile::IsActivated() const
 {
 	return m_IsActive;
 }
 
-bool Projectile::IsFriendly()
+bool Projectile::IsFriendly() const
 {
 	return m_IsFriendly;
 }
 
-Point2f Projectile::GetPosition()
+Point2f Projectile::GetPosition() const
 {
 	return m_Position;
 }
 
-Direction Projectile::GetDirection()
+Direction Projectile::GetDirection() const
 {
 	return m_Direction;
 }
 
-float Projectile::GetWidth()
+float Projectile::GetWidth() const
 {
 	return m_Width;
 }
 
-float Projectile::GetHeight()
+float Projectile::GetHeight() const
 {
 	return m_Height;
 }

@@ -15,25 +15,33 @@ public:
 		None, Beam, Fire, Spark
 	};
 
-	// Constructor, Destructor and Operator Overloading
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Entity(const std::string& textureName, float width, float height, const Point2f& center);
 	Entity(const Entity& other) = delete;
 	Entity(Entity&& other) = delete;
 	Entity& operator=(const Entity& rhs) = delete;
 	Entity& operator=(Entity&& rhs) = delete;
-	virtual ~Entity();
+	virtual ~Entity() noexcept;
 
-	// Behavioral
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual void Draw(bool flipSprite) const;
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 
-	// Mutators
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			MUTATORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual void SetPosition(const Point2f& newCenterPos)		final;
 	virtual void SetPosition(float centerX, float centerY)		final;
 	virtual void SetVelocity(const Vector2f& velocity)			final;
 	virtual void InverseDirection()								final;
 
-	// Accessors
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual Point2f					GetPosition()		const final;
 	virtual Vector2f				GetVelocity()		const final;
 	virtual float					GetWidth()			const final;
@@ -43,9 +51,9 @@ public:
 	virtual Direction				GetDirection()		const final;
 	virtual AbilityType				GetAbilityType()	const final;
 	virtual Ability*				GetAbilityPtr()		const final;
+	virtual int						GetScore()			const final;
+
 protected:
-	// Behavioral Functions
-	
 	// Protected Data Members
 	AnimationManager* m_pAnimationManager;
 	std::string m_CurrentAnimation;
@@ -63,10 +71,13 @@ protected:
 	float	m_Height;
 
 	bool	m_IsInvincible;
+	int		m_Score;
 
-	static const float m_GRAVITY;
 	float m_GravityMultiplier;
+	// Pretected Constants
+	static const float m_GRAVITY;
 private:
+	// Private Update Functions
 	void ApplyGravity(float elapsedSec);
 };
 

@@ -11,19 +11,20 @@ Entity::Entity(const std::string& textureName, float width, float height, const 
 	, m_AccumSec			{ 0 }
 	, m_Position			{ center }
 	, m_Direction			{ Direction::Right }
-	, m_Velocity			{ 30.f, 0.f }
-	, m_HitInfo				{}
+	, m_Velocity			{ 0.f, 0.f }
+	, m_HitInfo				{ }
 	, m_IsInvincible		{ false }
 	, m_pAbility			{ nullptr }
 	, m_AbilityType			{ AbilityType::None }
 	, m_GravityMultiplier	{ 1.f }
 	, m_pAnimationManager	{ m_pAnimationManager = new AnimationManager(textureName)}
-	, m_CurrentAnimation	{}
+	, m_CurrentAnimation	{ "" }
+	, m_Score				{ }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 }
 
-Entity::~Entity()
+Entity::~Entity() noexcept
 {
 	delete m_pAbility;
 	m_pAbility = nullptr;
@@ -37,8 +38,7 @@ void Entity::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 	m_AccumSec += elapsedSec;
 	ApplyGravity(elapsedSec);
 
-	// TODO remove this check, was only for while making the animations for ever entity
-	if (m_pAnimationManager != nullptr) m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
+	m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 }
 
 void Entity::Draw(bool flipSprite) const
@@ -120,6 +120,10 @@ Direction Entity::GetDirection() const
 Ability* Entity::GetAbilityPtr() const
 {
 	return m_pAbility;
+}
+int Entity::GetScore() const
+{
+	return m_Score;
 }
 Entity::AbilityType Entity::GetAbilityType() const
 {

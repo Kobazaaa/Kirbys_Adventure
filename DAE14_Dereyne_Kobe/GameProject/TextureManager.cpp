@@ -22,7 +22,7 @@ bool TextureManager::LoadTexture(const std::string& name, const std::string& fil
 	return true;
 }
 
-void TextureManager::DeleteTextures()
+void TextureManager::DeleteTextures() noexcept
 {
 	for (int index{}; index < m_vTextures.size(); ++index)
 	{

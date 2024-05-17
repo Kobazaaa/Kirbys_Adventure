@@ -4,13 +4,14 @@
 
 Enemy::Enemy(const std::string& textureName, const Point2f& center, bool doesWorldCollsion)
 	: Entity(textureName, 16, 16, center)
-	, m_IsActivated{true}
-	, m_IsEliminated{true}
-	, m_SpawnPoint{center}
-	, m_DoesWorldCollision{ doesWorldCollsion }
-	, m_CanMove{true}
+	, m_IsActivated			{ true }
+	, m_IsEliminated		{ true }
+	, m_SpawnPoint			{ center }
+	, m_DoesWorldCollision	{ doesWorldCollsion }
+	, m_CanMove				{ true }
 {
 	m_Direction = Direction::Left;
+	m_Velocity.x = m_WALK_SPEED;
 }
 
 void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
@@ -18,14 +19,13 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	if (!m_IsEliminated and m_IsActivated)
 	{
 		Entity::Update(elapsedSec, world);
-		if (m_CanMove and ((m_pAbility != nullptr and !m_pAbility->IsActive()) or m_pAbility == nullptr))
+		if (m_CanMove and (m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
 		}
 
 		if (m_DoesWorldCollision)
 		{
-			//m_Velocity.x = m_WALK_SPEED;
 			Collision::FloorCollision(this, world);
 			if (Collision::WallCollision(this, world)) InverseDirection();
 		}
@@ -84,6 +84,6 @@ void Enemy::Reset()
 	IsEliminated(true);
 	if (GetDirection() == Direction::Right) InverseDirection();
 	m_AccumSec = 0;
-	if(m_pAbility!=nullptr) m_pAbility->Deactivate();
+	if(m_pAbility != nullptr) m_pAbility->Deactivate();
 }
 #pragma endregion

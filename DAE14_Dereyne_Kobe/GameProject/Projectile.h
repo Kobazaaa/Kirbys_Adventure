@@ -1,34 +1,47 @@
 #pragma once
 #include "utils.h"
-#include "Direction.h"
-#include "Texture.h"
-#include "Vector2f.h"
 #include "AnimationManager.h"
+#include "Direction.h"
+#include "Vector2f.h"
 
 class Projectile
 {
 public:
-
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly = false, float customHitBoxSize = 4.f);
 	Projectile(const Projectile& other) = delete;
 	Projectile(Projectile&& other) = delete;
 	Projectile& operator=(const Projectile& rhs) = delete;
 	Projectile& operator=(Projectile&& rhs) = delete;
-	virtual ~Projectile();
+	virtual ~Projectile() noexcept;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0) = 0;
 	virtual void Draw() const;
 
+	
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	Rectf GetHitBox() const;
 	const utils::HitInfo& GetHitInfo() const;
 
-	bool IsActivated();
-	bool IsFriendly();
-	Point2f GetPosition();
-	Direction GetDirection();
-	float GetWidth();
-	float GetHeight();
+	bool IsActivated() const;
+	bool IsFriendly() const;
+	Point2f GetPosition() const;
+	Direction GetDirection() const;
+	float GetWidth() const;
+	float GetHeight() const;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			MUTATORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Activate(const Point2f& position, Direction direction);
 	void Hide();
 	void Reveal();
@@ -38,6 +51,7 @@ public:
 	void SetStartPosition(const Point2f& position);
 
 protected:
+	// Protected Variables
 	float			m_TravelTime;
 	bool			m_IsActive;
 	bool			m_IsFriendly;
@@ -46,12 +60,13 @@ protected:
 	Point2f			m_Position;
 	Point2f			m_StartPosition;
 	Vector2f		m_Velocity;
-	float			m_AccumSec;	
 	Direction		m_Direction;
+	float			m_AccumSec;	
 
 	AnimationManager* m_pAnimationManager;
 	std::string m_CurrentAnimation;
 private:
+	// Private Variables
 	utils::HitInfo	m_HitInfo;
 
 	float			m_Width;

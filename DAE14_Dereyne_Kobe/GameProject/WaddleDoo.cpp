@@ -7,6 +7,8 @@ WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
 {
 	m_pAbility = new Beam(false);
 	m_AbilityType = AbilityType::Beam;
+
+	m_Score = 300;
 }
 
 void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)
@@ -15,14 +17,16 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 
 	if (!IsEliminated())
 	{
-		if (m_AccumSec >= 2.3f)
+		if (m_AccumSec >= m_ABILITY_COOLDOWN)
 		{
+			// Random Jump
 			if (utils::GetRandomBool() and m_CanMove)
 			{
 				m_Position.y += 1;
 				m_Velocity.y = 150;
 				m_AccumSec = 0;
 			}
+			// Else Use Ability
 			else if (!m_pAbility->IsActive())
 			{
 				m_CanMove = false;

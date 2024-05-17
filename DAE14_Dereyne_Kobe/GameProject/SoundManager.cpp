@@ -41,7 +41,7 @@ bool SoundManager::LoadSoundEffect(const std::string& name, const std::string& f
 	return true;
 }
 
-void SoundManager::DeleteAllSound()
+void SoundManager::DeleteAllSound() noexcept
 {
 	for (int index{}; index < m_vSoundEffects.size(); ++index)
 	{
@@ -75,17 +75,6 @@ void SoundManager::PlayEffect(const std::string& name, int loops)
 			m_vSoundEffects[index]->m_pSoundEffect->Play(loops);
 		}
 	}
-}
-
-void SoundManager::StopEffect(const std::string& name)
-{
-//for (int index{}; index < m_vSoundEffects.size(); ++index)
-//{
-//	if (m_vSoundEffects[index]->m_Name == name)
-//	{
-//		m_vSoundEffects[index]->m_pSoundEffect->Stop();
-//	}
-//}
 }
 
 void SoundManager::PauseAll()

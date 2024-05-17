@@ -4,11 +4,16 @@
 class WaddleDee final : public Enemy
 {
 public:
-	// Constructor & Destructor
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit WaddleDee(const Point2f& center, bool doesWorldCollsion = true);
-	virtual ~WaddleDee() override = default;
+	virtual ~WaddleDee() noexcept override = default;
 
-	// Behavioral
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos) override;
 
 private:

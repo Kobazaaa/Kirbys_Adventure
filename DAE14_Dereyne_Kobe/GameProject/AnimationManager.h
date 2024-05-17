@@ -20,6 +20,9 @@ struct AnimObj
 class AnimationManager final
 {
 public:
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit AnimationManager(Texture* spritesheet);
 	explicit AnimationManager(const std::string& textureName);
 	AnimationManager(const AnimationManager& other) = delete;
@@ -28,26 +31,37 @@ public:
 	AnimationManager& operator=(AnimationManager&& rhs) noexcept;
 	virtual ~AnimationManager() noexcept;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Add(const std::string& name, Animation* animation);
 	void LoadFromFile(const std::string& filePath);
 
 	void Update(float elapsedSec, const std::string& animName);
 	void Draw(const Point2f& position, const std::string& animName) const;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	bool IsActive(const std::string& animName) const;
 	bool IsDone(const std::string& animName) const;
 	int GetCurrentFrame(const std::string& animName) const;
 private:
+	// Private Variables
 	std::vector<AnimObj*> m_vAnimations;
 	Texture* m_pSpriteSheet;
 
+
+	// Load From File
 	void	AddAnimation(const std::string& element, const std::string& name);
 	Frame	CreateFrame(const std::string& frame) const;
+	std::string GetAttributeValue(const std::string& attrName, const std::string& element) const;
 
 	Point2f ToPoint2f(const std::string& point2fString) const;
 	float	ToFloat(const std::string& floatString) const;
 	bool	ToBool(const std::string& booleanString) const;
 
-	std::string GetAttributeValue(const std::string& attrName, const std::string& element) const;
 };
 
