@@ -15,8 +15,6 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 
 	if (!IsEliminated())
 	{
-
-		m_AccumSec += elapsedSec;
 		if (m_AccumSec >= 2.3f)
 		{
 			if (utils::GetRandomBool() and m_CanMove)
@@ -39,7 +37,7 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 			}
 		}
 		
-		if (m_CanMove)
+		if (m_CanMove and !m_pAbility->IsActive())
 		{
 			m_CurrentAnimation = "Walk";
 		}

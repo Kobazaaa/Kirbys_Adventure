@@ -21,6 +21,7 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 	, m_Card			{ Card::Ability }
 	, m_InvincibleAccumSec{0}
 	, m_AbilityActivationAccumSec{0}
+	, m_WalkSpeedMultiplier{1.f}
 {
 }
 
@@ -231,6 +232,30 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 				bounced = true;
 			}
 		}
+
+		if (m_HitInfo.normal.DotProduct(Vector2f(0, 1)) >= sqrtf(2) / 2 + 0.1f and m_HitInfo.normal.DotProduct(Vector2f(0, 1)) < sqrtf(3) / 2 + 0.1f)
+		{
+			m_IsOn45 = false;
+			m_IsOn30 = true;
+		}
+		else if (m_HitInfo.normal.DotProduct(Vector2f(0, 1)) < sqrtf(3) / 2 + 0.1f and m_HitInfo.normal.DotProduct(Vector2f(0, 1)) > 0)
+		{
+			m_IsOn45 = true;
+			m_IsOn30 = false;
+		}
+		else
+		{
+			m_IsOn45 = false;
+			m_IsOn30 = false;
+		}
+
+		if (m_IsOn30 or m_IsOn45)
+		{
+			m_IsSlopeDown = m_HitInfo.normal.DotProduct(Vector2f(static_cast<int>(m_Direction), 0)) > 0;
+		}
+		if (m_IsOn30) std::cout << "30\n";
+		if (m_IsOn45) std::cout << "45\n";
+		if (!m_IsOn30 and !m_IsOn45) std::cout << "0\n";
 	}
 	else
 	{
@@ -258,7 +283,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 	}
 
-	std::cout << m_CurrentAnimation << std::endl;
+	//std::cout << m_CurrentAnimation << std::endl;
 }
 
 void Kirby::Draw() const
@@ -317,6 +342,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if (m_CurrentState == State::None or m_CurrentState == State::Walk)
 		{
+
 			if (KeyPress(SDL_SCANCODE_RIGHT) and m_Velocity.x >= 5.f)
 			{
 				if (m_Direction == Direction::Left and !m_InhaledEnemy)
@@ -354,14 +380,20 @@ void Kirby::MovementUpdate(float elapsedSec)
 			{
 				if (!m_IsRunning)
 				{
-					m_Velocity.x += m_WALK_SPEED * (elapsedSec * 5);
-					if (m_Velocity.x >= m_WALK_SPEED) m_Velocity.x = m_WALK_SPEED;
+					m_Velocity.x += m_WalkSpeedMultiplier * m_WALK_SPEED * (elapsedSec * 5);
+					if (m_Velocity.x >= m_WalkSpeedMultiplier * m_WALK_SPEED) m_Velocity.x = m_WALK_SPEED * m_WalkSpeedMultiplier;
 				}
 				else
 				{
-					m_Velocity.x = m_RUN_SPEED;
+					m_Velocity.x = m_WalkSpeedMultiplier * m_RUN_SPEED;
 				}
 				m_Direction = KeyDown(SDL_SCANCODE_RIGHT) ? Direction::Right : Direction::Left;
+
+				if (m_IsOn30 and m_IsSlopeDown)			m_WalkSpeedMultiplier = 1.25f;
+				else if (m_IsOn30 and !m_IsSlopeDown)	m_WalkSpeedMultiplier = 0.75f;
+				else if (m_IsOn45 and m_IsSlopeDown)	m_WalkSpeedMultiplier = 1.5f;
+				else if (m_IsOn45 and !m_IsSlopeDown)	m_WalkSpeedMultiplier = 0.5f;
+				else									m_WalkSpeedMultiplier = 1.f;
 			}
 		}
 		else
@@ -391,8 +423,8 @@ void Kirby::MovementUpdate(float elapsedSec)
 			}
 		}
 
-		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
 		if (m_Velocity.x >= 5.f and m_CurrentState == State::None) m_CurrentState = State::Walk;
+		m_Position.x += static_cast<int>(m_Direction) * m_Velocity.x * elapsedSec;
 
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -551,6 +583,10 @@ void Kirby::HitEnemy(const Point2f& enemyPos)
 
 		Direction hitDirection{ static_cast<Direction>(utils::GetSign(enemyPos.x - m_Position.x)) };
 		m_Velocity.x = -static_cast<int>(m_Direction) * static_cast<int>(hitDirection) * 100.f;
+
+		// Only works when facing the enemy, bc velocity backwards, check walk
+		//m_CurrentState = State::Jump;
+		m_CurrentAnimation = "Flip";
 	}
 
 	// TODO: knockback, also check friction
@@ -585,6 +621,10 @@ Kirby::Card Kirby::GetCard() const
 {
 	return m_Card;
 }
+bool Kirby::IsInvincible() const
+{
+	return m_IsInvincible;
+}
 Rectf Kirby::GetInhaleRect() const
 {
 	Rectf inhaleRect
@@ -610,16 +650,66 @@ void Kirby::UpdateSprite()
 	switch (m_CurrentState)
 	{
 	case Kirby::State::None:
-		if (!m_InhaledEnemy) m_CurrentAnimation = "Idle";
-		else m_CurrentAnimation = "InhaledIdle";
+		if (m_IsOn30)
+		{
+			if (!m_InhaledEnemy)
+			{
+				if (m_IsSlopeDown) m_CurrentAnimation = "Idle30Down";
+				else m_CurrentAnimation = "Idle30Up";
+			}
+			else
+			{
+				if (m_IsSlopeDown) m_CurrentAnimation = "InhaledIdle30Down";
+				else m_CurrentAnimation = "InhaledIdle30Up";
+			}
+		}
+		else if (m_IsOn45)
+		{
+			if (!m_InhaledEnemy)
+			{
+				if (m_IsSlopeDown) m_CurrentAnimation = "Idle45Down";
+				else m_CurrentAnimation = "Idle45Up";
+			}
+			else
+			{
+				if (m_IsSlopeDown) m_CurrentAnimation = "InhaledIdle45Down";
+				else m_CurrentAnimation = "InhaledIdle45Up";
+			}
+		}
+		else
+		{
+			if (!m_InhaledEnemy) m_CurrentAnimation = "Idle";
+			else m_CurrentAnimation = "InhaledIdle";
+		}
 		break;
 	case Kirby::State::Walk:
-		if (!m_InhaledEnemy) m_CurrentAnimation = "Walk";
-		else m_CurrentAnimation = "InhaledWalk";
+		if (m_IsOn45)
+		{
+			if (m_IsSlopeDown) m_CurrentAnimation = "Walk45Down";
+			else m_CurrentAnimation = "Walk45Up";
+		}
+		else
+		{
+			if (!m_InhaledEnemy) m_CurrentAnimation = "Walk";
+			else m_CurrentAnimation = "InhaledWalk";
+		}
 		break;
 	case Kirby::State::Slide:
 		if (m_Velocity.x > m_WALK_SPEED) m_CurrentAnimation = "Slide";
-		else m_CurrentAnimation = "Duck";
+		else
+		{
+			if (m_IsOn30)
+			{
+				if (m_IsSlopeDown) m_CurrentAnimation = "Duck30Down";
+				else m_CurrentAnimation = "Duck30Up";
+			}
+			else if (m_IsOn45)
+			{
+				if (m_IsSlopeDown) m_CurrentAnimation = "Duck45Down";
+				else m_CurrentAnimation = "Duck45Up";
+			}
+			else m_CurrentAnimation = "Duck";
+		}
 		break;
 	case Kirby::State::Jump:
 		if (!m_InhaledEnemy)
@@ -633,7 +723,7 @@ void Kirby::UpdateSprite()
 		m_CurrentAnimation = "Falling";
 		break;
 	case Kirby::State::Flight:
-		if (m_pAnimationManager->IsDone("FlightStart"))
+		if (!m_pAnimationManager->IsActive("FlightStart") or m_pAnimationManager->IsDone("FlightStart"))
 		{
 			m_CurrentAnimation = "Flight";
 			if (m_Velocity.y <= 0.f)

@@ -109,7 +109,7 @@ Rectf Entity::GetHitBox() const
 
 	return hitBox;
 }
-const utils::HitInfo& Entity::GetHitInfo() const
+utils::HitInfo& Entity::GetHitInfo()
 {
 	return m_HitInfo;
 }

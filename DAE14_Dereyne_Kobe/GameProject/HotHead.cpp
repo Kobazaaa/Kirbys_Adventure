@@ -75,6 +75,14 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 			}
 		}
 	}
+	else
+	{
+		m_CurrentAnimation = "Walk";
+		m_CanMove = true;
+		m_AbilityDurationCounter = 0;
+		m_AccumSec = 0;
+		m_pAbility->Deactivate();
+	}
 
 	m_pAbility->Update(elapsedSec, world, this);
 	m_FireShot.Update(elapsedSec, world);

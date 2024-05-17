@@ -45,7 +45,7 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 	const Point2f bottomRight	{ entity->GetHitBox().left + entity->GetHitBox().width,		entity->GetHitBox().bottom };
 	const Point2f bottomMiddle	{ entity->GetHitBox().left + entity->GetHitBox().width / 2,	entity->GetHitBox().bottom - 1};
 
-	utils::HitInfo hitInfo		{ entity->GetHitInfo() };
+	utils::HitInfo& hitInfo		{ entity->GetHitInfo() };
 	bool hasCollision{false};
 
 	for (size_t idx{}; idx < world.size(); idx++)

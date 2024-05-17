@@ -155,6 +155,8 @@ bool EnemyManager::EnemyKirbyProjectileCollision(Kirby* pKirby)
 	{
 		kirbyProj = pKirby->GetAbilityPtr()->GetProjectiles();
 	}
+	//kirbyProj
+
 
 	for (Enemy* enemyPtr : m_vEnemies)
 	{

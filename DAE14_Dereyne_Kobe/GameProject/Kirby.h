@@ -47,6 +47,7 @@ public:
 	int			 GetLives()			const;
 	int			 GetScore()			const;
 	Kirby::Card  GetCard()			const;
+	bool		 IsInvincible()		const;
 
 	// Mutators
 
@@ -95,9 +96,15 @@ private:
 
 	Card m_Card;
 
+	float m_WalkSpeedMultiplier;
+
 	bool m_IsSliding{false};
 	bool m_IsRunning{false};
 	bool m_IsTurning{false};
+
+	bool m_IsOn30{false};
+	bool m_IsOn45{false};
+	bool m_IsSlopeDown{false};
 
 	Level* const m_pLevel;
 };

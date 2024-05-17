@@ -39,7 +39,7 @@ public:
 	virtual float					GetWidth()			const final;
 	virtual float					GetHeight()			const final;
 	virtual Rectf					GetHitBox()			const final;
-	virtual const utils::HitInfo&	GetHitInfo()		const final;
+	virtual utils::HitInfo&			GetHitInfo()		final;
 	virtual Direction				GetDirection()		const final;
 	virtual AbilityType				GetAbilityType()	const final;
 	virtual Ability*				GetAbilityPtr()		const final;

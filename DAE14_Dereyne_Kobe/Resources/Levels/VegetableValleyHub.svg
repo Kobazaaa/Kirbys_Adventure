@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="496"
+   height="360"
+   viewBox="0 0 496 360"
+   sodipodi:docname="VegetableValleyHub.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1"
+     inkscape:cx="281"
+     inkscape:cy="96.5"
+     inkscape:window-width="2560"
+     inkscape:window-height="1334"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1" />
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g1">
+    <image
+       width="496"
+       height="360"
+       preserveAspectRatio="none"
+       xlink:href="VegetableValleyHub.png"
+       id="image1" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="M 487.56117,16.46233 H 8.4521357 V 351.53151 H 487.57812 Z"
+       id="path1" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="M 8.1759221,144.58124 H 23.445009 V 240.875 H 39.34375 v 47.96875 h 127.84281 v 16.14024 h 32.17336 v 16.17507 h 65.09802 V 224.8125 H 359.375 V 272.75 h 81.3293 v -64.24189 h 15.99829 v -31.90819 h 15.82152 v -63.99317 h 15.55634 V 353.19984 H 7.0710678 Z"
+       id="path2" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="m 136.73677,240.54889 h 46.44808"
+       id="path3" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="M 216.46875,256.625 H 265"
+       id="path4" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="m 216.875,176.5625 h 46.5"
+       id="path5" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="m 392.62104,144.8685 h 79.90307"
+       id="path6" />
+    <path
+       style="fill:#000000;fill-opacity:0.303125"
+       d="m 424.88279,64.788659 h 46.58066"
+       id="path7" />
+  </g>
+</svg>

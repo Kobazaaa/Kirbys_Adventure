@@ -59,7 +59,7 @@ bool Animation::IsActive() const
 
 bool Animation::IsDone() const
 {
-	return m_IsDone /*&& m_IsActivated*/;
+	return m_IsDone;
 }
 
 int Animation::GetCurrentFrame() const
@@ -69,7 +69,6 @@ int Animation::GetCurrentFrame() const
 
 void Animation::Activate()
 {
-	//if (!m_IsActivated) m_IsDone = false;
 	m_IsActivated = true;
 }
 void Animation::Deactivate()

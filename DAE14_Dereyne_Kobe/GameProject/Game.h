@@ -34,6 +34,11 @@ public:
 	void ProcessMouseUpEvent( const SDL_MouseButtonEvent& e ) override;
 
 private:
+	// ENUM
+	enum class GameState
+	{
+		Play, Pause
+	};
 
 	// FUNCTIONS
 	void Initialize();
@@ -54,4 +59,5 @@ private:
 	HUD* m_pHUD;
 	
 	const float m_SCALE{2.f};
+	GameState m_GameState;
 };

@@ -46,6 +46,12 @@
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{379221f3-4f7c-4dfa-9b4f-0a3b3be17759}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Projectiles and Abilities\Abilities">
+      <UniqueIdentifier>{0244e6d5-fb69-42af-aee7-c1c277ab7dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Projectiles and Abilities\Projectiles">
+      <UniqueIdentifier>{9e10c689-db06-4cfe-a2a3-f5a51e104f09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -87,47 +93,17 @@
     <ClCompile Include="HotHead.cpp">
       <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Projectile.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
     <ClCompile Include="EnemyManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Ability.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Beam.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="BeamProjectile.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="StarProjectile.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Puff.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Source Files\World</Filter>
     </ClCompile>
     <ClCompile Include="HUD.cpp">
       <Filter>Source Files\World</Filter>
-    </ClCompile>
-    <ClCompile Include="Fire.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="FireProjectile.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Spark.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="SparkProjectile.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>Source Files\Managers</Filter>
@@ -138,8 +114,38 @@
     <ClCompile Include="AnimationManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Ability.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Beam.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="BeamProjectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Fire.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Abilities</Filter>
+    </ClCompile>
     <ClCompile Include="Fireball.cpp">
-      <Filter>Source Files\Projectiles and Abilities</Filter>
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="FireProjectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Puff.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Spark.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="SparkProjectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="StarProjectile.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

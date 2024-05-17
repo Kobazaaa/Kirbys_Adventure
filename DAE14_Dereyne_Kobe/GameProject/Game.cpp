@@ -19,6 +19,8 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
+	m_GameState = GameState::Play;
+
 	// Sounds
 	SoundManager::LoadSoundEffect("Turn", "Sound/SoundEffects/23.wav");
 	SoundManager::LoadSoundEffect("Jump", "Sound/SoundEffects/Jump.wav");
@@ -64,27 +66,36 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
+	if (utils::KeyPress(SDL_SCANCODE_ESCAPE))
+	{
+		if (m_GameState == GameState::Play) m_GameState = GameState::Pause;
+		else if (m_GameState == GameState::Pause) m_GameState = GameState::Play;
+	}
 
-	if (m_pKirby->DoDoorChecks())
+	if (m_GameState != GameState::Pause)
 	{
-		m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
-		
+
+		if (m_pKirby->DoDoorChecks())
+		{
+			m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
+
+		}
+
+		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
+		if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
+		{
+			m_pCamera->Shake(0.1f, 0.1f);
+		}
+		if (m_pEnemyMngr->EnemyKirbyProjectileCollision(m_pKirby))
+		{
+			if (!m_pKirby->IsInvincible()) m_pCamera->Shake(0.1f, 0.1f);
+		}
+
+		m_pKirby->Update(elapsedSec, m_World);
+		m_pEnemyMngr->Update(elapsedSec, m_World, m_pKirby->GetPosition());
+		m_pHUD->Update(elapsedSec);
+		m_pCamera->Update(elapsedSec);
 	}
-	
-	m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
-	if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
-	{
-		m_pCamera->Shake(0.1f, 0.1f);
-	}
-	if (m_pEnemyMngr->EnemyKirbyProjectileCollision(m_pKirby))
-	{
-		m_pCamera->Shake(0.1f, 0.1f);
-	}
-	
-	m_pKirby->Update(elapsedSec, m_World);
-	m_pEnemyMngr->Update(elapsedSec, m_World, m_pKirby->GetPosition());
-	m_pHUD->Update(elapsedSec);
-	m_pCamera->Update(elapsedSec);
 }
 
 void Game::Draw( ) const
