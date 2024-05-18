@@ -17,7 +17,7 @@ class Kirby final : public Entity
 public:
 	enum class State
 	{
-		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability, EnterDoor
+		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability, EnterDoor, Hit
 	};
 	enum class Card
 	{

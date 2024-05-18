@@ -4,7 +4,7 @@
 
 HotHead::HotHead(const Point2f& center, bool doesWorldCollsion)
 	: Enemy("HotHead", center, doesWorldCollsion)
-	, m_FireShot				{ 2.f, false }
+	, m_FireShot				{ 5.f, false }
 	, m_AbilityDurationCounter	{ 0.f }
 	, m_UsedFireShot			{ false }
 {
@@ -31,8 +31,9 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 				m_CurrentAnimation = "Blink";
 
 				// Randomly Use Fireshot
-				if (utils::GetRandomBool() and !m_pAbility->IsActive() and !m_FireShot.IsActivated())
+				if (utils::GetRandomBool() and !m_pAbility->IsActive())
 				{
+					m_FireShot.Deactivate();
 					const Vector2f newVelocity
 					{
 						100.f,
@@ -45,7 +46,7 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 					m_AccumSec = 0;
 				}
 				// Else Use Ability
-				else if (!m_pAbility->IsActive() and !m_FireShot.IsActivated())
+				else if (!m_pAbility->IsActive())
 				{
 					m_pAbility->Activate(m_Position, m_Direction);
 				}

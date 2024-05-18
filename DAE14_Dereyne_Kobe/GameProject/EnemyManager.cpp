@@ -16,8 +16,15 @@ EnemyManager::EnemyManager(Camera* camera)
 	{
 		if ( i == 1 or i == 6 or i == 9 or i == 12 or i == 17 or i == 18 or i == 22 or i == 23  ) m_vEnemies.push_back(new WaddleDee(m_SpawnPoints[0][i]));
 		if ( i == 0 or i == 3 or i == 19														) m_vEnemies.push_back(new WaddleDoo(m_SpawnPoints[0][i]));
-		if ( i == 2 or i == 4 or i == 7			 or i == 14 or i == 20 or i == 24				) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], static_cast<BrontoBurt::Tactic>(rand() % 4)));
-		if ( i == 11																			) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], static_cast<BrontoBurt::Tactic>(rand() % 4),true));
+		
+		if ( i == 2 or i == 7 or i == 20) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::AscendingWave));
+		if ( i == 4 or i == 11) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::Ascend));
+		if ( i == 14) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::Wave));
+		if ( i == 24) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::Straight));
+
+		//if ( i == 2 or i == 4 or i == 7			 or i == 14 or i == 20 or i == 24				) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], static_cast<BrontoBurt::Tactic>(rand() % 4)));
+		//if ( i == 11																			) m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], static_cast<BrontoBurt::Tactic>(rand() % 4)));
+
 		if ( i == 5 or i == 10 or i == 15														) m_vEnemies.push_back(new Sparky(m_SpawnPoints[0][i]));
 		if ( i == 8 or i == 13 or i == 16 or i == 21											) m_vEnemies.push_back(new HotHead(m_SpawnPoints[0][i]));
 	}

@@ -4,7 +4,6 @@
 #include "Enemy.h"
 #include "Level.h"
 #include <iostream>
-#include <typeinfo>
 
 using namespace utils;
 
@@ -23,7 +22,6 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 	, m_WalkSpeedMultiplier			{ 1.f }
 {
 }
-
 std::string Kirby::EnumToString(Kirby::State state) const
 {
 	std::string enumAsString{};
@@ -83,7 +81,6 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	Collisions(world);
 
 }
-
 void Kirby::Draw() const
 {
 	m_Puff.Draw();
@@ -204,7 +201,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 			m_Position.y += 1;
 			if (CanJumpWithCurrentState())
 			{
-				m_CurrentState = State::Jump;
+    			m_CurrentState = State::Jump;
 				m_Velocity.y = m_JUMP_SPEED;
 				SoundManager::PlayEffect("Jump");
 			}
@@ -356,6 +353,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_CurrentState != State::Inhaling and
 			m_CurrentState != State::Falling and
 			m_CurrentState != State::Swallow and
+			m_CurrentState != State::Hit and
 			m_CurrentState != State::EnterDoor and
 			(abs(m_Velocity.x) >= 0.f)) m_CurrentState = State::None;
 
@@ -403,6 +401,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_CurrentState != State::Inhaling and
 			m_CurrentState != State::Jump and
 			m_CurrentState != State::Falling and
+			m_CurrentState != State::Hit and
 			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_CurrentState = State::None;
@@ -546,17 +545,13 @@ void Kirby::HitEnemy(const Point2f& enemyPos)
 	if (!m_IsInvincible)
 	{
 		--m_Health;
-		//m_IsInvincible = true;
+		m_IsInvincible = true;
 
 		Direction hitDirection{ static_cast<Direction>(utils::GetSign(enemyPos.x - m_Position.x)) };
 		m_Velocity.x = -static_cast<int>(hitDirection) * 100.f;
 
-		// No animation working yet?
-		m_CurrentState = State::Jump;
-		m_CurrentAnimation = "Flip";
+ 		m_CurrentState = State::Hit;
 	}
-
-	// TODO: knockback, also check friction
 }
 void Kirby::InhaledEnemy(Enemy* enemy)
 {
@@ -681,7 +676,7 @@ void Kirby::Animate()
 		}
 		break;
 	case Kirby::State::Walk:
-		if (m_IsOn45)
+		if (m_IsOn45 and !m_InhaledEnemy)
 		{
 			if (m_IsSlopeDown) m_CurrentAnimation = "Walk45Down";
 			else m_CurrentAnimation = "Walk45Up";
@@ -754,6 +749,13 @@ void Kirby::Animate()
 		if(m_AbilityType == AbilityType::Fire) m_CurrentAnimation = "Fire";
 		if(m_AbilityType == AbilityType::Spark) m_CurrentAnimation = "Spark";
 		break;
+	case Kirby::State::Hit:
+		m_CurrentAnimation = "Roll";
+		if (m_pAnimationManager->IsDone("Roll"))
+		{
+			m_CurrentState = State::None;
+		}
+		break;
 	default:
 		break;
 	}
@@ -763,10 +765,11 @@ void Kirby::Animate()
 #pragma region CanXxWithCurrentState
 bool Kirby::CanMoveWithCurrentState() const
 {
-	if (m_CurrentState == State::Slide or
-		m_CurrentState == State::Swallow or
-		m_CurrentState == State::Falling or
-		m_CurrentState == State::EnterDoor or
+	if (m_CurrentState == State::Slide		or
+		m_CurrentState == State::Swallow	or
+		m_CurrentState == State::Hit		or
+		m_CurrentState == State::Falling	or
+		m_CurrentState == State::EnterDoor	or
 		m_CurrentState == State::Inhaling) return false;
 	else return true;
 }
@@ -780,6 +783,7 @@ bool Kirby::CanJumpWithCurrentState() const
 		m_CurrentState == State::Flight		or
 		m_CurrentState == State::Exhaling	or
 		m_CurrentState == State::Swallow	or
+		m_CurrentState == State::Hit		or
 		m_Velocity.y != 0.f) return false;
 	else return true;
 }
@@ -792,20 +796,22 @@ bool Kirby::CanSlideWithCurrentState() const
 }
 bool Kirby::CanFlyWithCurrentState() const
 {
-	if (m_CurrentState == State::Slide or
-		m_CurrentState == State::Exhaling or
-		m_CurrentState == State::Swallow or
-		m_CurrentState == State::EnterDoor or
+	if (m_CurrentState == State::Slide		or
+		m_CurrentState == State::Exhaling	or
+		m_CurrentState == State::Swallow	or
+		m_CurrentState == State::EnterDoor	or
+		m_CurrentState == State::Hit		or
 		m_InhaledEnemy) return false;
 	else return true;
 }
 bool Kirby::CanInhaleWithCurrentState() const
 {
-	if (m_CurrentState == State::Slide or
-		m_CurrentState == State::Flight or
-		m_CurrentState == State::Exhaling or
-		m_CurrentState == State::Swallow or
-		m_CurrentState == State::EnterDoor or
+	if (m_CurrentState == State::Slide		or
+		m_CurrentState == State::Flight		or
+		m_CurrentState == State::Exhaling	or
+		m_CurrentState == State::Swallow	or
+		m_CurrentState == State::EnterDoor	or
+		m_CurrentState == State::Hit		or
 		m_InhaledEnemy) return false;
 	else return true;
 }

@@ -13,17 +13,19 @@ Fire::Fire(bool isFriendly)
 
 void Fire::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, Entity* owner)
 {
+	for (int index{}; index < m_FIREBALLS; ++index)
+	{
+		if (m_AccumSec >= m_PROJ_TRAVELTIME / 2 * index)
+		{
+			m_vProjectiles[index]->Update(elapsedSec, world, index);
+		}
+	}
 	if (m_IsActive)
 	{
 		m_AccumSec += elapsedSec;
 
 		for (int index{}; index < m_FIREBALLS; ++index)
 		{
-			if (m_AccumSec >= m_PROJ_TRAVELTIME / 2 * index)
-			{
-				m_vProjectiles[index]->Update(elapsedSec, world, index);
-			}
-
 			if (!m_vProjectiles[index]->IsActivated())
 			{
 				m_vProjectiles[index]->SetStartPosition(owner->GetPosition());

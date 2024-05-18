@@ -205,16 +205,16 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 		{
 			m_pKirby->SetPosition(clickPos);
 		}
-		//if (e.button == SDL_BUTTON_MIDDLE)
-		//{
-		//	m_pEnemyMngr->Add(new BrontoBurt(clickPos));
-		//	clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-		//}	
 		if (e.button == SDL_BUTTON_MIDDLE)
 		{
-			m_pEnemyMngr->Add(new HotHead(clickPos, true));
+			m_pEnemyMngr->Add(new BrontoBurt(clickPos, static_cast<BrontoBurt::Tactic>(rand() % 4)));
 			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-		}
+		}	
+		//if (e.button == SDL_BUTTON_MIDDLE)
+		//{
+		//	m_pEnemyMngr->Add(new HotHead(clickPos, true));
+		//	clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
+		//}
 	}
 }
 
