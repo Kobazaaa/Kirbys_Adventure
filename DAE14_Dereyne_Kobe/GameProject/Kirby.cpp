@@ -66,6 +66,7 @@ std::string Kirby::EnumToString(Kirby::State state) const
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	AbilityUpdate(elapsedSec, world);
+	Collisions(world);
 
 	if (m_IsInvincible) Invincibility(elapsedSec);
 	if (m_Health <= 0) Death();
@@ -78,7 +79,6 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 	MechanicUpdate(elapsedSec);
 
-	Collisions(world);
 
 }
 void Kirby::Draw() const
@@ -249,7 +249,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 			m_CurrentState = State::Exhaling;
 			if (!m_StarProj.IsActivated())
 			{
-				m_StarProj.Activate(m_Position, m_Direction);
+				m_StarProj.Activate(Point2f(m_Position.x, m_Position.y + 4), m_Direction);
 			}
 		}
 		else if (m_CurrentState == State::Flight)
@@ -333,6 +333,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 	if (Collision::WallCollision(this, world))
 	{
 		m_IsSliding = false;
+		m_Velocity.x = 0;
 		if (m_CurrentState == State::Walk and !m_InhaledEnemy)
 		{
 			m_CurrentAnimation = "Wall";
@@ -348,6 +349,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 	m_IsOn30 = false;
 	if (Collision::FloorCollision(this, world))
 	{
+
 		if (m_CurrentState != State::Exhaling and
 			m_CurrentState != State::Flight and
 			m_CurrentState != State::Inhaling and
@@ -384,9 +386,18 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_IsOn45 = true;
 			m_IsOn30 = false;
 		}
+		
+		//TODO fix landing animation
+		if (m_WasInAir and m_CurrentState != State::Falling and m_OldState != State::Falling)
+		{
+			m_WasInAir = false;
+			m_CurrentState = State::Slide;
+		}
 	}
 	else
 	{
+		m_WasInAir = true;
+
 		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_InhaledEnemy)
 		{
 			if (m_pAbility == nullptr or !m_pAbility->IsActive())

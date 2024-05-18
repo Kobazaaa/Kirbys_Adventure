@@ -1,0 +1,11 @@
+<Puff>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+
+	loop="true"
+
+</Puff>

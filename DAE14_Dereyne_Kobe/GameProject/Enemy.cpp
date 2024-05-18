@@ -26,7 +26,7 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 		if (m_DoesWorldCollision)
 		{
-			Collision::FloorCollision(this, world);
+			m_IsGrounded = Collision::FloorCollision(this, world);
 			if (Collision::WallCollision(this, world)) InverseDirection();
 		}
 	}

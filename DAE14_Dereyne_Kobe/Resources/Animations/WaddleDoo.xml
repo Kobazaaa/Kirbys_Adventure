@@ -137,6 +137,12 @@
 		height="16"
 		duration="0.06"
 	</Frame>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.06"
+	</Frame>
 
 
 	loop="false"

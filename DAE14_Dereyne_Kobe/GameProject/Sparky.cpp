@@ -31,7 +31,7 @@ void Sparky::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 		float xDistanceToKirby{ abs(m_Position.x - kirbyPos.x) };
 		float yDistanceToKirby{ abs(m_Position.y - kirbyPos.y) };
 
-		if (Collision::FloorCollision(this, world))
+		if (m_IsGrounded)
 		{
 			m_Velocity.x = 0;
 			m_CurrentAnimation = "Idle";

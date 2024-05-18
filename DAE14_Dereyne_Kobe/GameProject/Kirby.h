@@ -112,6 +112,8 @@ private:
 	bool m_IsSliding{false};
 	bool m_IsRunning{false};
 	bool m_IsTurning{false};
+	bool m_WasInAir{false};
+	bool m_IsGrounded{false};
 
 	bool m_IsOn30{false};
 	bool m_IsOn45{false};

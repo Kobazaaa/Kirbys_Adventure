@@ -4,6 +4,7 @@
 #include "WaddleDoo.h"
 #include "Sparky.h"
 #include "HotHead.h"
+#include "PoppyBrosJr.h"
 
 class Kirby;
 class Camera;

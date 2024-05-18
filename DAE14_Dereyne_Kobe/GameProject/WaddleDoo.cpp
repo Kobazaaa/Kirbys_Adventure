@@ -48,4 +48,11 @@ void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>
 
 		m_pAbility->Update(elapsedSec, world, this);
 	}
+	else
+	{
+		m_CurrentAnimation = "Walk";
+		m_CanMove = true;
+		//m_AccumSec = 0;
+		m_pAbility->Deactivate();
+	}
 }

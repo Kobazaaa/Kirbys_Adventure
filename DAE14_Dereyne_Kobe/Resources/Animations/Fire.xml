@@ -1,0 +1,40 @@
+<One>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+
+	loop="false"
+
+</One>
+<Two>
+	<Frame>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+
+	loop="false"
+
+</Two>
+
+<Spin>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+	<Frame>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+	
+	loop="true"
+	
+</Spin>

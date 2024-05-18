@@ -70,6 +70,7 @@ protected:
 	float	m_Width;
 	float	m_Height;
 
+	bool	m_IsGrounded;
 	bool	m_IsInvincible;
 	int		m_Score;
 

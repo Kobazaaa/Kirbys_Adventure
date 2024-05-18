@@ -1,0 +1,47 @@
+<NoFlap>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.065"
+	</Frame>
+
+	loop="true"
+
+</NoFlap>
+<FastFlap>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.065"
+	</Frame>
+	<Frame>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.065"
+	</Frame>
+
+
+	loop="true"
+
+</FastFlap>
+<SlowFlap>
+	<Frame>
+		position="0,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="16,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+
+	loop="true"
+
+</SlowFlap>

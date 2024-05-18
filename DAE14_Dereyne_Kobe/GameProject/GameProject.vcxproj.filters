@@ -147,6 +147,9 @@
     <ClCompile Include="StarProjectile.cpp">
       <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
     </ClCompile>
+    <ClCompile Include="PoppyBrosJr.cpp">
+      <Filter>Source Files\Entities\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="PoppyBrosJr.h">
+      <Filter>Header Files\Entities\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -39,7 +39,95 @@
 	loop="true"
 
 </Idle>
+<Idle30Up>
+	<Frame>
+		position="144,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+	
+</Idle30Up>
+<Idle30Down>
+	<Frame>
+		position="160,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+	
+</Idle30Down>
+<InhaledIdle30Up>
+	<Frame>
+		position="192,22"
+		width="24"
+		height="26"
+		duration="0.1"
+	</Frame>
 
+	loop="true"
+
+</InhaledIdle30Up>
+<InhaledIdle30Down>
+	<Frame>
+		position="216,22"
+		width="24"
+		height="26"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+
+</InhaledIdle30Down>
+
+<Idle45Up>
+	<Frame>
+		position="128,0"
+		width="16"
+		height="19"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+
+</Idle45Up>
+<Idle45Down>
+	<Frame>
+		position="176,0"
+		width="16"
+		height="19"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+
+</Idle45Down>
+<InhaledIdle45Up>
+	<Frame>
+		position="168,20"
+		width="24"
+		height="29"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+
+</InhaledIdle45Up>
+<InhaledIdle45Down>
+	<Frame>
+		position="240,20"
+		width="24"
+		height="29"
+		duration="0.1"
+	</Frame>
+	
+	loop="true"
+
+</InhaledIdle45Down>
 
 <Walk>
 	<Frame>
@@ -70,6 +158,46 @@
 	loop="true"
 
 </Walk>
+<Walk45Up>
+	<Frame>
+		position="192,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="208,0"
+		width="16"
+		height="17"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="224,0"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="240,0"
+		width="16"
+		height="18"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+	
+</Walk45Up>
+<Walk45Down>
+	<Frame>
+		position="48,32"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="true"
+	
+</Walk45Down>
 <Jump>
 	<Frame>
 		position="0,32"
@@ -110,6 +238,46 @@
 	loop="false"
 
 </Flip>
+<Roll>
+	<Frame>
+		position="16,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+	<Frame>
+		position="32,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+	<Frame>
+		position="48,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+	<Frame>
+		position="64,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+
+	loop="false"
+
+</Roll>
+<EndFlip>
+	<Frame>
+		position="64,32"
+		width="16"
+		height="16"
+		duration="0.07"
+	</Frame>
+
+	loop="true"
+
+</EndFlip>
 <Falling>
 	<Frame>
 		position="16,32"
@@ -121,6 +289,17 @@
 	loop="false"
 
 </Falling>
+<Turn>
+	<Frame>
+		position="48,32"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Turn>
 <Duck>
 	<Frame>
 		position="0,48"
@@ -132,6 +311,50 @@
 	loop="false"
 
 </Duck>
+<Duck30Up>
+	<Frame>
+		position="48,48"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Duck30Up>
+<Duck30Down>
+	<Frame>
+		position="96,48"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Duck30Down>
+<Duck45Up>
+	<Frame>
+		position="64,48"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Duck45Up>
+<Duck45Down>
+	<Frame>
+		position="80,48"
+		width="16"
+		height="16"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</Duck45Down>
 <Slide>
 	<Frame>
 		position="16,48"
@@ -399,14 +622,32 @@
 		position="80,96"
 		width="19"
 		height="16"
-		duration="0.1"
+		duration="0.05"
 	</Frame>
 	<Frame>
 		position="80,112"
 		width="19"
 		height="16"
-		duration="0.1"
+		duration="0.05"
 	</Frame>
 	
 	loop="true"
 </Beam>
+
+
+<EnterDoor>
+	<Frame>
+		position="48,0"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+	<Frame>
+		position="64,0"
+		width="16"
+		height="16"
+		duration="0.05"
+	</Frame>
+	
+	loop="false"
+</EnterDoor>

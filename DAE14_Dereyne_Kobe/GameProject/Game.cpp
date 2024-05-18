@@ -196,9 +196,14 @@ void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 		Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE - 64 };
 		clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 	
+		//if (e.button == SDL_BUTTON_RIGHT)
+		//{
+		//	m_pEnemyMngr->Add(new Sparky(clickPos));
+		//	clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
+		//}
 		if (e.button == SDL_BUTTON_RIGHT)
 		{
-			m_pEnemyMngr->Add(new Sparky(clickPos));
+			m_pEnemyMngr->Add(new PoppyBrosJr(clickPos));
 			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
 		}
 		if (e.button == SDL_BUTTON_LEFT)
@@ -253,6 +258,7 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("HotHead",				"Enemies/HotHead.png");
 	TextureManager::LoadTexture("Sparky",				"Enemies/Sparky.png");
 	TextureManager::LoadTexture("WaddleDee",			"Enemies/WaddleDee.png");
+	TextureManager::LoadTexture("PoppyBrosJr",			"Enemies/PoppyBrosJr.png");
 	TextureManager::LoadTexture("WaddleDoo",			"Enemies/WaddleDoo.png");
 	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
 	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");

@@ -73,9 +73,12 @@ bool Collision::FloorCollision(Entity* entity, const std::vector<std::vector<Poi
 		{
 			if ((utils::Raycast(world[idx], bottomRight, topRight, hitInfo)
 				or utils::Raycast(world[idx], bottomLeft, topRight, hitInfo)
-				or utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo))) hasCollision = true;
+				or utils::Raycast(world[idx], bottomMiddle, topMiddle, hitInfo)))
+			{
+				hasCollision = true;
+			}
 		}
-		else if (entity->GetVelocity().y < 0.f)
+		else if (entity->GetVelocity().y <= 0.f)
 		{
 			if ((utils::Raycast(world[idx], bottomRight, topRight, hitInfo)
 				or utils::Raycast(world[idx], bottomLeft, topRight, hitInfo)
