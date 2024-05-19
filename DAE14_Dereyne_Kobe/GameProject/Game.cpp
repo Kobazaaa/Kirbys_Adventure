@@ -97,8 +97,6 @@ void Game::Update( float elapsedSec )
 
 	if (m_GameState != GameState::Pause)
 	{
-
-
 		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
 		if (Collision::KirbyHitDetection(m_pKirby, m_pEnemyMngr->GetAllEnemies(), Projectile::GetAllProjectiles()))
 		{

@@ -41,7 +41,7 @@ public:
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 	void Draw() const;
 	void HitEnemy(const Point2f& enemyPos);
-	void InhaledEnemy(Enemy* enemy);
+	void InhaledEnemy(AbilityType ability);
 	bool DoDoorChecks(bool setPos);
 
 	void Reset();
@@ -57,6 +57,10 @@ public:
 	Kirby::Card  GetCard()			const;
 	bool		 IsInvincible()		const;
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			MUTATORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	void AddToScore(int addition);
 
 private:
 
@@ -93,8 +97,8 @@ private:
 	State		m_OldState		{State::None};
 	Card		m_Card;
 
-	bool m_InhaledEnemy;
-	Enemy* m_pInhaledEnemy;
+	bool		m_HasInhaledAbility;
+	AbilityType m_InhaledAbilityType;
 
 	// Kirby Statistics
 	int			m_Health;
@@ -107,7 +111,6 @@ private:
 	Puff m_Puff;
 	StarProjectile m_StarProj;
 	Star m_Star;
-	AbilityType m_InhaledAbility;
 
 	// Kirby Variables
 	float m_WalkSpeedMultiplier;

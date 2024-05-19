@@ -170,6 +170,7 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 
 				if (enemyPtr->IsActivated())
 				{
+					pKirby->AddToScore(enemyPtr->GetScore() * 2);
 					pKirby->HitEnemy(enemyPtr->GetPosition());
 					kirbyGotHitByEnemy = true;
 				}
@@ -193,6 +194,7 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 						if (Collision::ProjectileCollision(enemyPtr, projectilePtr))
 						{
 							enemyPtr->Reset();
+							pKirby->AddToScore(enemyPtr->GetScore() * 2);
 							// TODO fix beam segments getting deactivated (they shouldnt)
 							projectilePtr->Deactivate();
 						}

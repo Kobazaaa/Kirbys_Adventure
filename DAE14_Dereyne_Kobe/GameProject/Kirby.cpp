@@ -11,13 +11,12 @@ Kirby::Kirby( const Point2f& center, Level* const level)
 	: Entity("Kirby2", 16, 16, center)
 	, m_Health						{ 6 }
 	, m_Lives						{ 4 }
-	, m_InhaledEnemy				{ false }
-	, m_pInhaledEnemy				{ nullptr }
+	, m_HasInhaledAbility				{ false }
 	, m_pLevel						{ level }
 	, m_Puff						{ }
 	, m_StarProj					{ }
 	, m_Star						{ level }
-	, m_InhaledAbility				{ AbilityType::None }
+	, m_InhaledAbilityType				{ AbilityType::None }
 	, m_Card						{ Card::Ability }
 	, m_InvincibleAccumSec			{ 0 }
 	, m_AbilityActivationAccumSec	{ 0 }
@@ -137,7 +136,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 		{
 			if (KeyPress(SDL_SCANCODE_RIGHT) and abs(m_Velocity.x) >= 5.f)
 			{
-				if (m_Direction == Direction::Left and !m_InhaledEnemy)
+				if (m_Direction == Direction::Left and !m_HasInhaledAbility)
 				{
 					m_IsTurning = true;
 					SoundManager::PlayEffect("Turn");
@@ -148,7 +147,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 			}
 			if (KeyPress(SDL_SCANCODE_LEFT) and abs(m_Velocity.x) >= 5.f)
 			{
-				if (m_Direction == Direction::Right and !m_InhaledEnemy)
+				if (m_Direction == Direction::Right and !m_HasInhaledAbility)
 				{
 					m_IsTurning = true;
 					SoundManager::PlayEffect("Turn");
@@ -247,7 +246,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if (KeyPress(SDL_SCANCODE_LSHIFT))
 	{
-		if (m_InhaledEnemy)
+		if (m_HasInhaledAbility)
 		{
 			m_CurrentAnimation = "Exhaling";
 			m_CurrentState = State::Exhaling;
@@ -292,15 +291,15 @@ void Kirby::MechanicUpdate(float elapsedSec)
 			m_Star.SetPosition(newStarPos);
 		}
 
-		if (!m_InhaledEnemy and utils::IsOverlapping(m_Star.GetHitBox(), GetHitBox()))
+		if (!m_HasInhaledAbility and utils::IsOverlapping(m_Star.GetHitBox(), GetHitBox()) and m_Star.IsActivated())
 		{
-			m_InhaledEnemy = true;
-			m_InhaledAbility = m_Star.GetAbility();
+			m_HasInhaledAbility = true;
+			m_InhaledAbilityType = m_Star.GetAbility();
 			m_Star.Deactivate();
 			m_CurrentState = State::None;
 		}
 	}
-
+	if (!m_HasInhaledAbility) m_InhaledAbilityType = AbilityType::None;
 
 	if (KeyDown(SDL_SCANCODE_LSHIFT))
 	{
@@ -325,7 +324,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 #pragma endregion
 
 #pragma region RemoveAbility
-	if (KeyPress(SDL_SCANCODE_RSHIFT) and m_AbilityType != AbilityType::None)
+	if (KeyPress(SDL_SCANCODE_RSHIFT) and m_AbilityType != AbilityType::None and !m_pAbility->IsActive() and m_CurrentState != State::Swallow)
 	{
 		m_Star.Activate(m_Position, static_cast<Direction>(-static_cast<int>(m_Direction)));
 		m_Star.SetAbility(m_AbilityType);
@@ -340,28 +339,20 @@ void Kirby::MechanicUpdate(float elapsedSec)
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			SWALLOW			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if (m_InhaledEnemy and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN))
+	if (m_HasInhaledAbility and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN))
 	{
-		m_InhaledEnemy = false;
+		m_HasInhaledAbility = false;
 		m_CurrentAnimation = "Swallow";
 		m_CurrentState = State::Swallow;
 		delete m_pAbility;
 
-		if (m_InhaledAbility != AbilityType::None)
+		if (m_InhaledAbilityType != AbilityType::None)
 		{
-			if (m_InhaledAbility == AbilityType::Beam)		m_pAbility = new Beam(true);
-			if (m_InhaledAbility == AbilityType::Fire)		m_pAbility = new Fire(true);
-			if (m_InhaledAbility == AbilityType::Spark)		m_pAbility = new Spark(true);
-			m_AbilityType = m_InhaledAbility;
+			if (m_InhaledAbilityType == AbilityType::Beam)		m_pAbility = new Beam(true);
+			if (m_InhaledAbilityType == AbilityType::Fire)		m_pAbility = new Fire(true);
+			if (m_InhaledAbilityType == AbilityType::Spark)		m_pAbility = new Spark(true);
+			m_AbilityType = m_InhaledAbilityType;
 		}
-		else if (m_pInhaledEnemy->GetAbilityType() != AbilityType::None)
-		{
-			if (m_pInhaledEnemy->GetAbilityType() == AbilityType::Beam)		m_pAbility = new Beam(true);
-			if (m_pInhaledEnemy->GetAbilityType() == AbilityType::Fire)		m_pAbility = new Fire(true);
-			if (m_pInhaledEnemy->GetAbilityType() == AbilityType::Spark)	m_pAbility = new Spark(true);
-			m_AbilityType = m_pInhaledEnemy->GetAbilityType();
-		}
-		m_pInhaledEnemy = nullptr;
 	}
 
 	if (m_CurrentState != State::Swallow and m_OldState == State::Swallow and m_AbilityType != AbilityType::None) m_pAbility->Activate(m_Position, m_Direction);
@@ -374,7 +365,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 	{
 		m_IsSliding = false;
 		m_Velocity.x = 0;
-		if (m_CurrentState == State::Walk and !m_InhaledEnemy)
+		if (m_CurrentState == State::Walk and !m_HasInhaledAbility)
 		{
 			m_CurrentAnimation = "Wall";
 			if (!m_pAnimationManager->IsActive("Walk") or m_pAnimationManager->IsDone("Wall"))
@@ -433,7 +424,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 		if (m_WasInAir)
 		{
 			m_WasInAir = false;
-			if (CanJumpWithCurrentState() and !m_InhaledEnemy) m_CurrentState = State::Land;
+			if (CanJumpWithCurrentState() and !m_HasInhaledAbility) m_CurrentState = State::Land;
 		}
 	}
 	else
@@ -441,7 +432,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 		m_WasInAir = true;
 		m_IsGrounded = false;
 
-		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_InhaledEnemy)
+		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_HasInhaledAbility)
 		{
 			if (m_pAbility == nullptr or !m_pAbility->IsActive())
 			{
@@ -460,7 +451,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_CurrentState = State::None;
-			if (!m_InhaledEnemy) m_CurrentAnimation = "EndFlip";
+			if (!m_HasInhaledAbility) m_CurrentAnimation = "EndFlip";
 			else m_CurrentAnimation = "InhaledJumpEnd";
 		}
 
@@ -529,14 +520,14 @@ bool Kirby::DoDoorChecks(bool setPos)
 			{
 				m_CurrentState = State::EnterDoor;
 				m_Velocity.x = 0;
-				if (m_OldState != State::Flight and !m_InhaledEnemy)
+				if (m_OldState != State::Flight and !m_HasInhaledAbility)
 				{
 					m_CurrentAnimation = "EnterDoor";
 				}
 				else
 				{
 					m_CurrentAnimation = "Exhaling";
-					if (m_InhaledEnemy)
+					if (m_HasInhaledAbility)
 					{
 						if (!m_StarProj.IsActivated())
 						{
@@ -567,8 +558,8 @@ bool Kirby::DoDoorChecks(bool setPos)
 						else m_pLevel->DecreaseSubLevel();
 						m_Position = door.outcomePos;
 
-						m_InhaledEnemy = false;
-						m_pInhaledEnemy = nullptr;
+						m_HasInhaledAbility = false;
+						m_InhaledAbilityType = AbilityType::None;
 						m_Direction = Direction::Right;
 						m_CurrentState = State::None;
 					}
@@ -592,8 +583,8 @@ void Kirby::Reset()
 	m_Health = 6;
 	m_Score = 0;
 	m_IsInvincible = false;
-	m_InhaledEnemy = false;
-	m_pInhaledEnemy = nullptr;
+	m_HasInhaledAbility = false;
+	m_InhaledAbilityType = AbilityType::None;
 	delete m_pAbility;
 	m_pAbility = nullptr;
 	m_AbilityType = AbilityType::None;
@@ -619,17 +610,17 @@ void Kirby::HitEnemy(const Point2f& enemyPos)
 			
 			m_AbilityType = AbilityType::None;
 			delete m_pAbility;
+			m_pAbility = nullptr;
 		}
 
- 		m_CurrentState = State::Hit;
+ 		if (m_CurrentState != State::Flight) m_CurrentState = State::Hit;
 	}
 }
-void Kirby::InhaledEnemy(Enemy* enemy)
+void Kirby::InhaledEnemy(AbilityType ability)
 {
-	m_pInhaledEnemy = enemy;
-	m_InhaledEnemy = true;
+	m_HasInhaledAbility = true;
+	m_InhaledAbilityType = ability;
 	m_CurrentState = State::None;
-	m_Score += enemy->GetScore();
 }
 
 void Kirby::AbilityUpdate(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
@@ -700,6 +691,10 @@ bool Kirby::IsInvincible() const
 {
 	return m_IsInvincible;
 }
+void Kirby::AddToScore(int addition)
+{
+	m_Score += addition;
+}
 Rectf Kirby::GetInhaleRect() const
 {
 	Rectf inhaleRect
@@ -727,7 +722,7 @@ void Kirby::Animate()
 	case Kirby::State::None:
 		if (m_IsOn30)
 		{
-			if (!m_InhaledEnemy)
+			if (!m_HasInhaledAbility)
 			{
 				if (m_IsSlopeDown) m_CurrentAnimation = "Idle30Down";
 				else m_CurrentAnimation = "Idle30Up";
@@ -740,7 +735,7 @@ void Kirby::Animate()
 		}
 		else if (m_IsOn45)
 		{
-			if (!m_InhaledEnemy)
+			if (!m_HasInhaledAbility)
 			{
 				if (m_IsSlopeDown) m_CurrentAnimation = "Idle45Down";
 				else m_CurrentAnimation = "Idle45Up";
@@ -753,19 +748,19 @@ void Kirby::Animate()
 		}
 		else
 		{
-			if (!m_InhaledEnemy) m_CurrentAnimation = "Idle";
+			if (!m_HasInhaledAbility) m_CurrentAnimation = "Idle";
 			else m_CurrentAnimation = "InhaledIdle";
 		}
 		break;
 	case Kirby::State::Walk:
-		if (m_IsOn45 and !m_InhaledEnemy)
+		if (m_IsOn45 and !m_HasInhaledAbility)
 		{
 			if (m_IsSlopeDown) m_CurrentAnimation = "Walk45Down";
 			else m_CurrentAnimation = "Walk45Up";
 		}
 		else
 		{
-			if (!m_InhaledEnemy) m_CurrentAnimation = "Walk";
+			if (!m_HasInhaledAbility) m_CurrentAnimation = "Walk";
 			else m_CurrentAnimation = "InhaledWalk";
 		}
 		break;
@@ -787,7 +782,7 @@ void Kirby::Animate()
 		}
 		break;
 	case Kirby::State::Jump:
-		if (!m_InhaledEnemy)
+		if (!m_HasInhaledAbility)
 		{
 			if (m_Velocity.y >= 0.f) m_CurrentAnimation = "Jump";
 			else m_CurrentAnimation = "Flip";
@@ -814,16 +809,16 @@ void Kirby::Animate()
 		if (m_pAnimationManager->IsDone("Exhaling"))
 		{
 			m_CurrentState = State::None;
-			m_pInhaledEnemy = nullptr;
-			m_InhaledEnemy = false;
+			m_InhaledAbilityType = AbilityType::None;
+			m_HasInhaledAbility = false;
 		}
 		break;
 	case Kirby::State::Swallow:
 		if (m_pAnimationManager->IsDone("Swallow"))
 		{
 			m_CurrentState = State::None;
-			m_pInhaledEnemy = nullptr;
-			m_InhaledEnemy = false;
+			m_InhaledAbilityType = AbilityType::None;
+			m_HasInhaledAbility = false;
 		}
 		break;
 	case Kirby::State::Ability:
@@ -895,7 +890,7 @@ bool Kirby::CanJumpWithCurrentState() const
 }
 bool Kirby::CanSlideWithCurrentState() const
 {
-	if (m_InhaledEnemy) return false;
+	if (m_HasInhaledAbility) return false;
 	if (m_CurrentState == State::None or
 		m_CurrentState == State::Slide) return true;
 	else return false;
@@ -907,7 +902,7 @@ bool Kirby::CanFlyWithCurrentState() const
 		m_CurrentState == State::Swallow	or
 		m_CurrentState == State::EnterDoor	or
 		m_CurrentState == State::Hit		or
-		m_InhaledEnemy) return false;
+		m_HasInhaledAbility) return false;
 	else return true;
 }
 bool Kirby::CanInhaleWithCurrentState() const
@@ -918,7 +913,7 @@ bool Kirby::CanInhaleWithCurrentState() const
 		m_CurrentState == State::Swallow	or
 		m_CurrentState == State::EnterDoor	or
 		m_CurrentState == State::Hit		or
-		m_InhaledEnemy) return false;
+		m_HasInhaledAbility) return false;
 	else return true;
 }
 #pragma endregion

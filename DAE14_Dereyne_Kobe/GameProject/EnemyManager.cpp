@@ -120,7 +120,8 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 				Eliminate(enemyPtr);
 				if (!IsEnemyInhaleRect(pKirby))
 				{
-					pKirby->InhaledEnemy(enemyPtr);
+					pKirby->InhaledEnemy(enemyPtr->GetAbilityType());
+					pKirby->AddToScore(enemyPtr->GetScore());
 				}
 			}
 
