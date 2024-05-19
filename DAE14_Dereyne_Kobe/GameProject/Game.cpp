@@ -100,13 +100,9 @@ void Game::Update( float elapsedSec )
 
 
 		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
-		if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
+		if (Collision::KirbyHitDetection(m_pKirby, m_pEnemyMngr->GetAllEnemies(), Projectile::GetAllProjectiles()))
 		{
 			m_pCamera->Shake(0.1f, 0.1f);
-		}
-		if (m_pEnemyMngr->EnemyKirbyProjectileCollision(m_pKirby))
-		{
-			if (!m_pKirby->IsInvincible()) m_pCamera->Shake(0.1f, 0.1f);
 		}
 
 		m_pKirby->Update(elapsedSec, m_World);

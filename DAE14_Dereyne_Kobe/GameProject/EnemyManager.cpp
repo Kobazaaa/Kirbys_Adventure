@@ -90,28 +90,6 @@ void EnemyManager::Eliminate(Enemy* enemyPtr)
 #pragma endregion
 
 #pragma region Update
-bool EnemyManager::EnemyHitKirbyDetection(Kirby* pKirby)
-{
-	for (Enemy* enemyPtr : m_vEnemies)
-	{
-		if (!enemyPtr->IsEliminated())
-		{
-			if (Collision::EntityCollision(enemyPtr, pKirby))
-			{
-				Eliminate(enemyPtr);
-
-				if (enemyPtr->IsActivated())
-				{
-					pKirby->HitEnemy(enemyPtr->GetPosition());
-					return true;
-				}
-				else return false;
-			}
-		}
-	}
-	return false;
-}
-
 bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 {
 	bool isEnemyInRect{ false };
@@ -151,51 +129,9 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 	return isEnemyInRect;
 }
 
-bool EnemyManager::EnemyKirbyProjectileCollision(Kirby* pKirby)
+std::vector<Enemy*>& EnemyManager::GetAllEnemies()
 {
-	std::vector<Projectile*> kirbyProj;
-	if (pKirby->GetAbilityType() != Entity::AbilityType::None)
-	{
-		kirbyProj = pKirby->GetAbilityPtr()->GetProjectiles();
-	}
-	//kirbyProj
-
-
-	for (Enemy* enemyPtr : m_vEnemies)
-	{
-		if (!enemyPtr->IsEliminated())
-		{
-			for (Projectile* kirbyProjPtr : kirbyProj)
-			{
-				if (kirbyProjPtr->IsActivated())
-				{
-					if (Collision::ProjectileCollision(enemyPtr, kirbyProjPtr))
-					{
-						Eliminate(enemyPtr);
-					}
-				}
-			}
-
-			std::vector<Projectile*> enemyProj;
-			if (enemyPtr->GetAbilityType() != Entity::AbilityType::None)
-			{
-				enemyProj = enemyPtr->GetAbilityPtr()->GetProjectiles();
-			}
-			for (Projectile* enemyProjPtr : enemyProj)
-			{
-				if (enemyProjPtr->IsActivated())
-				{
-					if (Collision::ProjectileCollision(pKirby, enemyProjPtr))
-					{
-						pKirby->HitEnemy(enemyProjPtr->GetPosition());
-						return true;
-					}
-				}
-			}
-
-		}
-	}
-	return false;
+	return m_vEnemies;
 }
 
 bool EnemyManager::IsEnemyInhaleRect(Kirby* pKirby) const

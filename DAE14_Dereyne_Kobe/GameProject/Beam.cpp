@@ -28,6 +28,12 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 			m_vProjectiles[index]->Update(elapsedSec, world, index);
 
 			m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
+
+			//if (!m_vProjectiles[index]->IsActivated())
+			//{
+			//	m_vProjectiles[index]->Activate(m_vProjectiles[index]->GetPosition(), owner->GetDirection());
+			//	m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
+			//}
 		}
 		
 		m_BeamFlickerTimer += elapsedSec;

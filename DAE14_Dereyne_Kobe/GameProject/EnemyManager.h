@@ -37,6 +37,9 @@ public:
 	bool KirbyInhaleCollision(Kirby* pKirby, float elapsedSec);
 	bool EnemyKirbyProjectileCollision(Kirby* pKirby);
 
+
+	std::vector<Enemy*>& GetAllEnemies();
+
 private:
 	// Function
 	bool IsEnemyInhaleRect(Kirby* pKirby) const;

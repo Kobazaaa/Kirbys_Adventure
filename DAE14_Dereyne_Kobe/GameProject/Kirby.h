@@ -67,7 +67,9 @@ private:
 	void UserInput();
 	void MovementUpdate(float elapsedSec);
 	void MechanicUpdate(float elapsedSec);
+
 	void Collisions(const std::vector<std::vector<Point2f>>& world);
+
 	void SlopeHandling();
 	void ApplyFriction(float elapsedSec);
 

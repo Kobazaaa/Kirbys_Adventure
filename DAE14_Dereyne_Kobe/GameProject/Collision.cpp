@@ -2,6 +2,8 @@
 #include "Collision.h"
 #include "Projectile.h"
 #include "Entity.h"
+#include "Kirby.h"
+#include "Enemy.h"
 #include <iostream>
 
 
@@ -149,11 +151,73 @@ bool Collision::FloorCollision(Projectile* projectile, const std::vector<std::ve
 	}
 	return false;
 }
+
+bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, std::vector<Projectile*>& vProjectiles)
+{
+	bool kirbyGotHitByEnemy{false};
+	bool kirbyGotHitByProjectile{false};
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	KIRBY-ENEMY HIT DETECTION & HANDLING    ~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	for (Enemy* enemyPtr : vEnemies)
+	{
+		if (!enemyPtr->IsEliminated())
+		{
+			if (Collision::EntityCollision(enemyPtr, pKirby))
+			{
+				enemyPtr->Reset();
+
+				if (enemyPtr->IsActivated())
+				{
+					pKirby->HitEnemy(enemyPtr->GetPosition());
+					kirbyGotHitByEnemy = true;
+				}
+			}
+		}
+	}
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	KIRBY/ENEMY - PROJECtILE HIT DETECTION & HANDLING	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	for (Projectile* projectilePtr : vProjectiles)
+	{
+		if (projectilePtr->IsActivated())
+		{
+			if (projectilePtr->IsFriendly())
+			{
+				for (Enemy* enemyPtr : vEnemies)
+				{
+					if (!enemyPtr->IsEliminated())
+					{
+						if (Collision::ProjectileCollision(enemyPtr, projectilePtr))
+						{
+							enemyPtr->Reset();
+							// TODO fix beam segments getting deactivated (they shouldnt)
+							projectilePtr->Deactivate();
+						}
+					}
+				}
+			}
+			else
+			{
+				if (Collision::ProjectileCollision(pKirby, projectilePtr))
+				{
+					pKirby->HitEnemy(projectilePtr->GetPosition());
+					kirbyGotHitByProjectile = true;
+				}
+
+			}
+		}
+	}
+
+	return kirbyGotHitByEnemy or kirbyGotHitByProjectile;
+}
+
 bool Collision::EntityCollision(Entity* entity1, Entity* entity2)
 {
 	return utils::IsOverlapping(entity1->GetHitBox(), entity2->GetHitBox());
 }
-
 bool Collision::ProjectileCollision(Entity* entity, Projectile* projectile)
 {
 	return utils::IsOverlapping(entity->GetHitBox(), projectile->GetHitBox());

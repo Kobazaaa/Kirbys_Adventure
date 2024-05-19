@@ -13,6 +13,7 @@ void BeamProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 {
 	if (m_IsActive)
 	{
+		m_AccumSec += elapsedSec;
 		m_CurrentAnimation = "Beam";
 		if (m_AccumSec >= m_TravelTime)
 		{
@@ -21,7 +22,6 @@ void BeamProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 		}
 		else
 		{
-			m_AccumSec += elapsedSec;
 
 			const float angle{ 2 * M_PI / 3};
 			const float percentage{ m_AccumSec / m_TravelTime };

@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "Projectile.h"
 
+std::vector<Projectile*> Projectile::m_vAllProjectiles{};
+
 Projectile::Projectile(const std::string& textureName, const Vector2f velocity, float travelTime, bool isFriendly, float customHitBoxSize)
 	: m_Width				{ 16 }
 	, m_Height				{ 16 }
@@ -19,10 +21,21 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_CurrentAnimation	{ "" }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
+
+	m_vAllProjectiles.push_back(this);
 }
 
 Projectile::~Projectile()
 {
+	for (int index{}; index < m_vAllProjectiles.size(); ++index)
+	{
+		if (m_vAllProjectiles[index] == this)
+		{
+			m_vAllProjectiles[index] = m_vAllProjectiles.back();
+			m_vAllProjectiles.pop_back();
+		}
+	}
+
 	delete m_pAnimationManager;
 	m_pAnimationManager = nullptr;
 }
@@ -91,6 +104,11 @@ float Projectile::GetWidth() const
 float Projectile::GetHeight() const
 {
 	return m_Height;
+}
+
+std::vector<Projectile*>& Projectile::GetAllProjectiles()
+{
+	return m_vAllProjectiles;
 }
 
 void Projectile::Activate(const Point2f& position, Direction direction)

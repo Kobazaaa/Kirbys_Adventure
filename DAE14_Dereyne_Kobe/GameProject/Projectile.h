@@ -38,6 +38,7 @@ public:
 	float GetWidth() const;
 	float GetHeight() const;
 
+	static std::vector<Projectile*>& GetAllProjectiles();
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			MUTATORS			~~
@@ -72,5 +73,7 @@ private:
 	float			m_Width;
 	float			m_Height;
 	float			m_CustomHitBoxSize;
+
+	static std::vector<Projectile*> m_vAllProjectiles;
 };
 

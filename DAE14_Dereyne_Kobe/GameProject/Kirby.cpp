@@ -66,7 +66,6 @@ std::string Kirby::EnumToString(Kirby::State state) const
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	AbilityUpdate(elapsedSec, world);
-	if (m_DoesWorldCollision) Collisions(world);
 
 	if (m_IsInvincible) Invincibility(elapsedSec);
 	if (m_Health <= 0) Death();
@@ -80,6 +79,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 	MechanicUpdate(elapsedSec);
 
+	if (m_DoesWorldCollision) Collisions(world);
 
 }
 void Kirby::Draw() const
@@ -394,7 +394,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 		if (m_WasInAir)
 		{
 			m_WasInAir = false;
-			if (CanJumpWithCurrentState()) m_CurrentState = State::Land;
+			if (CanJumpWithCurrentState() and !m_InhaledEnemy) m_CurrentState = State::Land;
 		}
 	}
 	else

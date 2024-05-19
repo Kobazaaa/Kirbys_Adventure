@@ -2,6 +2,8 @@
 #include <vector>
 
 class Entity;
+class Kirby;
+class Enemy;
 class Projectile;
 class Ability;
 
@@ -20,6 +22,8 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~  ENTITY/PROJECTILE COLLISION	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	static bool KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, std::vector<Projectile*>& vProjectiles);
+
 	static bool EntityCollision		(Entity* entity1, Entity* entity2);
 	static bool ProjectileCollision	(Entity* entity,  Projectile* projectile);
 private:
