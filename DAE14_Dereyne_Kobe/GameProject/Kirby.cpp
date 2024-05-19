@@ -66,10 +66,11 @@ std::string Kirby::EnumToString(Kirby::State state) const
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	AbilityUpdate(elapsedSec, world);
-	Collisions(world);
+	if (m_DoesWorldCollision) Collisions(world);
 
 	if (m_IsInvincible) Invincibility(elapsedSec);
 	if (m_Health <= 0) Death();
+	if (m_CurrentState != State::Dead) m_DoesWorldCollision = true;
 
 	SlopeHandling();
 
@@ -154,7 +155,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 				else m_IsRunning = false;
 			}
 		}
-		else if (m_CurrentState != State::Jump) m_IsRunning = false;
+		else if (m_CurrentState != State::Jump and m_CurrentState != State::Land) m_IsRunning = false;
 
 		if (m_IsTurning)
 		{
@@ -349,12 +350,14 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 	m_IsOn30 = false;
 	if (Collision::FloorCollision(this, world))
 	{
+		m_IsGrounded = true;
 
 		if (m_CurrentState != State::Exhaling and
 			m_CurrentState != State::Flight and
 			m_CurrentState != State::Inhaling and
 			m_CurrentState != State::Falling and
 			m_CurrentState != State::Swallow and
+			m_CurrentState != State::Land and
 			m_CurrentState != State::Hit and
 			m_CurrentState != State::EnterDoor and
 			(abs(m_Velocity.x) >= 0.f)) m_CurrentState = State::None;
@@ -388,15 +391,16 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 		}
 		
 		//TODO fix landing animation
-		if (m_WasInAir and m_CurrentState != State::Falling and m_OldState != State::Falling)
+		if (m_WasInAir)
 		{
 			m_WasInAir = false;
-			m_CurrentState = State::Slide;
+			if (CanJumpWithCurrentState()) m_CurrentState = State::Land;
 		}
 	}
 	else
 	{
 		m_WasInAir = true;
+		m_IsGrounded = false;
 
 		if (m_Velocity.y < m_GRAVITY / 1.75f and (m_CurrentState == State::None or m_CurrentState == State::Jump or m_CurrentState == State::Falling or m_CurrentState == State::Walk) and !m_InhaledEnemy)
 		{
@@ -413,6 +417,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_CurrentState != State::Jump and
 			m_CurrentState != State::Falling and
 			m_CurrentState != State::Hit and
+			m_CurrentState != State::Dead and
 			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_CurrentState = State::None;
@@ -473,7 +478,7 @@ void Kirby::ApplyPlaySpace()
 	if (m_Position.y + GetHitBox().height / 2 < subLevel.bottom) m_Health = 0;
 }
 
-bool Kirby::DoDoorChecks()
+bool Kirby::DoDoorChecks(bool setPos)
 {
 	std::vector<Door> vDoors = m_pLevel->GetDoors();
 	for (const Door& door : vDoors)
@@ -516,14 +521,20 @@ bool Kirby::DoDoorChecks()
 				}
 				if (m_pAnimationManager->IsDone("EnterDoor"))
 				{
-					m_CurrentState = State::None;
-					m_Direction = Direction::Right;
-					if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
-					else m_pLevel->DecreaseSubLevel();
-					m_Position = door.outcomePos;
+					if (setPos)
+					{
+						if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
+						else m_pLevel->DecreaseSubLevel();
+						m_Position = door.outcomePos;
 
-					m_InhaledEnemy = false;
-					m_pInhaledEnemy = nullptr;
+						m_InhaledEnemy = false;
+						m_pInhaledEnemy = nullptr;
+						m_Direction = Direction::Right;
+						m_CurrentState = State::None;
+					}
+					else
+					{
+					}
 
 					return true;
 				}
@@ -590,6 +601,16 @@ void Kirby::Death()
 {
 	--m_Lives;
 	m_Health = 6;
+	
+
+	m_CurrentState = State::Dead;
+	
+	m_DoesWorldCollision = false;
+
+	m_Velocity.x = 0;
+	m_Velocity.y = m_JUMP_SPEED;
+	m_Position.y += 1;
+
 	if (m_Lives <= 0)
 	{
 		Reset();
@@ -766,6 +787,30 @@ void Kirby::Animate()
 		{
 			m_CurrentState = State::None;
 		}
+		break;
+	case Kirby::State::Land:
+		if (m_IsOn30)
+		{
+			if (m_IsSlopeDown) m_CurrentAnimation = "Duck30Down";
+			else m_CurrentAnimation = "Duck30Up";
+		}
+		else if (m_IsOn45)
+		{
+			if (m_IsSlopeDown) m_CurrentAnimation = "Duck45Down";
+			else m_CurrentAnimation = "Duck45Up";
+		}
+		else m_CurrentAnimation = "Duck";
+		if (m_pAnimationManager->IsDone("Duck30Down") or
+			m_pAnimationManager->IsDone("Duck30Up") or
+			m_pAnimationManager->IsDone("Duck45Down") or
+			m_pAnimationManager->IsDone("Duck45Up") or
+			m_pAnimationManager->IsDone("Duck"))
+		{
+			m_CurrentState = State::None;
+		}
+		break;
+	case Kirby::State::Dead:
+		m_CurrentAnimation = "Death";
 		break;
 	default:
 		break;

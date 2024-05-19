@@ -17,7 +17,7 @@ class Kirby final : public Entity
 public:
 	enum class State
 	{
-		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability, EnterDoor, Hit
+		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability, EnterDoor, Hit, Land, Dead
 	};
 	enum class Card
 	{
@@ -41,7 +41,7 @@ public:
 	void Draw() const;
 	void HitEnemy(const Point2f& enemyPos);
 	void InhaledEnemy(Enemy* enemy);
-	bool DoDoorChecks();
+	bool DoDoorChecks(bool setPos);
 
 	void Reset();
 
@@ -113,7 +113,6 @@ private:
 	bool m_IsRunning{false};
 	bool m_IsTurning{false};
 	bool m_WasInAir{false};
-	bool m_IsGrounded{false};
 
 	bool m_IsOn30{false};
 	bool m_IsOn45{false};

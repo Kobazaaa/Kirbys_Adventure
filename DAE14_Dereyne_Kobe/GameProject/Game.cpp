@@ -72,14 +72,32 @@ void Game::Update( float elapsedSec )
 		else if (m_GameState == GameState::Pause) m_GameState = GameState::Play;
 	}
 
+	FadeUpdate(elapsedSec);
+	if (!m_IsFadingIn and !m_IsFadingOut) m_FadeTimer = 0;
+
+	if (m_PlayerEnteredDoor)
+	{
+		if (m_GameState == GameState::Play) Fade(0.5f);
+		m_GameState = GameState::Pause;
+
+		if (!IsFadingOut())
+		{
+			m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
+			if (!IsFadingIn())
+			{
+				m_GameState = GameState::Play;
+				m_PlayerEnteredDoor = false;
+			}
+		}
+	}
+	if (m_pKirby->DoDoorChecks(IsFadingIn()))
+	{
+		m_PlayerEnteredDoor = true;
+	}
+
 	if (m_GameState != GameState::Pause)
 	{
 
-		if (m_pKirby->DoDoorChecks())
-		{
-			m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
-
-		}
 
 		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
 		if (m_pEnemyMngr->EnemyHitKirbyDetection(m_pKirby))
@@ -94,8 +112,9 @@ void Game::Update( float elapsedSec )
 		m_pKirby->Update(elapsedSec, m_World);
 		m_pEnemyMngr->Update(elapsedSec, m_World, m_pKirby->GetPosition());
 		m_pHUD->Update(elapsedSec);
-		m_pCamera->Update(elapsedSec);
 	}
+	m_pCamera->Update(elapsedSec);
+
 }
 
 void Game::Draw( ) const
@@ -104,6 +123,8 @@ void Game::Draw( ) const
 
 	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetSubLevelHeight(), m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
 	{
+
+
 		m_pLevel->Draw();
 		utils::SetColor(Color4f(1, 1, 1, 1));
 	
@@ -130,6 +151,17 @@ void Game::Draw( ) const
 	m_pCamera->Reset();
 	
 	m_pHUD->Draw();
+
+	if (m_IsFadingOut)
+	{
+		utils::SetColor(Color4f(0, 0, 0, m_FadeTimer / m_FadeDuration));
+		utils::FillRect(GetViewPort());
+	}
+	else if (m_IsFadingIn)
+	{
+		utils::SetColor(Color4f(0, 0, 0, (m_FadeDuration - m_FadeTimer) / m_FadeDuration));
+		utils::FillRect(GetViewPort());
+	}
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
@@ -263,4 +295,48 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
 	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
 	TextureManager::LoadTexture("VegetableValley",		"Levels/VegetableValley.png");
+}
+
+void Game::Fade(float duration)
+{
+	if (!m_IsFadingOut and !m_IsFadingIn)
+	{
+		m_IsFadingOut = true;
+		m_FadeDuration = duration;
+	}
+}
+
+void Game::FadeUpdate(float elapsedSec)
+{
+	if (m_IsFadingOut)
+	{
+		m_FadeTimer += elapsedSec;
+
+		if (m_FadeTimer >= m_FadeDuration)
+		{
+			m_IsFadingOut = false;
+			m_IsFadingIn = true;
+			m_FadeTimer = 0;
+		}
+	}
+	else if (m_IsFadingIn)
+	{
+		m_FadeTimer += elapsedSec;
+
+		if (m_FadeTimer >= m_FadeDuration)
+		{
+			m_IsFadingIn = false;
+			m_FadeTimer = 0;
+		}
+	}
+}
+
+bool Game::IsFadingOut() const
+{
+	return m_IsFadingOut;
+}
+
+bool Game::IsFadingIn() const
+{
+	return m_IsFadingIn;
 }

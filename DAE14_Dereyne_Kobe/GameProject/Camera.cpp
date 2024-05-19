@@ -18,24 +18,7 @@ Camera::Camera(float screenWidth, float screenHeight, float scale)
 
 void Camera::Update(float elapsedSec)
 {
-	if (!m_IsShaking) m_CameraPosBeforeShake = m_CameraPos;
-
-	if (m_IsShaking)
-	{
-		m_ShakeTimer += elapsedSec;
-		m_CameraPos.x += utils::GetRandomFloat(-10 * m_ShakeMagnitude, 10 * m_ShakeMagnitude, 3);
-		m_CameraPos.y += utils::GetRandomFloat(-10 * m_ShakeMagnitude, 10 * m_ShakeMagnitude, 3);
-	}
-	
-	if (m_ShakeTimer >= m_ShakeDuration)
-	{
-		m_ShakeTimer = 0;
-		m_IsShaking = false;
-		m_ShakeDuration = 0;
-		m_ShakeMagnitude = 0;
-
-		m_CameraPos = m_CameraPosBeforeShake;
-	}
+	ShakeUpdate(elapsedSec);
 }
 
 void Camera::Aim(float sublevelW, float sublevelH, float sublevelBottom, const Point2f& trackCenter, float hudHeight)
@@ -54,20 +37,23 @@ void Camera::Aim(float sublevelW, float sublevelH, float sublevelBottom, const P
 
 	if (!m_IsShaking)
 	{
-		if (trackCenter.x < movementBox.left)					m_CameraPos.x += (trackCenter.x - (movementBox.left));
+		if		(trackCenter.x < movementBox.left)				m_CameraPos.x += (trackCenter.x - (movementBox.left));
 		else if (trackCenter.x > movementBox.left + moveBoxW)		m_CameraPos.x += (trackCenter.x - (movementBox.left + moveBoxW));
-		if (trackCenter.y < movementBox.bottom)				m_CameraPos.y += (trackCenter.y - (movementBox.bottom));
+		if		(trackCenter.y < movementBox.bottom)				m_CameraPos.y += (trackCenter.y - (movementBox.bottom));
 		else if (trackCenter.y > movementBox.bottom + moveBoxH)		m_CameraPos.y += (trackCenter.y - (movementBox.bottom + moveBoxH));
 	}
 
 
-	if (m_CameraPos.x <= 0.f)														m_CameraPos.x = 0.f;
+	if		(m_CameraPos.x <= 0.f)														m_CameraPos.x = 0.f;
 	else if (m_CameraPos.x > sublevelW - m_CameraWidth)									m_CameraPos.x = sublevelW - m_CameraWidth;
-	if (m_CameraPos.y <= sublevelBottom)											m_CameraPos.y = sublevelBottom;
+	if		(m_CameraPos.y <= sublevelBottom)											m_CameraPos.y = sublevelBottom;
 	else if (m_CameraPos.y > sublevelBottom + sublevelH - m_CameraHeight + hudHeight)	m_CameraPos.y = sublevelBottom + sublevelH - m_CameraHeight + hudHeight;
+
+
 	glTranslatef(0,m_SCALE * hudHeight, 0);
 	glScalef(m_SCALE, m_SCALE, 0);
 	glTranslatef(-m_CameraPos.x, -m_CameraPos.y, 0);
+
 }
 
 void Camera::Reset()
@@ -98,5 +84,26 @@ void Camera::SetPosition(const Point2f& pos)
 void Camera::SetPosition(float x, float y)
 {
 	SetPosition(Point2f(x, y));
+}
+void Camera::ShakeUpdate(float elapsedSec)
+{
+	if (!m_IsShaking) m_CameraPosBeforeShake = m_CameraPos;
+
+	if (m_IsShaking)
+	{
+		m_ShakeTimer += elapsedSec;
+		m_CameraPos.x += utils::GetRandomFloat(-10 * m_ShakeMagnitude, 10 * m_ShakeMagnitude, 3);
+		m_CameraPos.y += utils::GetRandomFloat(-10 * m_ShakeMagnitude, 10 * m_ShakeMagnitude, 3);
+	}
+
+	if (m_ShakeTimer >= m_ShakeDuration)
+	{
+		m_ShakeTimer = 0;
+		m_IsShaking = false;
+		m_ShakeDuration = 0;
+		m_ShakeMagnitude = 0;
+
+		m_CameraPos = m_CameraPosBeforeShake;
+	}
 }
 #pragma endregion

@@ -37,7 +37,6 @@ public:
 
 protected:
 	// Protected Variables
-	bool m_DoesWorldCollision;
 	bool m_CanMove;
 
 	// Protected Constants

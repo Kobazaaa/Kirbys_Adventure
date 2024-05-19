@@ -47,9 +47,20 @@ private:
 
 	void LoadTextures();
 
+	void Fade(float duration);
+	void FadeUpdate(float elapsedSec);
+	bool IsFadingOut() const;
+	bool IsFadingIn() const;
+
 	// VARIABLES
 	const bool m_DEBUG_MODE{true};
-	
+	bool m_PlayerEnteredDoor{false};
+
+	float m_FadeTimer;
+	float m_FadeDuration;
+	bool m_IsFadingIn;
+	bool m_IsFadingOut;
+
 	Kirby* m_pKirby;
 	EnemyManager* m_pEnemyMngr;
 	

@@ -18,7 +18,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Entity(const std::string& textureName, float width, float height, const Point2f& center);
+	explicit Entity(const std::string& textureName, float width, float height, const Point2f& center, bool doesWorldCollsion = true);
 	Entity(const Entity& other) = delete;
 	Entity(Entity&& other) = delete;
 	Entity& operator=(const Entity& rhs) = delete;
@@ -69,6 +69,7 @@ protected:
 
 	float	m_Width;
 	float	m_Height;
+	bool	m_DoesWorldCollision;
 
 	bool	m_IsGrounded;
 	bool	m_IsInvincible;

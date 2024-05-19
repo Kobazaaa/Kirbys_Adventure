@@ -18,7 +18,6 @@ public:
 	void Reset();
 	void Shake(float duration, float magnitude);
 
-
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			ACCESSORS			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,6 +31,9 @@ public:
 	void SetPosition(float x, float y);
 
 private:
+	// Private Behavioural
+	void ShakeUpdate(float elapsedSec);
+
 	// Private Variables
 	float		m_CameraWidth;
 	float		m_CameraHeight;

@@ -7,7 +7,6 @@ Enemy::Enemy(const std::string& textureName, const Point2f& center, bool doesWor
 	, m_IsActivated			{ true }
 	, m_IsEliminated		{ true }
 	, m_SpawnPoint			{ center }
-	, m_DoesWorldCollision	{ doesWorldCollsion }
 	, m_CanMove				{ true }
 {
 	m_Direction = Direction::Left;
