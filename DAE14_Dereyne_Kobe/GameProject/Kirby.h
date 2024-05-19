@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "Puff.h"
 #include "StarProjectile.h"
+#include "Star.h"
 #include "Beam.h"
 #include "Fire.h"
 #include "Spark.h"
@@ -105,6 +106,8 @@ private:
 	// Projectiles & Abilities
 	Puff m_Puff;
 	StarProjectile m_StarProj;
+	Star m_Star;
+	AbilityType m_InhaledAbility;
 
 	// Kirby Variables
 	float m_WalkSpeedMultiplier;

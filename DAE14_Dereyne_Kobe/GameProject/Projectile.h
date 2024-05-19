@@ -33,6 +33,7 @@ public:
 
 	bool IsActivated() const;
 	bool IsFriendly() const;
+	bool DoesEntityCollision() const;
 	Point2f GetPosition() const;
 	Direction GetDirection() const;
 	float GetWidth() const;
@@ -56,6 +57,7 @@ protected:
 	float			m_TravelTime;
 	bool			m_IsActive;
 	bool			m_IsFriendly;
+	bool			m_DoesEntityCollision;
 	bool			m_Hidden;
 
 	Point2f			m_Position;

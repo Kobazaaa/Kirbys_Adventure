@@ -119,8 +119,6 @@ void Game::Draw( ) const
 
 	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetSubLevelHeight(), m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
 	{
-
-
 		m_pLevel->Draw();
 		utils::SetColor(Color4f(1, 1, 1, 1));
 	

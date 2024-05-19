@@ -2,6 +2,7 @@
 #include "Collision.h"
 #include "TextureManager.h"
 #include "Projectile.h"
+#include <iostream>
 
 std::vector<Projectile*> Projectile::m_vAllProjectiles{};
 
@@ -13,6 +14,7 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_Position			{ Point2f(0,0) }
 	, m_IsActive			{ false }
 	, m_IsFriendly			{ isFriendly }
+	, m_DoesEntityCollision	{ true }
 	, m_TravelTime			{ travelTime }
 	, m_AccumSec			{ 0.f }
 	, m_Hidden				{ false }
@@ -84,6 +86,11 @@ bool Projectile::IsActivated() const
 bool Projectile::IsFriendly() const
 {
 	return m_IsFriendly;
+}
+
+bool Projectile::DoesEntityCollision() const
+{
+	return m_DoesEntityCollision;
 }
 
 Point2f Projectile::GetPosition() const

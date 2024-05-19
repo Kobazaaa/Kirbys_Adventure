@@ -33,9 +33,7 @@ public:
 	void Pop();
 	void Eliminate(Enemy* enemyPtr);
 
-	bool EnemyHitKirbyDetection(Kirby* pKirby);
 	bool KirbyInhaleCollision(Kirby* pKirby, float elapsedSec);
-	bool EnemyKirbyProjectileCollision(Kirby* pKirby);
 
 
 	std::vector<Enemy*>& GetAllEnemies();

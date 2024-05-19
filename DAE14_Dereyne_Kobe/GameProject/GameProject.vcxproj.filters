@@ -150,6 +150,9 @@
     <ClCompile Include="PoppyBrosJr.cpp">
       <Filter>Source Files\Entities\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Star.cpp">
+      <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="PoppyBrosJr.h">
       <Filter>Header Files\Entities\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Star.h">
+      <Filter>Header Files\Projectiles and Abilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

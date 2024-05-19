@@ -129,7 +129,7 @@ bool Collision::WallCollision(Projectile* projectile, const std::vector<std::vec
 	{
 		if (utils::Raycast(world[idx], left, right, hitInfo))
 		{
-			projectile->Deactivate();
+			//projectile->Deactivate();
 			return true;
 		}
 	}
@@ -145,7 +145,7 @@ bool Collision::FloorCollision(Projectile* projectile, const std::vector<std::ve
 	{
 		if (utils::Raycast(world[idx], top, bottom, hitInfo))
 		{
-			projectile->Deactivate();
+			//projectile->Deactivate();
 			return true;
 		}
 	}
@@ -178,11 +178,11 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// ~~	KIRBY/ENEMY - PROJECtILE HIT DETECTION & HANDLING	~~
+	// ~~	KIRBY/ENEMY - PROJECTILE HIT DETECTION & HANDLING	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	for (Projectile* projectilePtr : vProjectiles)
 	{
-		if (projectilePtr->IsActivated())
+		if (projectilePtr->IsActivated() and projectilePtr->DoesEntityCollision())
 		{
 			if (projectilePtr->IsFriendly())
 			{
