@@ -37,7 +37,7 @@ private:
 	// ENUM
 	enum class GameState
 	{
-		Play, Pause
+		Hub, Play, Pause
 	};
 
 	// FUNCTIONS
@@ -53,7 +53,7 @@ private:
 	bool IsFadingIn() const;
 
 	// VARIABLES
-	const bool m_DEBUG_MODE{true};
+	const bool m_DEBUG_MODE{false};
 	bool m_PlayerEnteredDoor{false};
 
 	float m_FadeTimer;
@@ -66,7 +66,10 @@ private:
 	
 	std::vector<std::vector<Point2f>> m_World;
 	Camera* m_pCamera;
+
 	Level* m_pLevel;
+	Level* m_pHub;
+
 	HUD* m_pHUD;
 	
 	const float m_SCALE{2.f};

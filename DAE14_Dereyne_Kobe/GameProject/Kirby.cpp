@@ -420,7 +420,6 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_IsOn30 = false;
 		}
 		
-		//TODO fix landing animation
 		if (m_WasInAir)
 		{
 			m_WasInAir = false;

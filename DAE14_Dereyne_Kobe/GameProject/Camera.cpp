@@ -24,20 +24,20 @@ void Camera::Update(float elapsedSec)
 void Camera::Aim(float sublevelW, float sublevelH, float sublevelBottom, const Point2f& trackCenter, float hudHeight)
 {
 	glPushMatrix();
-	Point2f cameraCenter	{ m_CameraPos.x    + m_CameraWidth / 2, m_CameraPos.y   + m_CameraHeight / 2};
+	Point2f cameraCenter{ m_CameraPos.x + m_CameraWidth / 2, m_CameraPos.y + m_CameraHeight / 2 };
 
-	float moveBoxW			{ m_CameraWidth  / 6};
-	float moveBoxH			{ m_CameraHeight };
+	float moveBoxW{ m_CameraWidth / 6 };
+	float moveBoxH{ m_CameraHeight / 16 };
 	Rectf movementBox
 	{
 		cameraCenter.x - moveBoxW,
-		cameraCenter.y - moveBoxH / 2,
+		cameraCenter.y - 3.5f * moveBoxH,
 		moveBoxW, moveBoxH
 	};
 
 	if (!m_IsShaking)
 	{
-		if		(trackCenter.x < movementBox.left)				m_CameraPos.x += (trackCenter.x - (movementBox.left));
+		if		(trackCenter.x < movementBox.left)					m_CameraPos.x += (trackCenter.x - (movementBox.left));
 		else if (trackCenter.x > movementBox.left + moveBoxW)		m_CameraPos.x += (trackCenter.x - (movementBox.left + moveBoxW));
 		if		(trackCenter.y < movementBox.bottom)				m_CameraPos.y += (trackCenter.y - (movementBox.bottom));
 		else if (trackCenter.y > movementBox.bottom + moveBoxH)		m_CameraPos.y += (trackCenter.y - (movementBox.bottom + moveBoxH));
@@ -58,6 +58,21 @@ void Camera::Aim(float sublevelW, float sublevelH, float sublevelBottom, const P
 
 void Camera::Reset()
 {
+	//Point2f cameraCenter{ m_CameraPos.x + m_CameraWidth / 2, m_CameraPos.y + m_CameraHeight / 2 };
+
+	//float moveBoxW{ m_CameraWidth / 6 };
+	//float moveBoxH{ m_CameraHeight / 16 };
+	//Rectf movementBox
+	//{
+	//	cameraCenter.x - moveBoxW,
+	//	cameraCenter.y - 3.5f * moveBoxH,
+	//	moveBoxW, moveBoxH
+	//};
+
+	//utils::SetColor(Color4f(1, 0, 0, 1));
+	//utils::DrawRect(movementBox);
+	//utils::FillEllipse(cameraCenter, 3, 3);
+
 	glPopMatrix();
 }
 

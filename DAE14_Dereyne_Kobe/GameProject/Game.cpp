@@ -33,7 +33,9 @@ void Game::Initialize( )
 	LoadTextures();
 
 	// Camera + Level + HUD
-	m_pLevel =	new Level("Levels/VegetableValley.png", 3);
+	//m_pLevel =	new Level("VegetableValleyHub", 1);
+	m_pLevel =	new Level("VegetableValleyLevel", 3);
+	m_pHub =	new Level("VegetableValleyHub", 3);
 	m_pCamera = new Camera(GetViewPort().width, GetViewPort().height, m_SCALE);
 	
 	// EnemyManager
@@ -44,7 +46,8 @@ void Game::Initialize( )
 	m_pHUD = new HUD(m_pKirby, m_SCALE);
 	
 	// World
-	SVGParser::GetVerticesFromSvgFile("Levels/VegetableValley.svg", m_World);
+	//SVGParser::GetVerticesFromSvgFile("Levels/VegetableValleyHub.svg", m_World);
+	SVGParser::GetVerticesFromSvgFile("Levels/VegetableValleyLevel.svg", m_World);
 }
 
 void Game::Cleanup( )
@@ -58,6 +61,8 @@ void Game::Cleanup( )
 	delete m_pLevel;
 	m_pLevel = nullptr;
 	delete m_pHUD;
+	m_pHub = nullptr;
+	delete m_pHub;
 	m_pHUD = nullptr;
 
 	SoundManager::DeleteAllSound();
@@ -68,8 +73,8 @@ void Game::Update( float elapsedSec )
 {
 	if (utils::KeyPress(SDL_SCANCODE_ESCAPE))
 	{
-		if (m_GameState == GameState::Play) m_GameState = GameState::Pause;
-		else if (m_GameState == GameState::Pause) m_GameState = GameState::Play;
+		if (m_GameState == GameState::Play) m_GameState = GameState::Hub;
+		else if (m_GameState == GameState::Hub) m_GameState = GameState::Play;
 	}
 
 	FadeUpdate(elapsedSec);
@@ -95,7 +100,7 @@ void Game::Update( float elapsedSec )
 		m_PlayerEnteredDoor = true;
 	}
 
-	if (m_GameState != GameState::Pause)
+	if (m_GameState == GameState::Play)
 	{
 		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
 		if (Collision::KirbyHitDetection(m_pKirby, m_pEnemyMngr->GetAllEnemies(), Projectile::GetAllProjectiles()))
@@ -115,35 +120,37 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 
-	m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetSubLevelHeight(), m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
+	if (m_GameState == GameState::Play)
 	{
-		m_pLevel->Draw();
-		utils::SetColor(Color4f(1, 1, 1, 1));
-	
-		m_pKirby->Draw();
-		m_pEnemyMngr->Draw(m_DEBUG_MODE);
-	
-	
-	
-		if (m_DEBUG_MODE)
+		m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetSubLevelHeight(), m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
 		{
-			for (size_t idx{}; idx < m_World.size(); idx++)
-			{
-				if (idx == 1) utils::SetColor(Color4f(1, 0, 0, 1));
-				else utils::SetColor(Color4f(1, 1, 1, 1));
-				utils::DrawPolygon(m_World[idx]);
-			}
+			m_pLevel->Draw();
 			utils::SetColor(Color4f(1, 1, 1, 1));
-			utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
-			utils::DrawRect(m_pKirby->GetHitBox());
-			utils::DrawRect(m_pKirby->GetInhaleRect());
-	
-		}
-	}
-	m_pCamera->Reset();
-	
-	m_pHUD->Draw();
 
+			m_pKirby->Draw();
+			m_pEnemyMngr->Draw(m_DEBUG_MODE);
+
+
+
+			if (m_DEBUG_MODE)
+			{
+				for (size_t idx{}; idx < m_World.size(); idx++)
+				{
+					if (idx == 1) utils::SetColor(Color4f(1, 0, 0, 1));
+					else utils::SetColor(Color4f(1, 1, 1, 1));
+					utils::DrawPolygon(m_World[idx]);
+				}
+				utils::SetColor(Color4f(1, 1, 1, 1));
+				utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
+				utils::DrawRect(m_pKirby->GetHitBox());
+				utils::DrawRect(m_pKirby->GetInhaleRect());
+
+			}
+		}
+		m_pCamera->Reset();
+
+		m_pHUD->Draw();
+	}
 	if (m_IsFadingOut)
 	{
 		utils::SetColor(Color4f(0, 0, 0, m_FadeTimer / m_FadeDuration));
@@ -286,7 +293,8 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("WaddleDoo",			"Enemies/WaddleDoo.png");
 	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
 	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
-	TextureManager::LoadTexture("VegetableValley",		"Levels/VegetableValley.png");
+	TextureManager::LoadTexture("VegetableValleyLevel",	"Levels/VegetableValleyLevel.png");
+	TextureManager::LoadTexture("VegetableValleyHub",	"Levels/VegetableValleyHub.png");
 }
 
 void Game::Fade(float duration)

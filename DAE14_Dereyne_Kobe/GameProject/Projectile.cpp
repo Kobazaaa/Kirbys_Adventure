@@ -56,7 +56,7 @@ void Projectile::Draw() const
 				glRotatef(-180, 0, 1, 0);
 				glTranslatef(-m_Position.x, 0, 0);
 			}
-			m_pAnimationManager->Draw(m_Position, m_CurrentAnimation);
+			m_pAnimationManager->Draw(m_Position);
 		}
 		glPopMatrix();
 	}

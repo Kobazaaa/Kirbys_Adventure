@@ -2,11 +2,11 @@
 #include "TextureManager.h"
 #include "Level.h"
 
-Level::Level(const std::string& filePath, int nrSubLevels)
+Level::Level(const std::string& name, int nrSubLevels)
 	: m_Position		{ Point2f(0, 0) }
 	, m_NrSubLevels		{ nrSubLevels }
 	, m_CurrentSubLevel	{ 0 }
-	, m_pTexture		{ TextureManager::GetTexture("VegetableValley") }
+	, m_pTexture		{ TextureManager::GetTexture(name) }
 {
 	m_Width		= m_pTexture->GetWidth();
 	m_Height	= m_pTexture->GetHeight();

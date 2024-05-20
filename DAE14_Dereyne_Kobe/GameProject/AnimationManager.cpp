@@ -40,30 +40,34 @@ AnimObj::~AnimObj() noexcept
 #pragma endregion
 
 #pragma region AnimationManager
-AnimationManager::AnimationManager(Texture* spritesheet)
+AnimationManager::AnimationManager(Texture* spritesheet, bool oneAnimationAtATime)
 	: m_pSpriteSheet{ spritesheet }
+	, m_OneAnimationAtATime{oneAnimationAtATime}
 {
 }
-AnimationManager::AnimationManager(const std::string& textureName)
+AnimationManager::AnimationManager(const std::string& textureName, bool oneAnimationAtATime)
 	: m_pSpriteSheet{ TextureManager::GetTexture(textureName) }
+	, m_OneAnimationAtATime {oneAnimationAtATime}
 {
 }
 AnimationManager::AnimationManager(AnimationManager&& other) noexcept
 {
-	this->m_vAnimations		= std::move(other.m_vAnimations);
-	this->m_pSpriteSheet	= std::move(other.m_pSpriteSheet);
-	other.m_pSpriteSheet	= nullptr;
+	this->m_vAnimations			= std::move(other.m_vAnimations);
+	this->m_pSpriteSheet		= std::move(other.m_pSpriteSheet);
+	other.m_pSpriteSheet		= nullptr;
+	this->m_OneAnimationAtATime = std::move(other.m_OneAnimationAtATime);
 }
 AnimationManager& AnimationManager::operator=(AnimationManager&& rhs) noexcept
 {
 	if (this != &rhs)
 	{
-		this->m_vAnimations		= std::move(rhs.m_vAnimations);
+		this->m_vAnimations				= std::move(rhs.m_vAnimations);
+		this->m_OneAnimationAtATime		= std::move(rhs.m_OneAnimationAtATime);
 
 		delete this->m_pSpriteSheet;
-		this->m_pSpriteSheet	= std::move(rhs.m_pSpriteSheet);
+		this->m_pSpriteSheet			= std::move(rhs.m_pSpriteSheet);
 
-		rhs.m_pSpriteSheet		= nullptr;
+		rhs.m_pSpriteSheet				= nullptr;
 	}
 
 	return *this;
@@ -125,16 +129,27 @@ void AnimationManager::Update(float elapsedSec, const std::string& animName)
 		{
 			m_vAnimations[index]->m_pAnimation->Activate();
 		}
-		else m_vAnimations[index]->m_pAnimation->Deactivate();
+		else if (m_OneAnimationAtATime) m_vAnimations[index]->m_pAnimation->Deactivate();
 
 		m_vAnimations[index]->m_pAnimation->Update(elapsedSec);
 	}
 }
-void AnimationManager::Draw(const Point2f& position, const std::string& animName) const
+void AnimationManager::Draw(const Point2f& position) const
 {
 	for (int index{}; index < m_vAnimations.size(); index++)
 	{
 		m_vAnimations[index]->m_pAnimation->Draw(m_pSpriteSheet, position);
+	}
+}
+
+void AnimationManager::Deactivate(const std::string& animName)
+{
+	for (int index{}; index < m_vAnimations.size(); index++)
+	{
+		if (m_vAnimations[index]->m_Name == animName)
+		{
+			m_vAnimations[index]->m_pAnimation->Deactivate();
+		}
 	}
 }
 
@@ -242,7 +257,7 @@ Point2f AnimationManager::ToPoint2f(const std::string& point2fString) const
 	std::getline(stringstream, temp, ',');
 	point.x = std::stof(temp);
 	std::getline(stringstream, temp, ',');
-	point.y = std::stof(temp);;
+	point.y = std::stof(temp);
 
 	return point;
 }

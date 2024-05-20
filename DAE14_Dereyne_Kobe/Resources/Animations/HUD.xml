@@ -1,0 +1,140 @@
+<0>
+	<Frame>
+		position="0,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</0>
+<1>
+	<Frame>
+		position="8,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</1>
+<2>
+	<Frame>
+		position="16,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</2>
+<3>
+	<Frame>
+		position="24,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</3>
+<4>
+	<Frame>
+		position="32,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</4>
+<5>
+	<Frame>
+		position="40,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</5>
+<6>
+	<Frame>
+		position="48,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</6>
+<7>
+	<Frame>
+		position="56,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</7>
+<8>
+	<Frame>
+		position="64,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</8>
+<9>
+	<Frame>
+		position="72,0"
+		width="8"
+		height="8"
+		duration="1.0"
+	</Frame>
+	
+	loop="false"
+	
+</9>
+
+<Kirby>
+	<Frame>
+		position="0,25"
+		width="13"
+		height="12"
+		duration="0.25"
+	</Frame>
+	<Frame>
+		position="13,25"
+		width="13"
+		height="12"
+		duration="0.25"
+	</Frame>
+	<Frame>
+		position="26,25"
+		width="13"
+		height="12"
+		duration="0.25"
+	</Frame>
+	<Frame>
+		position="39,25"
+		width="13"
+		height="12"
+		duration="0.25"
+	</Frame>
+
+	loop="true"
+
+</Kirby>

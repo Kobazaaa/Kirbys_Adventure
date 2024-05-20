@@ -23,8 +23,8 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit AnimationManager(Texture* spritesheet);
-	explicit AnimationManager(const std::string& textureName);
+	explicit AnimationManager(Texture* spritesheet, bool oneAnimationAtATime = true);
+	explicit AnimationManager(const std::string& textureName, bool oneAnimationAtATime = true);
 	AnimationManager(const AnimationManager& other) = delete;
 	AnimationManager(AnimationManager&& other) noexcept;
 	AnimationManager& operator=(const AnimationManager& rhs) = delete;
@@ -39,8 +39,8 @@ public:
 	void LoadFromFile(const std::string& filePath);
 
 	void Update(float elapsedSec, const std::string& animName);
-	void Draw(const Point2f& position, const std::string& animName) const;
-
+	void Draw(const Point2f& position) const;
+	void Deactivate(const std::string& animName);
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			ACCESSORS			~~
@@ -52,7 +52,7 @@ private:
 	// Private Variables
 	std::vector<AnimObj*> m_vAnimations;
 	Texture* m_pSpriteSheet;
-
+	bool m_OneAnimationAtATime;
 
 	// Load From File
 	void	AddAnimation(const std::string& element, const std::string& name);
