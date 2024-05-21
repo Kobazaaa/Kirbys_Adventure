@@ -1,5 +1,6 @@
 #pragma once
 #include "utils.h"
+#include "SoundManager.h"
 #include "AnimationManager.h"
 #include "Direction.h"
 #include "Vector2f.h"

@@ -22,7 +22,6 @@ void BeamProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 		}
 		else
 		{
-
 			const float angle{ 2 * M_PI / 3};
 			const float percentage{ m_AccumSec / m_TravelTime };
 		

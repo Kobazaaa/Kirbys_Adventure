@@ -40,6 +40,7 @@ void PoppyBrosJr::Update(float elapsedSec, const std::vector<std::vector<Point2f
 				m_Velocity.x = m_WALK_SPEED;
 				m_Position.y += 1;
 				m_Velocity.y = m_JUMP_SPEED;
+				SoundManager::PlayEffect("EnemyJump");
 			}
 		}
 		else

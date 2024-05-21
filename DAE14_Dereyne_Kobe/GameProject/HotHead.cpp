@@ -42,6 +42,7 @@ void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& 
 					m_FireShot.SetVelocity(newVelocity);
 
 					m_FireShot.Activate(m_Position, m_Direction);
+					SoundManager::PlayEffect("Fire");
 					m_UsedFireShot = true;
 					m_AccumSec = 0;
 				}

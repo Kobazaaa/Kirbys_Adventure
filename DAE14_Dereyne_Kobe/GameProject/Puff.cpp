@@ -45,4 +45,8 @@ void Puff::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 
 		m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
+	else
+	{
+		m_CanMove = true;
+	}
 }

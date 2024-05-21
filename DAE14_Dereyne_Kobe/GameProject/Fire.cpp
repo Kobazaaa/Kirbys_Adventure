@@ -28,6 +28,7 @@ void Fire::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 		{
 			if (!m_vProjectiles[index]->IsActivated())
 			{
+				SoundManager::PlayEffect("Fire");
 				m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
 			}
 		}

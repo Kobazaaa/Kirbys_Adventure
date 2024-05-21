@@ -18,7 +18,7 @@ class Kirby final : public Entity
 public:
 	enum class State
 	{
-		None, Walk, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability, EnterDoor, Hit, Land, Dead
+		None, Walk, Duck, Slide, Jump, Falling, Flight, Inhaling, Exhaling, Swallow, Ability, EnterDoor, Land, Dead
 	};
 	enum class Card
 	{
@@ -117,6 +117,7 @@ private:
 
 	bool m_Bounced{false};
 
+	bool m_IsHit{false};
 	bool m_IsSliding{false};
 	bool m_IsRunning{false};
 	bool m_IsTurning{false};

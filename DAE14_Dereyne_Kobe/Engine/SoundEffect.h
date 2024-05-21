@@ -12,7 +12,12 @@ public:
 	SoundEffect& operator=( SoundEffect&& rhs) = delete;
 
 	bool IsLoaded( ) const;
-	bool Play( const int loops ) const;
+	bool Play( const int loops );
+
+	void Stop();
+	bool IsPlaying();
+	int GetChannel() const;
+
 	void SetVolume( const int value ); 
 	int GetVolume( ) const; 
 	static void StopAll( );
@@ -20,5 +25,7 @@ public:
 	static void ResumeAll( );
 
 private:
+	int m_Channel{-1};
+
 	Mix_Chunk* m_pMixChunk;
 };

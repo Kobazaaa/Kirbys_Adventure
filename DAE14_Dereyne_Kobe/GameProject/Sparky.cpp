@@ -44,6 +44,7 @@ void Sparky::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& w
 					m_Direction = m_Position.x <= kirbyPos.x ? Direction::Right : Direction::Left;
 					m_Velocity = m_vVelocities[rand() % m_vVelocities.size()];
 					m_Position.y += 1;
+					SoundManager::PlayEffect("EnemyJump");
 				}
 			}
 

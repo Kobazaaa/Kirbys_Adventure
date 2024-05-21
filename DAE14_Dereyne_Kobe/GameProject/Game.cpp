@@ -24,10 +24,26 @@ void Game::Initialize( )
 	// Sounds
 	SoundManager::LoadSoundEffect("Turn", "Sound/SoundEffects/23.wav");
 	SoundManager::LoadSoundEffect("Jump", "Sound/SoundEffects/Jump.wav");
+	SoundManager::LoadSoundEffect("InhalingStart", "Sound/SoundEffects/InhalingStart.wav");
 	SoundManager::LoadSoundEffect("Inhaling", "Sound/SoundEffects/Inhaling.wav");
+	SoundManager::LoadSoundEffect("StarSpit", "Sound/SoundEffects/StarSpit.ogg");
+	SoundManager::LoadSoundEffect("Beam", "Sound/SoundEffects/Beam.ogg");
+	SoundManager::LoadSoundEffect("Land", "Sound/SoundEffects/Land.wav");
+	SoundManager::LoadSoundEffect("Slide", "Sound/SoundEffects/Slide.wav");
+	SoundManager::LoadSoundEffect("Duck", "Sound/SoundEffects/Duck.wav");
+	SoundManager::LoadSoundEffect("Falling", "Sound/SoundEffects/Falling.wav");
+	SoundManager::LoadSoundEffect("PowerUpReceived", "Sound/SoundEffects/PowerUpReceived.wav");
+	SoundManager::LoadSoundEffect("Hit", "Sound/SoundEffects/Hit.wav");
+	SoundManager::LoadSoundEffect("StartFlight", "Sound/SoundEffects/StartFlight.wav");
+	SoundManager::LoadSoundEffect("Spark", "Sound/SoundEffects/Spark.wav");
+	SoundManager::LoadSoundEffect("Puff", "Sound/SoundEffects/Puff.wav");
+	SoundManager::LoadSoundEffect("Fire", "Sound/SoundEffects/Fire.wav");
+	SoundManager::LoadSoundEffect("EnemyJump", "Sound/SoundEffects/EnemyJump.wav");
+
 
 	SoundManager::LoadSoundStream("stream1", "Sound/Music/Vegetable_Valley_Hub.mp3");
 	SoundManager::LoadSoundStream("stream2", "Sound/Music/Vegetable_Valley_Hub.mp3");
+	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
 
 	// Textures
 	LoadTextures();
@@ -60,9 +76,9 @@ void Game::Cleanup( )
 	m_pCamera = nullptr;
 	delete m_pLevel;
 	m_pLevel = nullptr;
-	delete m_pHUD;
-	m_pHub = nullptr;
 	delete m_pHub;
+	m_pHub = nullptr;
+	delete m_pHUD;
 	m_pHUD = nullptr;
 
 	SoundManager::DeleteAllSound();

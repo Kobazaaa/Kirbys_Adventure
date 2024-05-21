@@ -36,9 +36,10 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 			//}
 		}
 		
+
 		m_BeamFlickerTimer += elapsedSec;
 		const float time{0.03f};
-		if (m_BeamFlickerTimer > time)
+		if (m_BeamFlickerTimer > time) 
 		{
 			for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 			{
@@ -53,6 +54,7 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 			}
 			if (m_BeamFlickerTimer > time * 2)
 			{
+				SoundManager::PlayEffect("Beam");
 				m_BeamFlickerTimer = 0;
 				for (int index{}; index < m_BEAM_SEGMENTS; ++index)
 				{
@@ -74,6 +76,9 @@ void Beam::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 		m_AccumSec = 0;
 		m_BeamFlickerTimer = 0;
 		Deactivate();
+		if (utils::KeyPress(SDL_SCANCODE_Y)) SoundManager::PlayEffect("Beam");
+		if (utils::KeyPress(SDL_SCANCODE_T)) SoundManager::StopEffect("Beam");
+
 	}
 }
 

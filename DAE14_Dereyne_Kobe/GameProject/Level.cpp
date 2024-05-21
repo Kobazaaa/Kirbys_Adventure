@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 #include "Level.h"
 
 Level::Level(const std::string& name, int nrSubLevels)
@@ -10,6 +11,8 @@ Level::Level(const std::string& name, int nrSubLevels)
 {
 	m_Width		= m_pTexture->GetWidth();
 	m_Height	= m_pTexture->GetHeight();
+	
+	SoundManager::PlayStream("VegetableValleyLevel");
 
 	Door door1
 	{

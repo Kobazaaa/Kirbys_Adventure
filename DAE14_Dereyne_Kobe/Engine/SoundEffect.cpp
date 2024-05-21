@@ -16,13 +16,12 @@ SoundEffect::~SoundEffect( )
 	Mix_FreeChunk( m_pMixChunk );
 	m_pMixChunk = nullptr;
 }
-
 bool SoundEffect::IsLoaded( ) const
 {
 	return m_pMixChunk != nullptr;
 }
 
-bool SoundEffect::Play( const int loops ) const
+bool SoundEffect::Play( const int loops )
 {
 	// Don't save the channel as a data member, 
 	// because when it stops playing the channel becomes free
@@ -30,12 +29,36 @@ bool SoundEffect::Play( const int loops ) const
 	if ( m_pMixChunk != nullptr )
 	{
 		const int channel{ Mix_PlayChannel( -1, m_pMixChunk, loops ) };
+		m_Channel = channel;
+
 		return channel == -1 ? false : true;
 	}
 	else
 	{
 		return false;
 	}
+}
+void SoundEffect::Stop()
+{
+	if (m_Channel != -1)
+	{
+		Mix_HaltChannel(m_Channel);
+		m_Channel = -1;
+	}
+}
+bool SoundEffect::IsPlaying()
+{
+	if (m_Channel != -1)
+	{
+		bool isPlaying{ Mix_Playing(m_Channel) != 0 };
+		if (!isPlaying) m_Channel = -1;
+		return isPlaying;
+	}
+	else return false;
+}
+int SoundEffect::GetChannel() const
+{
+	return m_Channel;
 }
 
 void SoundEffect::SetVolume( const int value )
@@ -45,7 +68,6 @@ void SoundEffect::SetVolume( const int value )
 		Mix_VolumeChunk( m_pMixChunk, value );
 	}
 }
-
 int SoundEffect::GetVolume( ) const
 {
 	if ( m_pMixChunk != nullptr )
@@ -62,7 +84,6 @@ void SoundEffect::StopAll( )
 {
 	Mix_HaltChannel(-1 );
 }
-
 void SoundEffect::PauseAll( )
 {
 	Mix_Pause( -1 );

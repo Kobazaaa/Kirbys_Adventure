@@ -25,6 +25,7 @@ void Spark::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 			if (!m_vProjectiles[index]->IsActivated())
 			{
+				SoundManager::PlayEffect("Spark");
 				m_vProjectiles[index]->SetStartPosition(owner->GetPosition());
 			}
 		}
