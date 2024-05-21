@@ -1,52 +1,68 @@
 #include "pch.h"
+#include "Kirby.h"
+#include "SVGParser.h"
 #include "TextureManager.h"
 #include "SoundManager.h"
 #include "Level.h"
 
-Level::Level(const std::string& name, int nrSubLevels)
+Level::Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors)
 	: m_Position		{ Point2f(0, 0) }
 	, m_NrSubLevels		{ nrSubLevels }
 	, m_CurrentSubLevel	{ 0 }
 	, m_pTexture		{ TextureManager::GetTexture(name) }
+	, m_pEnemyMngr		{ enemies }
+	, m_vDoors			{ doors }
+	, m_Name			{ name }
 {
 	m_Width		= m_pTexture->GetWidth();
 	m_Height	= m_pTexture->GetHeight();
 	
-	SoundManager::PlayStream("VegetableValleyLevel");
+	SVGParser::GetVerticesFromSvgFile("Levels/" + name + ".svg", m_World);
+}
 
-	Door door1
-	{
-		Rectf(968, 57, 16, 24),
-		Point2f(28, 228),
-		false
-	};
-	Door door3
-	{
-		Rectf(968, 209, 16, 24),
-		Point2f(32, 386),
-		false
-	};
-	Door door2
-	{
-		Rectf(24, 377, 16, 24),
-		Point2f(976, 218),
-		false
-	};
-	m_vDoors.push_back(door1);
-	m_vDoors.push_back(door2);
-	m_vDoors.push_back(door3);
+Level::~Level() noexcept
+{
+	delete m_pEnemyMngr;
+	m_pEnemyMngr = nullptr;
+}
 
-
+void Level::Update(float elapsedSec, Kirby* pKirby)
+{
+	if (m_pEnemyMngr) m_pEnemyMngr->Update(elapsedSec, m_World, pKirby->GetPosition());
+	pKirby->ApplyPlaySpace(this);
 }
 
 void Level::Draw() const
 {
-	const Rectf srcRect
-	{
-		0, -m_Height, m_Width, m_Height
-	};
-	m_pTexture->Draw(m_Position, srcRect);
+	m_pTexture->Draw(m_Position);
+	if (m_pEnemyMngr) m_pEnemyMngr->Draw(true);
 
+
+	for (const Door& doorObj : m_vDoors)
+	{
+		utils::SetColor(Color4f(1,0,0,1));
+		utils::FillRect(doorObj.doorRect);
+	}
+}
+
+bool Level::IsOnDoor(Kirby* kirby, Door& door)
+{
+	for (const Door& doorObj : m_vDoors)
+	{
+		if (utils::IsPointInRect(kirby->GetPosition(), doorObj.doorRect))
+		{
+			kirby->EnterDoor();
+			door = doorObj;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Level::PlayMusic() const
+{
+	SoundManager::PlayStream(m_Name, -1);
 }
 
 #pragma region Accessors
@@ -63,6 +79,16 @@ float Level::GetHeight() const
 std::vector<Door>& Level::GetDoors()
 {
 	return m_vDoors;
+}
+
+const std::vector<std::vector<Point2f>>& Level::GetWorld() const
+{
+	return m_World;
+}
+
+EnemyManager* Level::GetEnemyMngr() const
+{
+	return m_pEnemyMngr;
 }
 
 int Level::GetNrSubLevels() const

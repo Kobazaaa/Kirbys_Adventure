@@ -29,7 +29,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Kirby(const Point2f& center, Level* const level);
+	explicit Kirby(const Point2f& center);
 	virtual ~Kirby() override = default;
 	friend std::ostream& operator<<(std::ostream& out, const Kirby& kirby);
 	std::string EnumToString(Kirby::State state) const;
@@ -42,7 +42,9 @@ public:
 	void Draw() const;
 	void HitEnemy(const Point2f& enemyPos);
 	void InhaledEnemy(AbilityType ability);
-	bool DoDoorChecks(bool setPos);
+	bool HasEnteredDoor();
+	void EnterDoor();
+	void ApplyPlaySpace(Level* pLevel);
 
 	void Reset();
 
@@ -79,7 +81,6 @@ private:
 	void ApplyFriction(float elapsedSec);
 
 	void Animate();
-	void ApplyPlaySpace();
 
 	// Functions that check whether or not Kirby can perform a certain action in his current state
 	bool CanMoveWithCurrentState()		const;
@@ -126,9 +127,6 @@ private:
 	bool m_IsOn30{false};
 	bool m_IsOn45{false};
 	bool m_IsSlopeDown{false};
-
-	// Level
-	Level* const m_pLevel;
 
 	// Private Constants
 	const float		m_JUMP_SPEED	{ 20.f - m_GRAVITY / 2.f};

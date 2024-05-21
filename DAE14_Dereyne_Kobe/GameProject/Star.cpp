@@ -5,7 +5,7 @@
 
 Star::Star(Level* pLevel)
 	: Projectile("StarProjectile", Vector2f(55, 0), 5.f, true, 16.f)
-	, m_pLevel{pLevel}
+	, m_AbilityType{Entity::AbilityType::None}
 {
 	m_DoesEntityCollision = false;
 }
@@ -29,24 +29,6 @@ void Star::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 
 		if (Collision::WallCollision(this, world))	InvertDirection();
 
-		const Rectf subLevel
-		{
-			0,
-			m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(),
-			m_pLevel->GetWidth(),
-			m_pLevel->GetSubLevelHeight()
-		};
-
-		if (!utils::IsRectInRect(GetHitBox(), subLevel))
-		{
-			if (GetHitBox().left < subLevel.left or
-				GetHitBox().left + GetHitBox().width > subLevel.left + subLevel.width) InvertDirection();
-			if (GetHitBox().bottom < subLevel.bottom or
-				GetHitBox().bottom + GetHitBox().height > subLevel.bottom + subLevel.height) m_Velocity.y *= -1;
-		}
-		if (Collision::FloorCollision(this, world)) m_Velocity.y = 175.f;
-
-
 		m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}
 	else
@@ -58,6 +40,27 @@ void Star::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 void Star::SetAbility(Entity::AbilityType ability)
 {
 	m_AbilityType = ability;
+}
+
+void Star::ApplyPlaySpace(Level* pLevel)
+{
+	const Rectf subLevel
+	{
+		0,
+		pLevel->GetCurrentSubLevel() * pLevel->GetSubLevelHeight(),
+		pLevel->GetWidth(),
+		pLevel->GetSubLevelHeight()
+	};
+
+	if (!utils::IsRectInRect(GetHitBox(), subLevel))
+	{
+		if (GetHitBox().left < subLevel.left or
+			GetHitBox().left + GetHitBox().width > subLevel.left + subLevel.width) InvertDirection();
+		if (GetHitBox().bottom < subLevel.bottom or
+			GetHitBox().bottom + GetHitBox().height > subLevel.bottom + subLevel.height) m_Velocity.y *= -1;
+	}
+	if (Collision::FloorCollision(this, pLevel->GetWorld())) m_Velocity.y = 175.f;
+
 }
 
 Entity::AbilityType Star::GetAbility() const

@@ -18,7 +18,7 @@ bool SoundManager::LoadSoundStream(const std::string& name, const std::string& f
 		}
 	}
 
-	std::cout << m_vSoundStreams.size() << "\t Stream" << std::endl;
+	std::cout << m_vSoundStreams.size() << "\t Stream\t" << name << "\t" << filePath << std::endl;
 
 	return true;
 }
@@ -75,6 +75,18 @@ void SoundManager::PlayEffect(const std::string& name, int loops)
 			m_vSoundEffects[index]->m_pSoundEffect->Play(loops);
 		}
 	}
+}
+
+bool SoundManager::IsPlayingStream(const std::string& name)
+{
+	for (int index{}; index < m_vSoundStreams.size(); ++index)
+	{
+		if (m_vSoundStreams[index]->m_Name == name)
+		{
+			return (m_vSoundStreams[index]->m_pSoundStream->IsPlaying());
+		}
+	}
+	return false;
 }
 
 bool SoundManager::IsPlayingEffect(const std::string& name)

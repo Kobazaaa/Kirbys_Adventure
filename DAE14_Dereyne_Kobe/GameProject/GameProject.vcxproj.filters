@@ -153,6 +153,9 @@
     <ClCompile Include="Star.cpp">
       <Filter>Source Files\Projectiles and Abilities\Projectiles</Filter>
     </ClCompile>
+    <ClCompile Include="LevelManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -256,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="Star.h">
       <Filter>Header Files\Projectiles and Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelManager.h">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

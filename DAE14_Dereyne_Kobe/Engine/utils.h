@@ -83,6 +83,14 @@ namespace utils
 
 #pragma endregion CollisionFunctionality
 
+#pragma region FileStream
+	std::string GetAttributeValue(const std::string& attrName, const std::string& element);
+	Point2f		ToPoint2f(const std::string& point2fString);
+	Rectf		ToRectf(const std::string& rectfString);
+	float		ToFloat(const std::string& floatString);
+	bool		ToBool(const std::string& booleanString);
+#pragma endregion
+
 #pragma region Custom
 	int GetSign(int number);
 	int GetSign(float number);

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AnimationManager.h"
+#include "utils.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -226,7 +227,7 @@ void AnimationManager::AddAnimation(const std::string& element, const std::strin
 
 		if (line.find("loop") != std::string::npos)
 		{
-			loop = ToBool(GetAttributeValue("loop", line));
+			loop = utils::ToBool(utils::GetAttributeValue("loop", line));
 		}
 	}
 
@@ -237,49 +238,12 @@ Frame AnimationManager::CreateFrame(const std::string& frame) const
 	Rectf tempRect{};
 	float tempDuration{};
 
-	tempRect.left = ToPoint2f(GetAttributeValue("position", frame)).x;
-	tempRect.bottom = -ToPoint2f(GetAttributeValue("position", frame)).y;
-	tempRect.width = ToFloat(GetAttributeValue("width", frame));
-	tempRect.height = ToFloat(GetAttributeValue("height", frame));
-	tempDuration = ToFloat(GetAttributeValue("duration", frame));
+	tempRect.left = utils::ToPoint2f(utils::GetAttributeValue("position", frame)).x;
+	tempRect.bottom = -utils::ToPoint2f(utils::GetAttributeValue("position", frame)).y;
+	tempRect.width = utils::ToFloat(utils::GetAttributeValue("width", frame));
+	tempRect.height = utils::ToFloat(utils::GetAttributeValue("height", frame));
+	tempDuration = utils::ToFloat(utils::GetAttributeValue("duration", frame));
 
 	return Frame(tempRect, tempDuration);
-}
-
-Point2f AnimationManager::ToPoint2f(const std::string& point2fString) const
-{
-	Point2f point;
-
-	std::stringstream stringstream{};
-	stringstream << point2fString;
-	std::string temp;
-
-	std::getline(stringstream, temp, ',');
-	point.x = std::stof(temp);
-	std::getline(stringstream, temp, ',');
-	point.y = std::stof(temp);
-
-	return point;
-}
-float AnimationManager::ToFloat(const std::string& floatString) const
-{
-	return std::stof(floatString);
-}
-bool AnimationManager::ToBool(const std::string& booleanString) const
-{
-	if (booleanString == "true") return true;
-	else return false;
-}
-std::string AnimationManager::GetAttributeValue(const std::string& attrName, const std::string& element) const
-{
-	std::string attribute;
-	attribute = attrName;
-
-	int pos{ static_cast<int>(element.find(attribute) + attrName.length() + 2) };
-	int length{ static_cast<int>(element.find('"', pos) - pos) };
-
-	attribute = element.substr(pos, length);
-
-	return attribute;
 }
 #pragma endregion

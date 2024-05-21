@@ -3,20 +3,20 @@
 #include "Kirby.h"
 #include "Enemy.h"
 #include "Level.h"
+#include "Camera.h"
 #include <iostream>
 
 using namespace utils;
 
-Kirby::Kirby( const Point2f& center, Level* const level)
+Kirby::Kirby( const Point2f& center)
 	: Entity("Kirby2", 16, 16, center)
 	, m_Health						{ 6 }
 	, m_Lives						{ 4 }
-	, m_HasInhaledAbility				{ false }
-	, m_pLevel						{ level }
+	, m_HasInhaledAbility			{ false }
 	, m_Puff						{ }
 	, m_StarProj					{ }
-	, m_Star						{ level }
-	, m_InhaledAbilityType				{ AbilityType::None }
+	, m_Star						{ nullptr }
+	, m_InhaledAbilityType			{ AbilityType::None }
 	, m_Card						{ Card::Ability }
 	, m_InvincibleAccumSec			{ 0 }
 	, m_AbilityActivationAccumSec	{ 0 }
@@ -373,28 +373,30 @@ void Kirby::MechanicUpdate(float elapsedSec)
 			if (m_InhaledAbilityType == AbilityType::Fire)		m_pAbility = new Fire(true);
 			if (m_InhaledAbilityType == AbilityType::Spark)		m_pAbility = new Spark(true);
 			m_AbilityType = m_InhaledAbilityType;
+
+			SoundManager::PlayEffect("PowerUpReceived");
+			m_InhaledAbilityType = AbilityType::None;
 		}
 	}
-
-	if (m_CurrentState != State::Swallow and m_OldState == State::Swallow and m_AbilityType != AbilityType::None) m_pAbility->Activate(m_Position, m_Direction);
 #pragma endregion
 }
 void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 {
-	ApplyPlaySpace();
 	if (Collision::WallCollision(this, world))
 	{
 		m_IsSliding = false;
-		m_Velocity.x = 0;
+
+		//TODO fix wall animation
 		if (m_CurrentState == State::Walk and !m_HasInhaledAbility)
 		{
 			m_CurrentAnimation = "Wall";
-			if (!m_pAnimationManager->IsActive("Walk") or m_pAnimationManager->IsDone("Wall"))
+			if (!m_pAnimationManager->IsActive("Wall") or m_pAnimationManager->IsDone("Wall"))
 			{
+				//m_CurrentState = State::None;
 				m_CurrentAnimation = "Idle";
 			}
-			m_CurrentState = State::None;
 		}
+		m_Velocity.x = 0;
 	}
 
 	m_IsOn45 = false;
@@ -514,97 +516,87 @@ void Kirby::ApplyFriction(float elapsedSec)
 		if (m_Velocity.x >= 0.f) m_Velocity.x = 0.f;
 	}
 }
-void Kirby::ApplyPlaySpace()
+void Kirby::ApplyPlaySpace(Level* pLevel)
 {
-	Rectf subLevel
+	const Rectf subLevel
 	{
 		0,
-		m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(),
-		m_pLevel->GetWidth(),
-		m_pLevel->GetSubLevelHeight()
+		pLevel->GetCurrentSubLevel() * pLevel->GetSubLevelHeight(),
+		pLevel->GetWidth(),
+		pLevel->GetSubLevelHeight()
 	};
 
-	if (m_Position.x - GetHitBox().width  / 2 < subLevel.left)							m_Position.x = subLevel.left					 + GetHitBox().width  / 2;
-	if (m_Position.x + GetHitBox().width  / 2 > subLevel.left + subLevel.width)			m_Position.x = subLevel.left + subLevel.width	 - GetHitBox().width  / 2;
-	if (m_Position.y + GetHitBox().height / 2 > subLevel.bottom + subLevel.height) 
+	if (m_Position.x - GetHitBox().width  / 2 < subLevel.left)							m_Position.x = subLevel.left + GetHitBox().width / 2;
+	if (m_Position.x + GetHitBox().width  / 2 > subLevel.left + subLevel.width)			m_Position.x = subLevel.left + subLevel.width - GetHitBox().width  / 2;
+	if (m_Position.y + GetHitBox().height / 2 > subLevel.bottom + subLevel.height)
 	{
 		m_Position.y = subLevel.bottom + subLevel.height - GetHitBox().height / 2;
 		m_Velocity.y = 0;
 	}
 	if (m_Position.y + GetHitBox().height / 2 < subLevel.bottom) m_Health = 0;
+
+	m_Star.ApplyPlaySpace(pLevel);
 }
 
-bool Kirby::DoDoorChecks(bool setPos)
+bool Kirby::HasEnteredDoor()
 {
-	std::vector<Door> vDoors = m_pLevel->GetDoors();
-	for (const Door& door : vDoors)
+	if (m_CurrentState == State::EnterDoor)
 	{
-		if (utils::IsPointInRect(m_Position, door.doorRect))
+		if (m_pAnimationManager->IsDone("Exhaling"))
 		{
-			if (KeyPress(SDL_SCANCODE_UP) and !door.isFinalDoor)
+			m_CurrentAnimation = "EnterDoor";
+		}
+		if (m_pAnimationManager->IsDone("EnterDoor"))
+		{
+			m_Direction = Direction::Right;
+			m_CurrentState = State::None;
+			m_HasInhaledAbility = false;
+			m_InhaledAbilityType = AbilityType::None;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Kirby::EnterDoor()
+{
+	if (utils::KeyPress(SDL_SCANCODE_UP))
+	{
+		m_Direction = Direction::Right;
+		m_CurrentState = State::EnterDoor;
+		m_Velocity.x = 0;
+		if (m_OldState != State::Flight and !m_HasInhaledAbility)
+		{
+			m_CurrentAnimation = "EnterDoor";
+		}
+		else
+		{
+			m_CurrentAnimation = "Exhaling";
+			if (m_HasInhaledAbility)
 			{
-				m_CurrentState = State::EnterDoor;
-				m_Velocity.x = 0;
-				if (m_OldState != State::Flight and !m_HasInhaledAbility)
+				if (!m_StarProj.IsActivated())
 				{
-					m_CurrentAnimation = "EnterDoor";
-				}
-				else
-				{
-					m_CurrentAnimation = "Exhaling";
-					if (m_HasInhaledAbility)
-					{
-						if (!m_StarProj.IsActivated())
-						{
-							m_StarProj.Activate(m_Position, m_Direction);
-							SoundManager::PlayEffect("StarSpit");
-						}
-					}
-					else if (m_OldState == State::Flight)
-					{
-						if (!m_Puff.IsActivated())
-						{
-							m_Puff.Activate(m_Position, m_Direction);
-							SoundManager::PlayEffect("Puff");
-						}
-					}
+					m_StarProj.Activate(m_Position, m_Direction);
+					SoundManager::PlayEffect("StarSpit");
 				}
 			}
-
-			if (m_CurrentState == State::EnterDoor)
+			else if (m_OldState == State::Flight)
 			{
-				if(m_pAnimationManager->IsDone("Exhaling"))
+				if (!m_Puff.IsActivated())
 				{
-						m_CurrentAnimation = "EnterDoor";
-				}
-				if (m_pAnimationManager->IsDone("EnterDoor"))
-				{
-					if (setPos)
-					{
-						if (door.outcomePos.y > m_Position.y) m_pLevel->IncreaseSubLevel();
-						else m_pLevel->DecreaseSubLevel();
-						m_Position = door.outcomePos;
-
-						m_HasInhaledAbility = false;
-						m_InhaledAbilityType = AbilityType::None;
-						m_Direction = Direction::Right;
-						m_CurrentState = State::None;
-					}
-					else
-					{
-					}
-
-					return true;
+					m_Puff.Activate(m_Position, m_Direction);
+					SoundManager::PlayEffect("Puff");
 				}
 			}
 		}
 	}
-	return false;
+
 }
 
 void Kirby::Reset()
 {
-	m_pLevel->SetSubLevel(0);
+	//m_pLevel->SetSubLevel(0);
 	m_Position = Point2f(50, 50);
 	m_Lives = 4;
 	m_Health = 6;
@@ -641,7 +633,6 @@ void Kirby::HitEnemy(const Point2f& enemyPos)
 		}
 
 		SoundManager::PlayEffect("Hit");
-
 		m_IsHit = true;
 	}
 }
@@ -847,7 +838,7 @@ void Kirby::Animate()
 			m_CurrentState = State::None;
 			m_InhaledAbilityType = AbilityType::None;
 			m_HasInhaledAbility = false;
-			SoundManager::PlayEffect("PowerUpReceived");
+			if(m_AbilityType != AbilityType::None) m_pAbility->Activate(m_Position, m_Direction);
 		}
 		break;
 	case Kirby::State::Ability:

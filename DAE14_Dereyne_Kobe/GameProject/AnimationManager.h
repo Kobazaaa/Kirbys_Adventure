@@ -57,11 +57,5 @@ private:
 	// Load From File
 	void	AddAnimation(const std::string& element, const std::string& name);
 	Frame	CreateFrame(const std::string& frame) const;
-	std::string GetAttributeValue(const std::string& attrName, const std::string& element) const;
-
-	Point2f ToPoint2f(const std::string& point2fString) const;
-	float	ToFloat(const std::string& floatString) const;
-	bool	ToBool(const std::string& booleanString) const;
-
 };
 

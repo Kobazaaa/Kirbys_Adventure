@@ -19,65 +19,35 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	m_GameState = GameState::Play;
+	m_GameState = GameState::Hub;
 
 	// Sounds
-	SoundManager::LoadSoundEffect("Turn", "Sound/SoundEffects/23.wav");
-	SoundManager::LoadSoundEffect("Jump", "Sound/SoundEffects/Jump.wav");
-	SoundManager::LoadSoundEffect("InhalingStart", "Sound/SoundEffects/InhalingStart.wav");
-	SoundManager::LoadSoundEffect("Inhaling", "Sound/SoundEffects/Inhaling.wav");
-	SoundManager::LoadSoundEffect("StarSpit", "Sound/SoundEffects/StarSpit.ogg");
-	SoundManager::LoadSoundEffect("Beam", "Sound/SoundEffects/Beam.ogg");
-	SoundManager::LoadSoundEffect("Land", "Sound/SoundEffects/Land.wav");
-	SoundManager::LoadSoundEffect("Slide", "Sound/SoundEffects/Slide.wav");
-	SoundManager::LoadSoundEffect("Duck", "Sound/SoundEffects/Duck.wav");
-	SoundManager::LoadSoundEffect("Falling", "Sound/SoundEffects/Falling.wav");
-	SoundManager::LoadSoundEffect("PowerUpReceived", "Sound/SoundEffects/PowerUpReceived.wav");
-	SoundManager::LoadSoundEffect("Hit", "Sound/SoundEffects/Hit.wav");
-	SoundManager::LoadSoundEffect("StartFlight", "Sound/SoundEffects/StartFlight.wav");
-	SoundManager::LoadSoundEffect("Spark", "Sound/SoundEffects/Spark.wav");
-	SoundManager::LoadSoundEffect("Puff", "Sound/SoundEffects/Puff.wav");
-	SoundManager::LoadSoundEffect("Fire", "Sound/SoundEffects/Fire.wav");
-	SoundManager::LoadSoundEffect("EnemyJump", "Sound/SoundEffects/EnemyJump.wav");
-
-
-	SoundManager::LoadSoundStream("stream1", "Sound/Music/Vegetable_Valley_Hub.mp3");
-	SoundManager::LoadSoundStream("stream2", "Sound/Music/Vegetable_Valley_Hub.mp3");
-	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
-
+	LoadSounds();
 	// Textures
 	LoadTextures();
 
-	// Camera + Level + HUD
-	//m_pLevel =	new Level("VegetableValleyHub", 1);
-	m_pLevel =	new Level("VegetableValleyLevel", 3);
-	m_pHub =	new Level("VegetableValleyHub", 3);
+	
+	// Camera
 	m_pCamera = new Camera(GetViewPort().width, GetViewPort().height, m_SCALE);
-	
-	// EnemyManager
-	m_pEnemyMngr = new EnemyManager(m_pCamera);
-	
+
 	// Kirby
-	m_pKirby = new Kirby(Point2f(100, 100), m_pLevel);
+	m_pKirby = new Kirby(Point2f(100, 100));
+
+	// LevelManager
+	m_VegetableValleyManager = new LevelManager("Levels/World.xml", m_pKirby, m_pCamera);
+
+	//HUD
 	m_pHUD = new HUD(m_pKirby, m_SCALE);
-	
-	// World
-	//SVGParser::GetVerticesFromSvgFile("Levels/VegetableValleyHub.svg", m_World);
-	SVGParser::GetVerticesFromSvgFile("Levels/VegetableValleyLevel.svg", m_World);
 }
 
 void Game::Cleanup( )
 {
 	delete m_pKirby;
 	m_pKirby = nullptr;
-	delete m_pEnemyMngr;
-	m_pEnemyMngr = nullptr;
 	delete m_pCamera;
 	m_pCamera = nullptr;
-	delete m_pLevel;
-	m_pLevel = nullptr;
-	delete m_pHub;
-	m_pHub = nullptr;
+	delete m_VegetableValleyManager;
+	m_VegetableValleyManager = nullptr;
 	delete m_pHUD;
 	m_pHUD = nullptr;
 
@@ -103,7 +73,7 @@ void Game::Update( float elapsedSec )
 
 		if (!IsFadingOut())
 		{
-			m_pCamera->SetPosition(Point2f(0, m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight()));
+			m_pCamera->SetPosition(Point2f(0, m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight()));
 			if (!IsFadingIn())
 			{
 				m_GameState = GameState::Play;
@@ -111,21 +81,21 @@ void Game::Update( float elapsedSec )
 			}
 		}
 	}
-	if (m_pKirby->DoDoorChecks(IsFadingIn()))
-	{
-		m_PlayerEnteredDoor = true;
-	}
+	//if (m_pKirby->DoDoorChecks(IsFadingIn()))
+	//{
+	//	m_PlayerEnteredDoor = true;
+	//}
 
-	if (m_GameState == GameState::Play)
+	if (m_GameState != GameState::Pause)
 	{
-		m_pEnemyMngr->KirbyInhaleCollision(m_pKirby, elapsedSec);
-		if (Collision::KirbyHitDetection(m_pKirby, m_pEnemyMngr->GetAllEnemies(), Projectile::GetAllProjectiles()))
+		m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->KirbyInhaleCollision(m_pKirby, elapsedSec);
+		if (Collision::KirbyHitDetection(m_pKirby, m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->GetAllEnemies(), Projectile::GetAllProjectiles()))
 		{
 			m_pCamera->Shake(0.1f, 0.1f);
 		}
 
-		m_pKirby->Update(elapsedSec, m_World);
-		m_pEnemyMngr->Update(elapsedSec, m_World, m_pKirby->GetPosition());
+		m_VegetableValleyManager->Update(elapsedSec);
+		m_pKirby->Update(elapsedSec, m_VegetableValleyManager->GetCurrentLevel()->GetWorld());
 		m_pHUD->Update(elapsedSec);
 	}
 	m_pCamera->Update(elapsedSec);
@@ -136,25 +106,21 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 
-	if (m_GameState == GameState::Play)
-	{
-		m_pCamera->Aim(m_pLevel->GetWidth(), m_pLevel->GetSubLevelHeight(), m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
+		m_pCamera->Aim(m_VegetableValleyManager->GetCurrentLevel()->GetWidth(), m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight(), m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
 		{
-			m_pLevel->Draw();
+			m_VegetableValleyManager->Draw();
 			utils::SetColor(Color4f(1, 1, 1, 1));
 
 			m_pKirby->Draw();
-			m_pEnemyMngr->Draw(m_DEBUG_MODE);
-
 
 
 			if (m_DEBUG_MODE)
 			{
-				for (size_t idx{}; idx < m_World.size(); idx++)
+				for (size_t idx{}; idx < m_VegetableValleyManager->GetCurrentLevel()->GetWorld().size(); idx++)
 				{
 					if (idx == 1) utils::SetColor(Color4f(1, 0, 0, 1));
 					else utils::SetColor(Color4f(1, 1, 1, 1));
-					utils::DrawPolygon(m_World[idx]);
+					utils::DrawPolygon(m_VegetableValleyManager->GetCurrentLevel()->GetWorld()[idx]);
 				}
 				utils::SetColor(Color4f(1, 1, 1, 1));
 				utils::FillEllipse(m_pKirby->GetPosition(), 2, 2);
@@ -166,7 +132,6 @@ void Game::Draw( ) const
 		m_pCamera->Reset();
 
 		m_pHUD->Draw();
-	}
 	if (m_IsFadingOut)
 	{
 		utils::SetColor(Color4f(0, 0, 0, m_FadeTimer / m_FadeDuration));
@@ -238,53 +203,10 @@ void Game::ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e )
 
 void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 {
-	if (m_DEBUG_MODE)
-	{
-		Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE - 64 };
-		clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-	
-		//if (e.button == SDL_BUTTON_RIGHT)
-		//{
-		//	m_pEnemyMngr->Add(new Sparky(clickPos));
-		//	clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-		//}
-		if (e.button == SDL_BUTTON_RIGHT)
-		{
-			m_pEnemyMngr->Add(new PoppyBrosJr(clickPos));
-			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-		}
-		if (e.button == SDL_BUTTON_LEFT)
-		{
-			m_pKirby->SetPosition(clickPos);
-		}
-		if (e.button == SDL_BUTTON_MIDDLE)
-		{
-			m_pEnemyMngr->Add(new BrontoBurt(clickPos, static_cast<BrontoBurt::Tactic>(rand() % 4)));
-			clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-		}	
-		//if (e.button == SDL_BUTTON_MIDDLE)
-		//{
-		//	m_pEnemyMngr->Add(new HotHead(clickPos, true));
-		//	clickPos.y += m_pLevel->GetCurrentSubLevel() * m_pLevel->GetSubLevelHeight();
-		//}
-	}
 }
 
 void Game::ProcessMouseUpEvent( const SDL_MouseButtonEvent& e )
 {
-	//std::cout << "MOUSEBUTTONUP event: ";
-	//switch ( e.button )
-	//{
-	//case SDL_BUTTON_LEFT:
-	//	std::cout << " left button " << std::endl;
-	//	break;
-	//case SDL_BUTTON_RIGHT:
-	//	std::cout << " right button " << std::endl;
-	//	break;
-	//case SDL_BUTTON_MIDDLE:
-	//	std::cout << " middle button " << std::endl;
-	//	break;
-	//}
 }
 
 void Game::ClearBackground( ) const
@@ -311,6 +233,30 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
 	TextureManager::LoadTexture("VegetableValleyLevel",	"Levels/VegetableValleyLevel.png");
 	TextureManager::LoadTexture("VegetableValleyHub",	"Levels/VegetableValleyHub.png");
+}
+void Game::LoadSounds()
+{
+	SoundManager::LoadSoundEffect("Turn", "Sound/SoundEffects/23.wav");
+	SoundManager::LoadSoundEffect("Jump", "Sound/SoundEffects/Jump.wav");
+	SoundManager::LoadSoundEffect("InhalingStart", "Sound/SoundEffects/InhalingStart.wav");
+	SoundManager::LoadSoundEffect("Inhaling", "Sound/SoundEffects/Inhaling.wav");
+	SoundManager::LoadSoundEffect("StarSpit", "Sound/SoundEffects/StarSpit.ogg");
+	SoundManager::LoadSoundEffect("Beam", "Sound/SoundEffects/Beam.ogg");
+	SoundManager::LoadSoundEffect("Land", "Sound/SoundEffects/Land.wav");
+	SoundManager::LoadSoundEffect("Slide", "Sound/SoundEffects/Slide.wav");
+	SoundManager::LoadSoundEffect("Duck", "Sound/SoundEffects/Duck.wav");
+	SoundManager::LoadSoundEffect("Falling", "Sound/SoundEffects/Falling.wav");
+	SoundManager::LoadSoundEffect("PowerUpReceived", "Sound/SoundEffects/PowerUpReceived.wav");
+	SoundManager::LoadSoundEffect("Hit", "Sound/SoundEffects/Hit.wav");
+	SoundManager::LoadSoundEffect("StartFlight", "Sound/SoundEffects/StartFlight.wav");
+	SoundManager::LoadSoundEffect("Spark", "Sound/SoundEffects/Spark.wav");
+	SoundManager::LoadSoundEffect("Puff", "Sound/SoundEffects/Puff.wav");
+	SoundManager::LoadSoundEffect("Fire", "Sound/SoundEffects/Fire.wav");
+	SoundManager::LoadSoundEffect("EnemyJump", "Sound/SoundEffects/EnemyJump.wav");
+
+
+	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
+	SoundManager::LoadSoundStream("VegetableValleyHub", "Sound/Music/Vegetable_Valley_Hub.mp3");
 }
 
 void Game::Fade(float duration)

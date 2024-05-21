@@ -165,6 +165,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Kirby.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -201,6 +202,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Kirby.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="PoppyBrosJr.h" />

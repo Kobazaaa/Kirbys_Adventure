@@ -16,20 +16,20 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			BEHAVIOURAL			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	virtual void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0);
-	virtual void SetAbility(Entity::AbilityType ability);
+	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index = 0);
+	void SetAbility(Entity::AbilityType ability);
+	void ApplyPlaySpace(Level* pLevel);
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			ACCESSORS			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	virtual Entity::AbilityType GetAbility() const;
+	Entity::AbilityType GetAbility() const;
 
 private:
 	// Private Update Functions
 	void InvertDirection();
 
 	// Private Variables
-	Level* m_pLevel;
 	Entity::AbilityType m_AbilityType;
 
 	// Private Constants

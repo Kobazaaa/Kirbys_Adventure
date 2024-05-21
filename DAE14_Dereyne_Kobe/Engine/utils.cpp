@@ -3,6 +3,8 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "utils.h"
 
 
@@ -816,3 +818,62 @@ bool utils::KeyRelease(int SDL_SCANCODE)
 }
 
 #pragma endregion CollisionFunctionality
+
+
+#pragma region FileStream
+Point2f utils::ToPoint2f(const std::string& point2fString)
+{
+	Point2f point;
+
+	std::stringstream stringstream{};
+	stringstream << point2fString;
+	std::string temp;
+
+	std::getline(stringstream, temp, ',');
+	point.x = std::stof(temp);
+	std::getline(stringstream, temp, ',');
+	point.y = std::stof(temp);
+
+	return point;
+}
+Rectf utils::ToRectf(const std::string& rectfString)
+{
+	Rectf rect;
+
+	std::stringstream stringstream{};
+	stringstream << rectfString;
+	std::string temp;
+
+	std::getline(stringstream, temp, ',');
+	rect.left = std::stof(temp);
+	std::getline(stringstream, temp, ',');
+	rect.bottom = std::stof(temp);
+	std::getline(stringstream, temp, ',');
+	rect.width = std::stof(temp);
+	std::getline(stringstream, temp, ',');
+	rect.height = std::stof(temp);
+
+	return rect;
+}
+float utils::ToFloat(const std::string& floatString)
+{
+	return std::stof(floatString);
+}
+bool utils::ToBool(const std::string& booleanString)
+{
+	if (booleanString == "true") return true;
+	else return false;
+}
+std::string utils::GetAttributeValue(const std::string& attrName, const std::string& element)
+{
+	std::string attribute;
+	attribute = attrName;
+
+	int pos{ static_cast<int>(element.find(attribute) + attrName.length() + 2) };
+	int length{ static_cast<int>(element.find('"', pos) - pos) };
+
+	attribute = element.substr(pos, length);
+
+	return attribute;
+}
+#pragma endregion

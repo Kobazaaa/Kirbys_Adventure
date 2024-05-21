@@ -3,7 +3,7 @@
 #include "BaseGame.h"
 #include "HUD.h"
 #include "Camera.h"
-#include "Level.h"
+#include "LevelManager.h"
 #include "EnemyManager.h"
 #include "TextureManager.h"
 #include "SoundManager.h"
@@ -46,6 +46,7 @@ private:
 	void ClearBackground( ) const;
 
 	void LoadTextures();
+	void LoadSounds();
 
 	void Fade(float duration);
 	void FadeUpdate(float elapsedSec);
@@ -62,13 +63,9 @@ private:
 	bool m_IsFadingOut;
 
 	Kirby* m_pKirby;
-	EnemyManager* m_pEnemyMngr;
-	
-	std::vector<std::vector<Point2f>> m_World;
-	Camera* m_pCamera;
+	LevelManager* m_VegetableValleyManager;
 
-	Level* m_pLevel;
-	Level* m_pHub;
+	Camera* m_pCamera;
 
 	HUD* m_pHUD;
 	
