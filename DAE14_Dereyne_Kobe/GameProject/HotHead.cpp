@@ -3,15 +3,13 @@
 #include "HotHead.h"
 
 HotHead::HotHead(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("HotHead", center, doesWorldCollsion)
+	: Enemy("HotHead", center, 300, doesWorldCollsion)
 	, m_FireShot				{ 5.f, false }
 	, m_AbilityDurationCounter	{ 0.f }
 	, m_UsedFireShot			{ false }
 {
 	m_pAbility = new Fire(false);
 	m_AbilityType = AbilityType::Fire;
-
-	m_Score = 300;
 }
 
 void HotHead::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)

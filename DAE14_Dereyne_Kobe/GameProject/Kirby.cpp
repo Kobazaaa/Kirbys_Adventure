@@ -9,7 +9,7 @@
 using namespace utils;
 
 Kirby::Kirby( const Point2f& center)
-	: Entity("Kirby2", 16, 16, center)
+	: Entity("Kirby2", 16, 16, center, 0)
 	, m_Health						{ 6 }
 	, m_Lives						{ 4 }
 	, m_HasInhaledAbility			{ false }
@@ -66,22 +66,34 @@ std::string Kirby::EnumToString(Kirby::State state) const
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	AbilityUpdate(elapsedSec, world);
-
-	if (m_IsInvincible) Invincibility(elapsedSec);
-	if (m_Health <= 0) Death();
-	if (m_CurrentState != State::Dead) m_DoesWorldCollision = true;
-
-	SlopeHandling();
-
-	MovementUpdate(elapsedSec);
 	Entity::Update(elapsedSec, world);
 	Animate();
-
-	MechanicUpdate(elapsedSec);
-
 	if (m_DoesWorldCollision) Collisions(world);
+	if (m_Health <= 0) Death();
 
+	if (m_CurrentState != State::Dead)
+	{
+		m_DoesWorldCollision = true;
+
+		AbilityUpdate(elapsedSec, world);
+
+		if (m_IsInvincible) Invincibility(elapsedSec);
+		SlopeHandling();
+
+		MovementUpdate(elapsedSec);
+		MechanicUpdate(elapsedSec);
+	}
+
+
+
+
+	if (utils::DEBUG_MODE)
+	{
+		if (KeyPress(SDL_SCANCODE_K))
+		{
+			--m_Health;
+		}
+	}
 }
 void Kirby::Draw() const
 {
@@ -128,6 +140,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 			{
 				m_Velocity.x = static_cast<int>(m_Direction) * 3.f;
 				m_IsSliding = false;
+				m_AccumSec = 0;
 			}
 			else m_Velocity.x = static_cast<int>(m_Direction) * m_SLIDE_SPEED;
 		}
@@ -224,14 +237,11 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~			FLIGHT			~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if ((KeyPress(SDL_SCANCODE_UP) and CanFlyWithCurrentState()))
-		{
-			m_Position.y += 1;
-		}
+		if (m_IsGrounded and m_CurrentState == State::Flight) m_Position.y += 1;
 
 		if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
 		{
-			if (m_CurrentState != State::EnterDoor)
+ 			if (m_CurrentState != State::EnterDoor)
 			{
 				if (m_CurrentState != State::Flight)
 				{
@@ -340,6 +350,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 		if (m_CurrentState == State::Inhaling and m_AccumSec >= 0.40f)
 		{
 			m_CurrentState = State::None;
+			m_AccumSec = 0;
 		}
 	}
 #pragma endregion
@@ -376,6 +387,10 @@ void Kirby::MechanicUpdate(float elapsedSec)
 
 			SoundManager::PlayEffect("PowerUpReceived");
 			m_InhaledAbilityType = AbilityType::None;
+		}
+		else
+		{
+			SoundManager::PlayEffect("NoPowerUpReceived");
 		}
 	}
 #pragma endregion
@@ -473,6 +488,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_CurrentState != State::Inhaling and
 			m_CurrentState != State::Jump and
 			m_CurrentState != State::Falling and
+			m_CurrentState != State::EnterDoor and
 			m_CurrentState != State::Dead and
 			!m_IsHit and
 			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
@@ -542,12 +558,17 @@ bool Kirby::HasEnteredDoor()
 {
 	if (m_CurrentState == State::EnterDoor)
 	{
+		m_Velocity.x = 0;
+		m_Velocity.y = 0;
+
 		if (m_pAnimationManager->IsDone("Exhaling"))
 		{
 			m_CurrentAnimation = "EnterDoor";
 		}
 		if (m_pAnimationManager->IsDone("EnterDoor"))
 		{
+			SoundManager::PlayEffect("DoorEnter");
+
 			m_Direction = Direction::Right;
 			m_CurrentState = State::None;
 			m_HasInhaledAbility = false;
@@ -563,11 +584,11 @@ void Kirby::EnterDoor()
 {
 	if (utils::KeyPress(SDL_SCANCODE_UP))
 	{
-		m_Direction = Direction::Right;
 		m_CurrentState = State::EnterDoor;
 		m_Velocity.x = 0;
 		if (m_OldState != State::Flight and !m_HasInhaledAbility)
 		{
+			m_Direction = Direction::Right;
 			m_CurrentAnimation = "EnterDoor";
 		}
 		else
@@ -660,21 +681,26 @@ void Kirby::AbilityUpdate(float elapsedSec, const std::vector<std::vector<Point2
 }
 void Kirby::Death()
 {
-	--m_Lives;
-	m_Health = 6;
-	
-
-	m_CurrentState = State::Dead;
-	
-	m_DoesWorldCollision = false;
-
-	m_Velocity.x = 0;
-	m_Velocity.y = m_JUMP_SPEED;
-	m_Position.y += 1;
-
-	if (m_Lives <= 0)
+	if (m_CurrentState != State::Dead)
 	{
-		Reset();
+		m_AccumSec = 0;
+		m_Velocity.x = 0;
+		m_Velocity.y = m_JUMP_SPEED;
+		m_Position.y += 1;
+		m_DoesWorldCollision = false;
+		SoundManager::PlayStream("Dead");
+	}
+	m_CurrentState = State::Dead;
+	if (m_AccumSec >= 1.f)
+	{
+		--m_Lives;
+		m_Health = 6;
+			Reset();
+	
+		if (m_Lives <= 0)
+		{
+			Reset();
+		}
 	}
 }
 void Kirby::Invincibility(float elapsedSec)
@@ -883,6 +909,9 @@ void Kirby::Animate()
 			if (m_pAnimationManager->IsDone("Roll"))
 			{
 				m_IsHit = false;
+				m_CurrentState = State::None;
+				m_InhaledAbilityType = AbilityType::None;
+				m_HasInhaledAbility = false;
 			}
 		}
 		if (m_HasInhaledAbility or m_OldState == State::Flight)
@@ -891,6 +920,9 @@ void Kirby::Animate()
 			if (m_pAnimationManager->IsDone("InhaledRoll"))
 			{
 				m_IsHit = false;
+				m_CurrentState = State::None;
+				m_InhaledAbilityType = AbilityType::None;
+				m_HasInhaledAbility = false;
 			}
 		}
 

@@ -2,8 +2,8 @@
 #include "Enemy.h"
 #include <iostream>
 
-Enemy::Enemy(const std::string& textureName, const Point2f& center, bool doesWorldCollsion)
-	: Entity(textureName, 16, 16, center)
+Enemy::Enemy(const std::string& textureName, const Point2f& center, int score, bool doesWorldCollsion)
+	: Entity(textureName, 16, 16, center, score)
 	, m_IsActivated			{ true }
 	, m_IsEliminated		{ true }
 	, m_SpawnPoint			{ center }

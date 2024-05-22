@@ -25,10 +25,10 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			BEHAVIOURAL			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	void Draw(bool debugMode = false) const;
+	void Draw() const;
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos);
 
-	void Add(const std::string& filePath, Point2f center);
+	void Add(const std::string& filePath, Point2f center, int score);
 	void Add(Enemy* enemyPtr);
 	void Pop();
 	void Eliminate(Enemy* enemyPtr);

@@ -3,14 +3,12 @@
 #include "Spark.h"
 
 Sparky::Sparky(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("Sparky", center, doesWorldCollsion)
+	: Enemy("Sparky", center, 300, doesWorldCollsion)
 	, m_AbilityDurationCounter{0}
 {
 	m_Velocity.x = 0.f;
 	m_pAbility = new Spark(false);
 	m_AbilityType = AbilityType::Spark;
-
-	m_Score = 300;
 
 	const Vector2f m_VELOCITY_BIG_STAT		{ 0.f, 110.f };
 	const Vector2f m_VELOCITY_SMALL_STAT	{ 0.f, m_VELOCITY_BIG_STAT.y / 2 };

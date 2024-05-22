@@ -2,11 +2,10 @@
 #include "PoppyBrosJr.h"
 
 PoppyBrosJr::PoppyBrosJr(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("PoppyBrosJr", center, doesWorldCollsion)
+	: Enemy("PoppyBrosJr", center, 200, doesWorldCollsion)
 	, m_JumpAccumSec{ 0.f }
 {
 	m_StartDirection = m_Direction;
-	m_Score = 200;
 }
 
 void PoppyBrosJr::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)

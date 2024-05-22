@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "utils.h"
 #include <iostream>
 #include "TextureManager.h"
 
@@ -17,7 +18,7 @@ bool TextureManager::LoadTexture(const std::string& name, const std::string& fil
 		}
 	}
 	
-	std::cout << m_vTextures.size() << "\t Texture" << std::endl;
+	if (utils::DEBUG_MODE) std::cout << m_vTextures.size() << "\t Texture" << std::endl;
 
 	return true;
 }

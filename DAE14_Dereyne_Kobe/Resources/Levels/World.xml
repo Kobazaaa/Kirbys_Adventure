@@ -1,0 +1,163 @@
+<VegetableValleyHub>
+	<DoorVector>
+		<Door>
+			door="88,72,16,16"
+			outcomePos="100,100"
+			isFinal="true"
+			nextLevel="1"
+		</Door>
+	</DoorVector>
+
+	<EnemyManager>
+
+	</EnemyManager>
+	
+	
+	name="VegetableValleyHub"
+	subLevels="1"
+	
+</VegetableValleyHub>
+
+<VegetableValleyLevelOne>
+	<DoorVector>
+		<Door>
+			door="968,57,16,24"
+			outcomePos="28,228"
+			isFinal="false"
+			nextLevel="1"
+		</Door>
+		<Door>
+			door="24,377,16,24"
+			outcomePos="976,218"
+			isFinal="false"
+			nextLevel="1"
+		</Door>
+		<Door>
+			door="968,209,16,24"
+			outcomePos="32,386"
+			isFinal="false"
+			nextLevel="1"
+		</Door>
+		<Door>
+			door="952,439,16,24"
+			outcomePos="100,80"
+			isFinal="true"
+			nextLevel="0"
+		</Door>
+	</DoorVector>
+
+	<EnemyManager>
+		<WaddleDoo>
+			spawnpoint="304.407928,64.190735"
+		</WaddleDoo>
+
+		<WaddleDee>
+			spawnpoint="367.972656,45.432678"
+		</WaddleDee>
+
+		<BrontoBurt>
+			spawnpoint="406.904053,118.659302"
+			tactic="ascendingWave"
+		</BrontoBurt>
+
+		<WaddleDoo>
+			spawnpoint="481.675812,47.808136"
+		</WaddleDoo>
+
+		<BrontoBurt>
+			spawnpoint="559.808105,61.810333"
+			tactic="ascend"
+		</BrontoBurt>
+
+		<Sparky>
+			spawnpoint="607.415588,61.810333"
+		</Sparky>
+
+		<WaddleDee>
+			spawnpoint="724.754028,61.810333"
+		</WaddleDee>
+
+		<BrontoBurt>
+			spawnpoint="781.883057,128.180786"
+			tactic="ascendingWave"
+		</BrontoBurt>
+
+		<HotHead>
+			spawnpoint="944.868713,61.530273"
+		</HotHead>
+
+		<WaddleDee>
+			spawnpoint="189.308044,214.493134"
+		</WaddleDee>
+
+		<Sparky>
+			spawnpoint="382.972656,280.632172"
+		</Sparky>
+
+		<BrontoBurt>
+			spawnpoint="384.952881,191.126648"
+			tactic="ascend"
+		</BrontoBurt>
+
+		<WaddleDee>
+			spawnpoint="495.448639,217.661469"
+		</WaddleDee>
+
+		<HotHead>
+			spawnpoint="669.707153,248.948792"
+		</HotHead>
+
+		<BrontoBurt>
+			spawnpoint="816.328430,311.329620"
+			tactic="wave"
+		</BrontoBurt>
+
+		<Sparky>
+			spawnpoint="913.503723,217.234802"
+		</Sparky>
+
+		<HotHead>
+			spawnpoint="258.615417,449.544159"
+		</HotHead>
+
+		<PoppyBrosJr>
+			spawnpoint="292.675049,399.444824"
+		</PoppyBrosJr>
+
+		<WaddleDee>
+			spawnpoint="338.417908,463.603638"
+		</WaddleDee>
+
+		<WaddleDoo>
+			spawnpoint="427.329376,433.702454"
+		</WaddleDoo>
+
+		<BrontoBurt>
+			spawnpoint="522.562134,464.513733"
+			tactic="ascendingWave"
+		</BrontoBurt>
+
+		<HotHead>
+			spawnpoint="701.390503,417.266724"
+		</HotHead>
+
+		<PoppyBrosJr>
+			spawnpoint="788.519775,464.395752"
+		</PoppyBrosJr>
+
+		<WaddleDee>
+			spawnpoint="852.678589,382.415009"
+		</WaddleDee>
+
+		<BrontoBurt>
+			spawnpoint="943.768311,415.682556"
+			tactic="straight"
+		</BrontoBurt>
+
+	</EnemyManager>
+
+
+	name="VegetableValleyLevel"
+	subLevels="3"
+
+</VegetableValleyLevelOne>

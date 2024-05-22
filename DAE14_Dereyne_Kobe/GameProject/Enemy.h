@@ -7,7 +7,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Enemy(const std::string& textureName, const Point2f& center, bool doesWorldCollsion = true);
+	explicit Enemy(const std::string& textureName, const Point2f& center, int score, bool doesWorldCollsion = true);
 	virtual ~Enemy() noexcept override  = default;
 
 

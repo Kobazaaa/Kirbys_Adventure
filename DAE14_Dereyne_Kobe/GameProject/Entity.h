@@ -18,7 +18,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Entity(const std::string& textureName, float width, float height, const Point2f& center, bool doesWorldCollsion = true);
+	explicit Entity(const std::string& textureName, float width, float height, const Point2f& center, int score, bool doesWorldCollsion = true);
 	Entity(const Entity& other) = delete;
 	Entity(Entity&& other) = delete;
 	Entity& operator=(const Entity& rhs) = delete;

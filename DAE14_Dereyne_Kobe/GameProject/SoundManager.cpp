@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "utils.h"
 #include <iostream>
 #include "SoundManager.h"
 
@@ -18,7 +19,7 @@ bool SoundManager::LoadSoundStream(const std::string& name, const std::string& f
 		}
 	}
 
-	std::cout << m_vSoundStreams.size() << "\t Stream\t" << name << "\t" << filePath << std::endl;
+	if (utils::DEBUG_MODE) std::cout << m_vSoundStreams.size() << "\t Stream\t" << name << "\t" << filePath << std::endl;
 
 	return true;
 }

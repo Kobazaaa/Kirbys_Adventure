@@ -54,7 +54,6 @@ private:
 	bool IsFadingIn() const;
 
 	// VARIABLES
-	const bool m_DEBUG_MODE{true};
 	bool m_PlayerEnteredDoor{false};
 
 	float m_FadeTimer;

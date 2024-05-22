@@ -5,6 +5,7 @@
 namespace utils
 {
 	const float g_Pi{ 3.1415926535f };
+	const bool DEBUG_MODE{ true };
 
 #pragma region OpenGLDrawFunctionality
 
@@ -83,6 +84,10 @@ namespace utils
 
 #pragma endregion CollisionFunctionality
 
+
+	// ALL THE FUNCTIONALITY AFTER THIS COMMENT BLOCK ARE
+	// IMPLEMENTED BY DEREYNE KOBE - 1DAEGD14
+	// FR THE PROGRAMMING 2 GAME PROJECT
 #pragma region FileStream
 	std::string GetAttributeValue(const std::string& attrName, const std::string& element);
 	Point2f		ToPoint2f(const std::string& point2fString);
@@ -102,7 +107,9 @@ namespace utils
 
 	bool IsRectInRect(const Rectf& smallRect, const Rectf& bigRect);
 	Rectf VectorToRect(const std::vector<Point2f>& vector);
+#pragma endregion
 
+#pragma region Keyboard
 	bool KeyPress(int SDL_SCANCODE);
 	bool KeyDown(int SDL_SCANCODE);
 	bool KeyRelease(int SDL_SCANCODE);

@@ -5,7 +5,7 @@
 
 const float Entity::m_GRAVITY{ -300.f };
 
-Entity::Entity(const std::string& textureName, float width, float height, const Point2f& center, bool doesWorldCollsion)
+Entity::Entity(const std::string& textureName, float width, float height, const Point2f& center, int score, bool doesWorldCollsion)
 	: m_Width				{ width }
 	, m_Height				{ height }
 	, m_AccumSec			{ 0 }
@@ -19,7 +19,7 @@ Entity::Entity(const std::string& textureName, float width, float height, const 
 	, m_GravityMultiplier	{ 1.f }
 	, m_pAnimationManager	{ m_pAnimationManager = new AnimationManager(textureName)}
 	, m_CurrentAnimation	{ "" }
-	, m_Score				{ }
+	, m_Score				{ score }
 	, m_DoesWorldCollision	{ doesWorldCollsion }
 	, m_IsGrounded			{ false }
 {

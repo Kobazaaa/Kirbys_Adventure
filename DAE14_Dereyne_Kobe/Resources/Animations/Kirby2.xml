@@ -267,6 +267,17 @@
 	loop="false"
 
 </Roll>
+<InhaledRoll>
+	<Frame>
+		position="120,48"
+		width="24"
+		height="24"
+		duration="0.3"
+	</Frame>
+
+	loop="false"
+
+</InhaledRoll>
 <EndFlip>
 	<Frame>
 		position="64,32"
@@ -305,7 +316,7 @@
 		position="0,48"
 		width="16"
 		height="16"
-		duration="0.1"
+		duration="0.08"
 	</Frame>
 
 	loop="false"
@@ -316,7 +327,7 @@
 		position="48,48"
 		width="16"
 		height="16"
-		duration="0.1"
+		duration="0.08"
 	</Frame>
 
 	loop="false"
@@ -327,7 +338,7 @@
 		position="96,48"
 		width="16"
 		height="16"
-		duration="0.1"
+		duration="0.08"
 	</Frame>
 
 	loop="false"
@@ -338,7 +349,7 @@
 		position="64,48"
 		width="16"
 		height="16"
-		duration="0.1"
+		duration="0.08"
 	</Frame>
 
 	loop="false"
@@ -349,7 +360,7 @@
 		position="80,48"
 		width="16"
 		height="16"
-		duration="0.1"
+		duration="0.08"
 	</Frame>
 
 	loop="false"
@@ -575,6 +586,17 @@
 	
 	loop="false"
 </InhaledJump>
+<InhaledJumpEnd>
+	<Frame>
+		position="96,24"
+		width="24"
+		height="24"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</InhaledJumpEnd>
 <SparkStart>
 	<Frame>
 		position="32,96"
@@ -651,3 +673,31 @@
 	
 	loop="false"
 </EnterDoor>
+<Death>
+	<Frame>
+		position="16,128"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="32,128"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="32,112"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="16,112"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	
+	loop="true"
+</Death>

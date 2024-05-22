@@ -684,17 +684,17 @@ bool utils::IntersectRectLine(const Rectf& r, const Point2f& p1, const Point2f& 
 	intersectMax = tMax;
 	return true;
 }
+#pragma endregion CollisionFunctionality
 
+#pragma region Custom
 int utils::GetSign(int number)
 {
 	return GetSign(static_cast<double>(number));
 }
-
 int utils::GetSign(float number)
 {
 	return GetSign(static_cast<double>(number));
 }
-
 int utils::GetSign(double number)
 {
 	if (number >= 0) return 1;
@@ -705,7 +705,6 @@ bool utils::GetRandomBool()
 {
 	return rand() % 2 == 0 ? true : false;
 }
-
 int utils::GetRandomInt(int minIncl, int maxIncl)
 {
 	if (minIncl < maxIncl)
@@ -721,7 +720,6 @@ int utils::GetRandomInt(int minIncl, int maxIncl)
 		return minIncl;
 	}
 }
-
 float utils::GetRandomFloat(int minIncl, int maxIncl, int precision)
 {
 	float precisionPower{ powf(10, precision)};
@@ -740,7 +738,6 @@ bool utils::IsRectInRect(const Rectf& smallRect, const Rectf& bigRect)
 
 	return false;
 }
-
 Rectf utils::VectorToRect(const std::vector<Point2f>& vector)
 {
 	Rectf nullRect{ 0, 0, 0, 0 };
@@ -768,7 +765,9 @@ Rectf utils::VectorToRect(const std::vector<Point2f>& vector)
 	}
 	else return nullRect;
 }
+#pragma endregion
 
+#pragma region Keyboard
 static bool m_PrevKeyStatesPress[256] = {false};
 bool utils::KeyPress(int SDL_SCANCODE)
 {
@@ -816,9 +815,7 @@ bool utils::KeyRelease(int SDL_SCANCODE)
 
 	return isReleased;
 }
-
-#pragma endregion CollisionFunctionality
-
+#pragma endregion
 
 #pragma region FileStream
 Point2f utils::ToPoint2f(const std::string& point2fString)

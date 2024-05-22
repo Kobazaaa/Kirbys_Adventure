@@ -99,7 +99,6 @@ void Game::Update( float elapsedSec )
 		m_pHUD->Update(elapsedSec);
 	}
 	m_pCamera->Update(elapsedSec);
-
 }
 
 void Game::Draw( ) const
@@ -114,7 +113,7 @@ void Game::Draw( ) const
 			m_pKirby->Draw();
 
 
-			if (m_DEBUG_MODE)
+			if (utils::DEBUG_MODE)
 			{
 				for (size_t idx{}; idx < m_VegetableValleyManager->GetCurrentLevel()->GetWorld().size(); idx++)
 				{
@@ -146,7 +145,7 @@ void Game::Draw( ) const
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 {
-	if (m_DEBUG_MODE)
+	if (utils::DEBUG_MODE)
 	{
 		if (e.keysym.sym == SDLK_i)
 		{
@@ -157,22 +156,6 @@ void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 			m_pCamera->Shake(0.1f, 0.1f);
 		}
 		
-		if (e.keysym.sym == SDLK_1)
-		{
-			SoundManager::PlayStream("stream1");
-		}
-		if (e.keysym.sym == SDLK_2)
-		{
-			SoundManager::PlayStream("stream2");
-		}
-		if (e.keysym.sym == SDLK_3)
-		{
-			SoundManager::PlayEffect("effect1");
-		}
-		if (e.keysym.sym == SDLK_4)
-		{
-			SoundManager::PlayEffect("effect2");
-		}
 		if (e.keysym.sym == SDLK_5)
 		{
 			SoundManager::PauseAll();
@@ -185,11 +168,11 @@ void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 		{
 			SoundManager::StopAll();
 		}
+		if (e.keysym.sym == SDLK_r)
+		{
+			m_pKirby->Reset();
+		}	
 	}
-	if (e.keysym.sym == SDLK_r)
-	{
-		m_pKirby->Reset();
-	}	
 }
 
 void Game::ProcessKeyUpEvent( const SDL_KeyboardEvent& e )
@@ -201,8 +184,18 @@ void Game::ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e )
 	//std::cout << "MOUSEMOTION event: " << e.x << ", " << e.y << std::endl;
 }
 
-void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
+void Game::ProcessMouseDownEvent(const SDL_MouseButtonEvent& e)
 {
+	if (utils::DEBUG_MODE)
+	{
+		Point2f clickPos{ (float(e.x) / m_SCALE + m_pCamera->GetCameraView().left) , float(e.y) / m_SCALE - 64 };
+		clickPos.y += m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight();
+
+		if (e.button == SDL_BUTTON_LEFT)
+		{
+			m_pKirby->SetPosition(clickPos);
+		}
+	}
 }
 
 void Game::ProcessMouseUpEvent( const SDL_MouseButtonEvent& e )
@@ -253,10 +246,14 @@ void Game::LoadSounds()
 	SoundManager::LoadSoundEffect("Puff", "Sound/SoundEffects/Puff.wav");
 	SoundManager::LoadSoundEffect("Fire", "Sound/SoundEffects/Fire.wav");
 	SoundManager::LoadSoundEffect("EnemyJump", "Sound/SoundEffects/EnemyJump.wav");
+	SoundManager::LoadSoundEffect("DoorEnter", "Sound/SoundEffects/Door.wav");
+	SoundManager::LoadSoundEffect("EnemyDeath", "Sound/SoundEffects/EnemyDeath.wav");
+	SoundManager::LoadSoundEffect("NoPowerUpReceived", "Sound/SoundEffects/NoPowerUpReceived.wav");
 
 
 	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
 	SoundManager::LoadSoundStream("VegetableValleyHub", "Sound/Music/Vegetable_Valley_Hub.mp3");
+	SoundManager::LoadSoundStream("Dead", "Sound/Music/Dead.mp3");
 }
 
 void Game::Fade(float duration)

@@ -35,13 +35,16 @@ void Level::Update(float elapsedSec, Kirby* pKirby)
 void Level::Draw() const
 {
 	m_pTexture->Draw(m_Position);
-	if (m_pEnemyMngr) m_pEnemyMngr->Draw(true);
+	if (m_pEnemyMngr) m_pEnemyMngr->Draw();
 
 
-	for (const Door& doorObj : m_vDoors)
+	if (utils::DEBUG_MODE)
 	{
-		utils::SetColor(Color4f(1,0,0,1));
-		utils::FillRect(doorObj.doorRect);
+		for (const Door& doorObj : m_vDoors)
+		{
+			utils::SetColor(Color4f(1, 0, 0, 1));
+			utils::FillRect(doorObj.doorRect);
+		}
 	}
 }
 

@@ -3,12 +3,10 @@
 #include "WaddleDoo.h"
 
 WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("WaddleDoo", center, doesWorldCollsion)
+	: Enemy("WaddleDoo", center, 300, doesWorldCollsion)
 {
 	m_pAbility = new Beam(false);
 	m_AbilityType = AbilityType::Beam;
-
-	m_Score = 300;
 }
 
 void WaddleDoo::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos)

@@ -9,27 +9,6 @@
 EnemyManager::EnemyManager(Camera* camera)
 	: m_pCamera{camera}
 {
-	//std::vector<std::vector<Point2f>> m_SpawnPoints;
-	//
-	//SVGParser::GetVerticesFromSvgFile("Enemies/SpawnPoints.svg", m_SpawnPoints);
-	//
-	//for (size_t i = 0; i < 25; i++)
-	//{
-	//	if ( i == 1 or i == 6 or i == 9 or i == 12 or i == 18 or i == 23						) m_vEnemies.push_back(new WaddleDee(m_SpawnPoints[0][i]));
-	//	if ( i == 0 or i == 3 or i == 19														) m_vEnemies.push_back(new WaddleDoo(m_SpawnPoints[0][i]));
-	//	
-	//	if ( i == 2 or i == 7 or i == 20)														  m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::AscendingWave));
-	//	if ( i == 4 or i == 11)																	  m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::Ascend));
-	//	if ( i == 14)																			  m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::Wave));
-	//	if ( i == 24)																			  m_vEnemies.push_back(new BrontoBurt(m_SpawnPoints[0][i], BrontoBurt::Tactic::Straight));
-	//
-	//	if ( i == 5 or i == 10 or i == 15														) m_vEnemies.push_back(new Sparky(m_SpawnPoints[0][i]));
-	//	if ( i == 8 or i == 13 or i == 16 or i == 21											) m_vEnemies.push_back(new HotHead(m_SpawnPoints[0][i]));
-	//	
-	//	if ( i == 17 or i == 22																	) m_vEnemies.push_back(new PoppyBrosJr(m_SpawnPoints[0][i]));
-	//}
-	//
-	//
 	//std::ofstream file{ "spawn.txt" };
 	//if (file)
 	//{
@@ -87,13 +66,13 @@ EnemyManager::~EnemyManager()
 	}
 }
 
-void EnemyManager::Draw(bool debugMode) const
+void EnemyManager::Draw() const
 {
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
 		enemyPtr->Draw();
 
-		if (debugMode)
+		if (utils::DEBUG_MODE)
 		{
 			utils::SetColor(Color4f(1, 1, 1, 1));
 			utils::DrawRect(enemyPtr->GetHitBox());
@@ -115,9 +94,9 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 }
 
 #pragma region Managing
-void EnemyManager::Add(const std::string& filePath, Point2f center)
+void EnemyManager::Add(const std::string& filePath, Point2f center, int score)
 {
-	m_vEnemies.push_back(new Enemy(filePath, center));
+	m_vEnemies.push_back(new Enemy(filePath, center, score));
 }
 void EnemyManager::Add(Enemy* enemyPtr)
 {
@@ -149,8 +128,14 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 				isEnemyInRect = true;
 				enemyPtr->IsActivated(false);
 
-				float xInc{ -elapsedSec * 10.f *  (enemyPtr->GetPosition().x - pKirby->GetPosition().x) };
-				float yInc{ -elapsedSec * 10.f * ((enemyPtr->GetPosition().y - (pKirby->GetInhaleRect().bottom + (pKirby->GetInhaleRect().height / 2)))) };
+				float xDist{ enemyPtr->GetPosition().x - pKirby->GetPosition().x };
+				float yDist{ (enemyPtr->GetPosition().y - (pKirby->GetInhaleRect().bottom + (pKirby->GetInhaleRect().height / 2))) };
+
+				float xSpeed{ -utils::GetSign(xDist) * 20 * powf(0.9f, (abs(xDist) - 50)) };
+				float ySpeed{ -utils::GetSign(yDist) * 20 * powf(0.9f, (abs(xDist) - 50)) };
+
+				float xInc{ xSpeed * elapsedSec };
+				float yInc{ ySpeed * elapsedSec };
 
 				Point2f newEnemyPos
 				{
