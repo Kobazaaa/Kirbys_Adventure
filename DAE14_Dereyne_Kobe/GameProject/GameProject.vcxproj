@@ -179,6 +179,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="Star.cpp" />
     <ClCompile Include="StarProjectile.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="ViewFade.cpp" />
     <ClCompile Include="WaddleDee.cpp" />
     <ClCompile Include="WaddleDoo.cpp" />
   </ItemGroup>
@@ -216,6 +217,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="Star.h" />
     <ClInclude Include="StarProjectile.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="ViewFade.h" />
     <ClInclude Include="WaddleDee.h" />
     <ClInclude Include="WaddleDoo.h" />
   </ItemGroup>

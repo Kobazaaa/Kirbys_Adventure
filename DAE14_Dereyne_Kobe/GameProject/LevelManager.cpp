@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Level.h"
 #include "Kirby.h"
+#include "ViewFade.h"
 #include "LevelManager.h"
 #include <cassert>
 #include <sstream>
@@ -10,6 +11,7 @@
 LevelManager::LevelManager(const std::string& filePath, Kirby* kirby, Camera* camera)
 	: m_pKirby{ kirby }
 	, m_pCamera{ camera }
+	, m_DoorEntered{ false }
 {
 	LoadFromFile(filePath);
 	m_CurrentLevel = m_vLevels[0];
@@ -35,17 +37,27 @@ void LevelManager::Update(float elapsedSec)
 		{
 			if (m_pKirby->HasEnteredDoor())
 			{
-				m_pKirby->SetPosition(door.outcomePos);
-				if (door.isFinalDoor)
+				m_DoorEntered = true;
+				ViewFade::StartFade(3.f);
+			}
+
+			if(m_DoorEntered)
+			{
+				if (ViewFade::IsFadingIn())
 				{
-					m_CurrentLevel = m_vLevels[door.nextLevel];
-					m_CurrentLevel->SetSubLevel(0);
-					m_CurrentLevel->PlayMusic();
-				}
-				else
-				{
-					if (m_pKirby->GetPosition().y > door.doorRect.bottom) m_CurrentLevel->IncreaseSubLevel();
-					else m_CurrentLevel->DecreaseSubLevel();
+					m_pKirby->SetPosition(door.outcomePos);
+					m_DoorEntered = false;
+					if (door.isFinalDoor)
+					{
+						m_CurrentLevel = m_vLevels[door.nextLevel];
+						m_CurrentLevel->SetSubLevel(0);
+						m_CurrentLevel->PlayMusic();
+					}
+					else
+					{
+						if (m_pKirby->GetPosition().y > door.doorRect.bottom) m_CurrentLevel->IncreaseSubLevel();
+						else m_CurrentLevel->DecreaseSubLevel();
+					}
 				}
 			}
 		}

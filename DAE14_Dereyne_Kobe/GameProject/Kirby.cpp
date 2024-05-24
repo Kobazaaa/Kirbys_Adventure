@@ -3,6 +3,7 @@
 #include "Kirby.h"
 #include "Enemy.h"
 #include "Level.h"
+#include "ViewFade.h"
 #include "Camera.h"
 #include <iostream>
 
@@ -385,11 +386,14 @@ void Kirby::MechanicUpdate(float elapsedSec)
 			if (m_InhaledAbilityType == AbilityType::Spark)		m_pAbility = new Spark(true);
 			m_AbilityType = m_InhaledAbilityType;
 
+			m_Card = Card::Ability;
+
 			SoundManager::PlayEffect("PowerUpReceived");
 			m_InhaledAbilityType = AbilityType::None;
 		}
 		else
 		{
+			m_Card = Card::Nothing;
 			SoundManager::PlayEffect("NoPowerUpReceived");
 		}
 	}
@@ -640,6 +644,8 @@ void Kirby::HitEnemy(const Point2f& enemyPos)
 		--m_Health;
 		m_IsInvincible = true;
 
+		m_Card = Card::Damaged;
+
 		Direction hitDirection{ static_cast<Direction>(utils::GetSign(enemyPos.x - m_Position.x)) };
 		m_Velocity.x = -static_cast<int>(hitDirection) * 100.f;
 
@@ -689,6 +695,7 @@ void Kirby::Death()
 		m_Position.y += 1;
 		m_DoesWorldCollision = false;
 		SoundManager::PlayStream("Dead");
+		//ViewFade::StartFade(1.f);
 	}
 	m_CurrentState = State::Dead;
 	if (m_AccumSec >= 1.f)
@@ -914,13 +921,13 @@ void Kirby::Animate()
 				m_HasInhaledAbility = false;
 			}
 		}
-		if (m_HasInhaledAbility or m_OldState == State::Flight)
+		if (m_HasInhaledAbility or m_CurrentState == State::Flight)
 		{
 			m_CurrentAnimation = "InhaledRoll";
 			if (m_pAnimationManager->IsDone("InhaledRoll"))
 			{
 				m_IsHit = false;
-				m_CurrentState = State::None;
+				m_CurrentState = m_OldState;
 				m_InhaledAbilityType = AbilityType::None;
 				m_HasInhaledAbility = false;
 			}

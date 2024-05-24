@@ -131,6 +131,15 @@ void SoundManager::StopAll()
 	SoundStream::Stop();
 }
 
+void SoundManager::SetVolume(int volume)
+{
+	for (int index{}; index < m_vSoundEffects.size(); ++index)
+	{
+		m_vSoundEffects[index]->m_pSoundEffect->SetVolume(volume);
+	}
+	SoundStream::SetVolume(volume);
+}
+
 
 bool SoundManager::IsStreamLoaded(const std::string& name)
 {

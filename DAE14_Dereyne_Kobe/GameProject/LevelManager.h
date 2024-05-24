@@ -46,6 +46,7 @@ private:
 	std::vector<Level*> m_vLevels;
 
 	Kirby* m_pKirby;
+	bool m_DoorEntered;
 	Camera* m_pCamera;
 };
 

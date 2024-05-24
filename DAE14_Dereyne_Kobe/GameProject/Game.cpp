@@ -3,6 +3,7 @@
 #include "Matrix2x3.h"
 #include "Game.h"
 #include "utils.h"
+#include "ViewFade.h"
 #include "Kirby.h"
 #include <iostream>
 
@@ -57,30 +58,41 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
+	if (ViewFade::IsFading())
+	{
+		m_GameState = GameState::Pause;
+	}
+	else
+	{
+		m_GameState = GameState::Play;
+	}
+
 	if (utils::KeyPress(SDL_SCANCODE_ESCAPE))
 	{
 		if (m_GameState == GameState::Play) m_GameState = GameState::Hub;
 		else if (m_GameState == GameState::Hub) m_GameState = GameState::Play;
 	}
 
-	FadeUpdate(elapsedSec);
-	if (!m_IsFadingIn and !m_IsFadingOut) m_FadeTimer = 0;
+	ViewFade::Update(elapsedSec);
 
-	if (m_PlayerEnteredDoor)
-	{
-		if (m_GameState == GameState::Play) Fade(0.5f);
-		m_GameState = GameState::Pause;
+	//FadeUpdate(elapsedSec);
+	//if (!m_IsFadingIn and !m_IsFadingOut) m_FadeTimer = 0;
 
-		if (!IsFadingOut())
-		{
-			m_pCamera->SetPosition(Point2f(0, m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight()));
-			if (!IsFadingIn())
-			{
-				m_GameState = GameState::Play;
-				m_PlayerEnteredDoor = false;
-			}
-		}
-	}
+	//if (m_PlayerEnteredDoor)
+	//{
+	//	if (m_GameState == GameState::Play) Fade(0.5f);
+	//	m_GameState = GameState::Pause;
+
+	//	if (!IsFadingOut())
+	//	{
+	//		m_pCamera->SetPosition(Point2f(0, m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight()));
+	//		if (!IsFadingIn())
+	//		{
+	//			m_GameState = GameState::Play;
+	//			m_PlayerEnteredDoor = false;
+	//		}
+	//	}
+	//}
 	//if (m_pKirby->DoDoorChecks(IsFadingIn()))
 	//{
 	//	m_PlayerEnteredDoor = true;
@@ -94,10 +106,10 @@ void Game::Update( float elapsedSec )
 			m_pCamera->Shake(0.1f, 0.1f);
 		}
 
-		m_VegetableValleyManager->Update(elapsedSec);
 		m_pKirby->Update(elapsedSec, m_VegetableValleyManager->GetCurrentLevel()->GetWorld());
 		m_pHUD->Update(elapsedSec);
 	}
+	m_VegetableValleyManager->Update(elapsedSec);
 	m_pCamera->Update(elapsedSec);
 }
 
@@ -130,17 +142,8 @@ void Game::Draw( ) const
 		}
 		m_pCamera->Reset();
 
-		m_pHUD->Draw();
-	if (m_IsFadingOut)
-	{
-		utils::SetColor(Color4f(0, 0, 0, m_FadeTimer / m_FadeDuration));
-		utils::FillRect(GetViewPort());
-	}
-	else if (m_IsFadingIn)
-	{
-		utils::SetColor(Color4f(0, 0, 0, (m_FadeDuration - m_FadeTimer) / m_FadeDuration));
-		utils::FillRect(GetViewPort());
-	}
+	m_pHUD->Draw();
+	ViewFade::Draw(GetViewPort());
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
@@ -171,6 +174,14 @@ void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 		if (e.keysym.sym == SDLK_r)
 		{
 			m_pKirby->Reset();
+		}	
+		if (e.keysym.sym == SDLK_m)
+		{
+			SoundManager::SetVolume(0);
+		}	
+		if (e.keysym.sym == SDLK_u)
+		{
+			SoundManager::SetVolume(50);
 		}	
 	}
 }
@@ -254,48 +265,4 @@ void Game::LoadSounds()
 	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
 	SoundManager::LoadSoundStream("VegetableValleyHub", "Sound/Music/Vegetable_Valley_Hub.mp3");
 	SoundManager::LoadSoundStream("Dead", "Sound/Music/Dead.mp3");
-}
-
-void Game::Fade(float duration)
-{
-	if (!m_IsFadingOut and !m_IsFadingIn)
-	{
-		m_IsFadingOut = true;
-		m_FadeDuration = duration;
-	}
-}
-
-void Game::FadeUpdate(float elapsedSec)
-{
-	if (m_IsFadingOut)
-	{
-		m_FadeTimer += elapsedSec;
-
-		if (m_FadeTimer >= m_FadeDuration)
-		{
-			m_IsFadingOut = false;
-			m_IsFadingIn = true;
-			m_FadeTimer = 0;
-		}
-	}
-	else if (m_IsFadingIn)
-	{
-		m_FadeTimer += elapsedSec;
-
-		if (m_FadeTimer >= m_FadeDuration)
-		{
-			m_IsFadingIn = false;
-			m_FadeTimer = 0;
-		}
-	}
-}
-
-bool Game::IsFadingOut() const
-{
-	return m_IsFadingOut;
-}
-
-bool Game::IsFadingIn() const
-{
-	return m_IsFadingIn;
 }

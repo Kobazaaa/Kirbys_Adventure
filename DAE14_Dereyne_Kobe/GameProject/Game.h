@@ -48,18 +48,8 @@ private:
 	void LoadTextures();
 	void LoadSounds();
 
-	void Fade(float duration);
-	void FadeUpdate(float elapsedSec);
-	bool IsFadingOut() const;
-	bool IsFadingIn() const;
-
 	// VARIABLES
 	bool m_PlayerEnteredDoor{false};
-
-	float m_FadeTimer;
-	float m_FadeDuration;
-	bool m_IsFadingIn;
-	bool m_IsFadingOut;
 
 	Kirby* m_pKirby;
 	LevelManager* m_VegetableValleyManager;
