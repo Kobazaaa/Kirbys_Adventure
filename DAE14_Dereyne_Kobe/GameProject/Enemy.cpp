@@ -20,7 +20,7 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 		Entity::Update(elapsedSec, world);
 		if (m_CanMove and (m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
-			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x;
+			m_Position.x += int(m_Direction) * elapsedSec * m_Velocity.x * m_WalkSpeedMultiplier;
 		}
 
 		if (m_DoesWorldCollision)
@@ -28,6 +28,14 @@ void Enemy::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 			m_IsGrounded = Collision::FloorCollision(this, world);
 			if (Collision::WallCollision(this, world)) InverseDirection();
 		}
+
+		if (m_IsUnderwater)
+		{
+			m_GravityMultiplier = 0.5f;
+			m_WalkSpeedMultiplier = 0.0f;
+			if (m_IsGrounded) IsEliminated(true);
+		}
+		else m_WalkSpeedMultiplier = 1.f;
 	}
 	else if (m_IsEliminated)
 	{

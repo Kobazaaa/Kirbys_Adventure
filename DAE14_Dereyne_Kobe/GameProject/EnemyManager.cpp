@@ -93,6 +93,21 @@ void EnemyManager::Update(float elapsedSec, const std::vector<std::vector<Point2
 	ApplyPlaySpace();
 }
 
+void EnemyManager::DoUnderwaterChecks(const std::vector<std::vector<Point2f>>& world)
+{
+	for (int enemyIdx{}; enemyIdx < m_vEnemies.size(); ++enemyIdx)
+	{
+		for (int worldIdx{}; worldIdx < world.size(); ++worldIdx)
+		{
+			if (utils::IsPointInPolygon(m_vEnemies[enemyIdx]->GetPosition(), world[worldIdx]))
+			{
+				m_vEnemies[enemyIdx]->IsUnderwater(true);
+			}
+			else m_vEnemies[enemyIdx]->IsUnderwater(false);
+		}
+	}
+}
+
 #pragma region Managing
 void EnemyManager::Add(const std::string& filePath, Point2f center, int score)
 {

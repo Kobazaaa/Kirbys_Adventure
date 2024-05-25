@@ -28,13 +28,14 @@ public:
 	void Draw() const;
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, const Point2f& kirbyPos);
 
+	void DoUnderwaterChecks(const std::vector<std::vector<Point2f>>& world);
+
 	void Add(const std::string& filePath, Point2f center, int score);
 	void Add(Enemy* enemyPtr);
 	void Pop();
 	void Eliminate(Enemy* enemyPtr);
 
 	bool KirbyInhaleCollision(Kirby* pKirby, float elapsedSec);
-
 
 	std::vector<Enemy*>& GetAllEnemies();
 

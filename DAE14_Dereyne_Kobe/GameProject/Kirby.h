@@ -73,6 +73,7 @@ private:
 	void Death();
 	void Invincibility(float elapsedSec);
 	void UserInput();
+	void ApplyUnderwaterChanges();
 	void MovementUpdate(float elapsedSec);
 	void MechanicUpdate(float elapsedSec);
 
@@ -115,8 +116,6 @@ private:
 	Star m_Star;
 
 	// Kirby Variables
-	float m_WalkSpeedMultiplier;
-
 	bool m_Bounced{false};
 
 	bool m_IsHit{false};
@@ -124,6 +123,7 @@ private:
 	bool m_IsRunning{false};
 	bool m_IsTurning{false};
 	bool m_WasInAir{false};
+	bool m_WasInWater{false};
 
 	bool m_IsOn30{false};
 	bool m_IsOn45{false};
@@ -131,6 +131,7 @@ private:
 
 	// Private Constants
 	const float		m_JUMP_SPEED	{ 20.f - m_GRAVITY / 2.f};
+	const float		m_SWIM_SPEED	{ m_JUMP_SPEED / 4};
 	const float		m_WALK_SPEED	{ 60.f };
 	const float		m_RUN_SPEED		{ 1.5f * m_WALK_SPEED };
 	const float		m_SLIDE_SPEED	{ 2 * m_WALK_SPEED };

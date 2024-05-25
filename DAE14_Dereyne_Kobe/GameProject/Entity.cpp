@@ -22,6 +22,8 @@ Entity::Entity(const std::string& textureName, float width, float height, const 
 	, m_Score				{ score }
 	, m_DoesWorldCollision	{ doesWorldCollsion }
 	, m_IsGrounded			{ false }
+	, m_IsUnderwater		{ false }
+	, m_WalkSpeedMultiplier	{ 1.f }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 }
@@ -79,6 +81,14 @@ void Entity::SetVelocity(const Vector2f& velocity)
 void Entity::InverseDirection()
 {
 	m_Direction = static_cast<Direction>(-static_cast<int>(m_Direction));
+}
+void Entity::IsUnderwater(bool isUdnerwater)
+{
+	if (isUdnerwater and !m_IsUnderwater)
+	{
+		m_Velocity.y = 0;
+	}
+	m_IsUnderwater = isUdnerwater;
 }
 #pragma endregion
 

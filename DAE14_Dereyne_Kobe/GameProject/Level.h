@@ -19,7 +19,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors);
+	explicit Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, bool hasWater);
 	Level(const Level& other) = delete;
 	Level(Level&& other) = delete;
 	Level& operator=(const Level& rhs) = delete;
@@ -63,10 +63,13 @@ private:
 	Texture* m_pTexture;
 	std::vector<Door> m_vDoors;
 	std::vector<std::vector<Point2f>> m_World;
+	std::vector<std::vector<Point2f>> m_WaterBodies;
 	EnemyManager* m_pEnemyMngr;
 
 	float m_Width;
 	float m_Height;
+	bool m_DoorEntered;
+	bool m_HasWater;
 
 	int m_NrSubLevels;
 	int m_CurrentSubLevel;

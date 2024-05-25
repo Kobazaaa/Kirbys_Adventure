@@ -38,6 +38,7 @@ public:
 	virtual void SetPosition(float centerX, float centerY)		final;
 	virtual void SetVelocity(const Vector2f& velocity)			final;
 	virtual void InverseDirection()								final;
+	virtual void IsUnderwater(bool isUdnerwater)				final;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			ACCESSORS			~~
@@ -66,12 +67,14 @@ protected:
 	AbilityType		m_AbilityType;
 
 	float	m_AccumSec;
+	float	m_WalkSpeedMultiplier;
 
 	float	m_Width;
 	float	m_Height;
 	bool	m_DoesWorldCollision;
 
 	bool	m_IsGrounded;
+	bool	m_IsUnderwater;
 	bool	m_IsInvincible;
 	int		m_Score;
 

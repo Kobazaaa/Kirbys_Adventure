@@ -21,7 +21,6 @@ Kirby::Kirby( const Point2f& center)
 	, m_Card						{ Card::Ability }
 	, m_InvincibleAccumSec			{ 0 }
 	, m_AbilityActivationAccumSec	{ 0 }
-	, m_WalkSpeedMultiplier			{ 1.f }
 {
 }
 std::string Kirby::EnumToString(Kirby::State state) const
@@ -80,9 +79,20 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 		if (m_IsInvincible) Invincibility(elapsedSec);
 		SlopeHandling();
+		if (m_IsUnderwater) ApplyUnderwaterChanges();
+		else if(m_WasInWater)
+		{
+			m_WasInWater = false;
+			if (m_CurrentState != State::Flight and m_CurrentState != State::Dead)
+			{
+				m_Velocity.y = m_JUMP_SPEED;
+				m_CurrentState = State::Jump;
+			}
+		}
 
 		MovementUpdate(elapsedSec);
 		MechanicUpdate(elapsedSec);
+
 	}
 
 
@@ -151,7 +161,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~	   RUNNING & TURNING	~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if (m_CurrentState == State::None or m_CurrentState == State::Walk)
+		if ((m_CurrentState == State::None or m_CurrentState == State::Walk) and !m_IsUnderwater)
 		{
 			if (KeyPress(SDL_SCANCODE_RIGHT) and abs(m_Velocity.x) >= 5.f)
 			{
@@ -218,6 +228,10 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~			JUMPING			~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		if (m_IsUnderwater and KeyDown(SDL_SCANCODE_SPACE))
+		{
+			m_Velocity.y = m_SWIM_SPEED;
+		}
 		if (KeyPress(SDL_SCANCODE_SPACE))
 		{
 			m_Position.y += 1;
@@ -228,7 +242,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 				SoundManager::PlayEffect("Jump");
 			}
 		}
-		else if (KeyRelease(SDL_SCANCODE_SPACE))
+		if (KeyRelease(SDL_SCANCODE_SPACE) and m_CurrentState != State::Flight)
 		{
 			if (m_Velocity.y >= 0) m_Velocity.y = 0;
 		}
@@ -239,10 +253,11 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~			FLIGHT			~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if (m_IsGrounded and m_CurrentState == State::Flight) m_Position.y += 1;
+		if (m_IsUnderwater and m_CurrentState == State::Flight) m_Velocity.y = 30.f;
 
 		if ((KeyDown(SDL_SCANCODE_UP) and CanFlyWithCurrentState()) or (KeyDown(SDL_SCANCODE_SPACE) and m_CurrentState == State::Flight))
 		{
- 			if (m_CurrentState != State::EnterDoor)
+ 			if (m_CurrentState != State::EnterDoor and !m_IsUnderwater)
 			{
 				if (m_CurrentState != State::Flight)
 				{
@@ -254,7 +269,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 			}
 		}
 		if (m_CurrentState == State::Flight) m_GravityMultiplier = 0.5f;
-		else m_GravityMultiplier = 1.f;
+		else if (!m_IsUnderwater) m_GravityMultiplier = 1.f;
 	}
 #pragma endregion
 }
@@ -292,7 +307,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 		{
 			if (!m_pAbility->IsActive()) m_pAbility->Activate(m_Position, m_Direction);
 		}
-		else if (CanInhaleWithCurrentState())
+		else if (CanInhaleWithCurrentState() and !m_IsUnderwater)
 		{
 			SoundManager::PlayEffect("InhalingStart");
 			m_CurrentState = State::Inhaling;
@@ -468,7 +483,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 		if (m_WasInAir)
 		{
 			m_WasInAir = false;
-			if (CanJumpWithCurrentState() and !m_HasInhaledAbility and ((m_AbilityType != AbilityType::None and !m_pAbility->IsActive()) or m_AbilityType == AbilityType::None))
+			if (CanJumpWithCurrentState() and !m_HasInhaledAbility and !m_IsUnderwater and ((m_AbilityType != AbilityType::None and !m_pAbility->IsActive()) or m_AbilityType == AbilityType::None))
 			{
 				SoundManager::PlayEffect("Land");
 				m_CurrentState = State::Land;
@@ -484,9 +499,10 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 		{
 			if (m_pAbility == nullptr or !m_pAbility->IsActive())
 			{
-				m_CurrentState = State::Falling;
+				if (!m_IsUnderwater) m_CurrentState = State::Falling;
 			}
 		}
+		if (m_CurrentState == State::Falling and m_IsUnderwater) m_CurrentState = State::None;
 
 		if (m_Velocity.y < 0.f and
 			m_CurrentState != State::Flight and
@@ -497,6 +513,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_CurrentState != State::EnterDoor and
 			m_CurrentState != State::Dead and
 			!m_IsHit and
+			!m_IsUnderwater and
 			(m_AbilityType == AbilityType::None or !m_pAbility->IsActive()))
 		{
 			m_CurrentState = State::None;
@@ -730,6 +747,14 @@ void Kirby::UserInput()
 {
 }
 
+void Kirby::ApplyUnderwaterChanges()
+{
+	m_WalkSpeedMultiplier = 0.5f;
+	m_GravityMultiplier = 0.2f;
+
+	m_WasInWater = true;
+}
+
 #pragma region Accessors
 Kirby::State Kirby::GetCurrentState() const
 {
@@ -914,6 +939,25 @@ void Kirby::Animate()
 		break;
 	}
 
+	if (m_IsUnderwater and m_CurrentState != State::Flight)
+	{
+		if (!m_IsGrounded and m_Velocity.y >= m_SWIM_SPEED - 5.f and abs(m_Velocity.x) < 5.f)
+		{
+			if (!m_HasInhaledAbility) m_CurrentAnimation = "SwimUp";
+			else m_CurrentAnimation = "InhaledWalk";
+		}
+		else if (!m_IsGrounded and abs(m_Velocity.x) > 5.f)
+		{
+			if (!m_HasInhaledAbility) m_CurrentAnimation = "SwimSide";
+			else m_CurrentAnimation = "InhaledWalk";
+		}
+		else if (!m_IsGrounded)
+		{
+			m_CurrentState = State::None;
+			if (!m_HasInhaledAbility) m_CurrentAnimation = "EndFlip";
+			else m_CurrentAnimation = "InhaledJumpEnd";
+		}
+	}
 
 	if (m_IsHit)
 	{
