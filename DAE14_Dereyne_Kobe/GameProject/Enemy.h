@@ -8,6 +8,10 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Enemy(const std::string& textureName, const Point2f& center, int score, bool doesWorldCollsion = true);
+	Enemy(const Enemy& other) = delete;
+	Enemy(Enemy&& other) = delete;
+	Enemy& operator=(const Enemy& other) = delete;
+	Enemy& operator=(Enemy&& other) = delete;
 	virtual ~Enemy() noexcept override  = default;
 
 

@@ -8,7 +8,6 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit BeamProjectile(float travelTime, float diameter, bool isFriendly = false);
-	virtual ~BeamProjectile() noexcept override = default;
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

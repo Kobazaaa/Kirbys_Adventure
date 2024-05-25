@@ -8,7 +8,6 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Beam(bool isFriendly = false);
-	virtual ~Beam() noexcept override = default;
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

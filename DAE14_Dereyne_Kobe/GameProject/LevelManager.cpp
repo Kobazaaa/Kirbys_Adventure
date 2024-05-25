@@ -137,7 +137,7 @@ void LevelManager::AddLevel(const std::string& element)
 	std::string name;
 	name = utils::GetAttributeValue("name", element);
 
-	//TODO check if this is a copy or a move? should be move, also for the enemyManagerTemp pointer
+	//TODO check if I can/should make lvls non-ptrs, same for NeemyMngr in level class
 	Level* tempLevel = new Level(name, subLevels, enemyManagerTemp, doorsTemp);
 	m_vLevels.push_back(std::move(tempLevel));
 

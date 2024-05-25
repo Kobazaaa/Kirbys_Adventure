@@ -12,7 +12,7 @@ public:
 		TextureObj(TextureObj&& other) noexcept;
 		TextureObj& operator=(const TextureObj& rhs) = delete;
 		TextureObj& operator=(TextureObj&& rhs) = delete;
-		~TextureObj();
+		~TextureObj() noexcept;
 
 		std::string m_Name;
 		Texture* m_pTexture;

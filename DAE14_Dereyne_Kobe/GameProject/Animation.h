@@ -6,7 +6,6 @@
 struct Frame
 {
 	explicit Frame(const Rectf frameRect, float frameDur);
-	~Frame() = default;
 
 	Rectf frameRect;
 	float frameDuration;
@@ -19,7 +18,6 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Animation(std::vector<Frame>&& frames, bool loop);
-	virtual ~Animation() noexcept = default;
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

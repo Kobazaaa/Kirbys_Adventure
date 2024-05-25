@@ -8,7 +8,6 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit WaddleDee(const Point2f& center, bool doesWorldCollsion = true);
-	virtual ~WaddleDee() noexcept override = default;
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

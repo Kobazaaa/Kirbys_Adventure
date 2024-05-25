@@ -14,7 +14,6 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit BrontoBurt(const Point2f center, Tactic tactic);
-	virtual ~BrontoBurt() override = default;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			BEHAVIOURAL			~~

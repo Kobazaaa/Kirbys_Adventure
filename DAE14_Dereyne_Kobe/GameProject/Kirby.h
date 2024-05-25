@@ -30,7 +30,6 @@ public:
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit Kirby(const Point2f& center);
-	virtual ~Kirby() override = default;
 
 	friend std::ostream& operator<<(std::ostream& out, const Kirby& kirby);
 	std::string EnumToString(Kirby::State state) const;
