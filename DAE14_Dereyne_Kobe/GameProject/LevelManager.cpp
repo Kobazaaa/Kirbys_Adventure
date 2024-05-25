@@ -38,7 +38,7 @@ void LevelManager::Update(float elapsedSec)
 			if (m_pKirby->HasEnteredDoor())
 			{
 				m_DoorEntered = true;
-				ViewFade::StartFade(3.f);
+				ViewFade::StartFade(1.f);
 			}
 
 			if(m_DoorEntered)

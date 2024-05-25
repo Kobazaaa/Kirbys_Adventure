@@ -44,6 +44,7 @@ public:
 	void InhaledEnemy(AbilityType ability);
 	bool HasEnteredDoor();
 	void EnterDoor();
+	void ForceInhale();
 	void ApplyPlaySpace(Level* pLevel);
 
 	void Reset();

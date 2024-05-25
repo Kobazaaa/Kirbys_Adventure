@@ -274,6 +274,8 @@ void Kirby::MechanicUpdate(float elapsedSec)
 			{
 				SoundManager::PlayEffect("StarSpit");
 				m_StarProj.Activate(Point2f(m_Position.x, m_Position.y + 4), m_Direction);
+				m_HasInhaledAbility = false;
+				m_InhaledAbilityType = AbilityType::None;
 			}
 		}
 		else if (m_CurrentState == State::Flight)
@@ -619,6 +621,11 @@ void Kirby::EnterDoor()
 
 }
 
+void Kirby::ForceInhale()
+{
+	m_CurrentState = State::Inhaling;
+}
+
 void Kirby::Reset()
 {
 	//m_pLevel->SetSubLevel(0);
@@ -929,7 +936,6 @@ void Kirby::Animate()
 				m_IsHit = false;
 				m_CurrentState = m_OldState;
 				m_InhaledAbilityType = AbilityType::None;
-				m_HasInhaledAbility = false;
 			}
 		}
 

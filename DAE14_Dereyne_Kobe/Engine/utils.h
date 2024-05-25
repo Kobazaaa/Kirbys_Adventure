@@ -5,7 +5,7 @@
 namespace utils
 {
 	const float g_Pi{ 3.1415926535f };
-	const bool DEBUG_MODE{ false };
+	const bool DEBUG_MODE{ true };
 
 #pragma region OpenGLDrawFunctionality
 

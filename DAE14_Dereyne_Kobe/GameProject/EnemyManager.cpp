@@ -155,6 +155,10 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 					pKirby->AddToScore(enemyPtr->GetScore());
 				}
 			}
+			else if (!enemyPtr->IsActivated())
+			{
+				pKirby->ForceInhale();
+			}
 
 		}
 	}
@@ -170,7 +174,7 @@ bool EnemyManager::IsEnemyInhaleRect(Kirby* pKirby) const
 {
 	for (Enemy* enemyPtr : m_vEnemies)
 	{
-		if (!enemyPtr->IsEliminated())
+		if (!enemyPtr->IsEliminated() and !enemyPtr->IsActivated())
 		{
 			if (utils::IsPointInRect(enemyPtr->GetPosition(), pKirby->GetInhaleRect()))
 			{
