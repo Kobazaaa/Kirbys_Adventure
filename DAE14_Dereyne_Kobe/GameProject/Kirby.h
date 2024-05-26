@@ -64,6 +64,7 @@ public:
 	// ~~			MUTATORS			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void AddToScore(int addition);
+	void SetHealth(int health);
 
 private:
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Texture.h"
 #include "EnemyManager.h"
+#include "PowerUp.h"
 #include <vector>
 
 class Kirby;
@@ -19,7 +20,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, bool hasWater);
+	explicit Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, std::vector<PowerUp*> powerUps, bool hasWater);
 	Level(const Level& other) = delete;
 	Level(Level&& other) = delete;
 	Level& operator=(const Level& rhs) = delete;
@@ -61,9 +62,12 @@ private:
 	// Private Variables
 	Point2f m_Position;
 	Texture* m_pTexture;
+	
 	std::vector<Door> m_vDoors;
 	std::vector<std::vector<Point2f>> m_World;
 	std::vector<std::vector<Point2f>> m_WaterBodies;
+
+	std::vector<PowerUp*> m_vPowerUps;
 	EnemyManager* m_pEnemyMngr;
 
 	float m_Width;

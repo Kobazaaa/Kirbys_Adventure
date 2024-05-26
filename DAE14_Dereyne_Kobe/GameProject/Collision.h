@@ -6,6 +6,7 @@ class Kirby;
 class Enemy;
 class Projectile;
 class Ability;
+class PowerUp;
 
 class Collision final
 {
@@ -19,6 +20,9 @@ public:
 	static bool WallCollision		(Projectile* projectile, const std::vector<std::vector<Point2f>>& world);
 	static bool FloorCollision		(Projectile* projectile, const std::vector<std::vector<Point2f>>& world);
 
+	static bool WallCollision		(PowerUp* powerUp, const std::vector<std::vector<Point2f>>& world);
+	static bool FloorCollision		(PowerUp* powerUp, const std::vector<std::vector<Point2f>>& world);
+
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~  ENTITY/PROJECTILE COLLISION	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,6 +30,7 @@ public:
 
 	static bool EntityCollision		(Entity* entity1, Entity* entity2);
 	static bool ProjectileCollision	(Entity* entity,  Projectile* projectile);
+	static bool PowerUpCollision	(Entity* entity,  PowerUp* powerUp);
 private:
 
 };

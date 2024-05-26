@@ -2,7 +2,7 @@
 #include "utils.h"
 #include "SoundManager.h"
 #include "AnimationManager.h"
-#include "Direction.h"
+#include "WorldUtils.h"
 #include "Vector2f.h"
 
 class Projectile

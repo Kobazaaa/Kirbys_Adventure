@@ -152,6 +152,51 @@ bool Collision::FloorCollision(Projectile* projectile, const std::vector<std::ve
 	return false;
 }
 
+bool Collision::WallCollision(PowerUp* powerUp, const std::vector<std::vector<Point2f>>& world)
+{
+	const Point2f left		{ powerUp->GetHitBox().left,										powerUp->GetHitBox().bottom + powerUp->GetHitBox().height / 2 };
+	const Point2f right		{ powerUp->GetHitBox().left + powerUp->GetHitBox().width,		powerUp->GetHitBox().bottom + powerUp->GetHitBox().height / 2 };
+	utils::HitInfo hitInfo	{ powerUp->GetHitInfo() };
+
+	for (size_t idx{}; idx < world.size(); idx++)
+	{
+		if (utils::Raycast(world[idx], left, right, hitInfo))
+		{
+			Point2f newPosition
+			{
+				hitInfo.intersectPoint.x + utils::GetSign(hitInfo.normal.x) * ((powerUp->GetHitBox().width / 2.f) + 1),
+				powerUp->GetPosition().y
+			};
+			powerUp->SetPosition(newPosition);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Collision::FloorCollision(PowerUp* powerUp, const std::vector<std::vector<Point2f>>& world)
+{
+	const Point2f top		{ powerUp->GetHitBox().left + powerUp->GetHitBox().width / 2,		powerUp->GetHitBox().bottom + powerUp->GetHitBox().height };
+	const Point2f bottom	{ powerUp->GetHitBox().left + powerUp->GetHitBox().width / 2,		powerUp->GetHitBox().bottom };
+	utils::HitInfo hitInfo	{ powerUp->GetHitInfo() };
+
+	for (size_t idx{}; idx < world.size(); idx++)
+	{
+		if (utils::Raycast(world[idx], top, bottom, hitInfo))
+		{
+			Point2f newPosition
+			{
+				powerUp->GetPosition().x,
+				hitInfo.intersectPoint.y + utils::GetSign(hitInfo.normal.y) * (powerUp->GetHitBox().height / 2)
+			};
+			powerUp->SetPosition(newPosition);
+			powerUp->SetVelocity(Vector2f(0, 0));
+			return true;
+		}
+	}
+	return false;
+}
+
 bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, std::vector<Projectile*>& vProjectiles)
 {
 	bool kirbyGotHitByEnemy{false};
@@ -225,4 +270,9 @@ bool Collision::EntityCollision(Entity* entity1, Entity* entity2)
 bool Collision::ProjectileCollision(Entity* entity, Projectile* projectile)
 {
 	return utils::IsOverlapping(entity->GetHitBox(), projectile->GetHitBox());
+}
+
+bool Collision::PowerUpCollision(Entity* entity, PowerUp* powerUp)
+{
+	return utils::IsOverlapping(entity->GetHitBox(), powerUp->GetHitBox());
 }

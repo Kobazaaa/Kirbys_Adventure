@@ -40,6 +40,7 @@ private:
 	void AddLevel(const std::string& element);
 	void AddEnemyManager(const std::string& element, EnemyManager* enemyManager);
 	void AddDoors(const std::string& element, std::vector<Door>& doors);
+	void AddPowerUps(const std::string& element, std::vector<PowerUp*>& powerUps);
 
 	// Private Variables
 	Level* m_CurrentLevel;

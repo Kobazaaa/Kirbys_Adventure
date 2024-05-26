@@ -3,8 +3,6 @@
 #include "Entity.h"
 #include "TextureManager.h"
 
-const float Entity::m_GRAVITY{ -300.f };
-
 Entity::Entity(const std::string& textureName, float width, float height, const Point2f& center, int score, bool doesWorldCollsion)
 	: m_Width				{ width }
 	, m_Height				{ height }
@@ -17,7 +15,7 @@ Entity::Entity(const std::string& textureName, float width, float height, const 
 	, m_pAbility			{ nullptr }
 	, m_AbilityType			{ AbilityType::None }
 	, m_GravityMultiplier	{ 1.f }
-	, m_pAnimationManager	{ m_pAnimationManager = new AnimationManager(textureName)}
+	, m_pAnimationManager	{ new AnimationManager(textureName)}
 	, m_CurrentAnimation	{ "" }
 	, m_Score				{ score }
 	, m_DoesWorldCollision	{ doesWorldCollsion }

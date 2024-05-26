@@ -780,6 +780,10 @@ void Kirby::AddToScore(int addition)
 {
 	m_Score += addition;
 }
+void Kirby::SetHealth(int health)
+{
+	m_Health = health;
+}
 Rectf Kirby::GetInhaleRect() const
 {
 	Rectf inhaleRect

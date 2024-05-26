@@ -30,8 +30,5 @@ private:
 
 	// Private Variables
 	Entity::AbilityType m_AbilityType;
-
-	// Private Constants
-	const float m_GRAVITY{ -300.f };
 };
 

@@ -237,6 +237,7 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
 	TextureManager::LoadTexture("VegetableValleyLevel",	"Levels/VegetableValleyLevel.png");
 	TextureManager::LoadTexture("VegetableValleyHub",	"Levels/VegetableValleyHub.png");
+	TextureManager::LoadTexture("PowerUps",				"PowerUps/Items.png");
 }
 void Game::LoadSounds()
 {

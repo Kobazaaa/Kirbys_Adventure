@@ -3,7 +3,7 @@
 #include "Texture.h"
 #include "AnimationManager.h"
 #include "SoundManager.h"
-#include "Direction.h"
+#include "WorldUtils.h"
 #include "Collision.h"
 #include "Ability.h"
 
@@ -79,8 +79,7 @@ protected:
 	int		m_Score;
 
 	float m_GravityMultiplier;
-	// Pretected Constants
-	static const float m_GRAVITY;
+
 private:
 	// Private Update Functions
 	void ApplyGravity(float elapsedSec);

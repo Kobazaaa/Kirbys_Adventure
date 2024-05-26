@@ -5,13 +5,14 @@
 #include "SoundManager.h"
 #include "Level.h"
 
-Level::Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, bool hasWater)
+Level::Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, std::vector<PowerUp*> powerUps, bool hasWater)
 	: m_Position		{ Point2f(0, 0) }
 	, m_NrSubLevels		{ nrSubLevels }
 	, m_CurrentSubLevel	{ 0 }
 	, m_pTexture		{ TextureManager::GetTexture(name) }
 	, m_pEnemyMngr		{ enemies }
 	, m_vDoors			{ doors }
+	, m_vPowerUps		{ powerUps }
 	, m_Name			{ name }
 	, m_HasWater		{ hasWater}
 {
@@ -26,12 +27,23 @@ Level::~Level() noexcept
 {
 	delete m_pEnemyMngr;
 	m_pEnemyMngr = nullptr;
+
+	for (int index{}; index < m_vPowerUps.size(); ++index)
+	{
+		delete m_vPowerUps[index];
+		m_vPowerUps[index] = nullptr;
+	}
 }
 
 void Level::Update(float elapsedSec, Kirby* pKirby)
 {
 	if (m_pEnemyMngr) m_pEnemyMngr->Update(elapsedSec, m_World, pKirby->GetPosition());
 	pKirby->ApplyPlaySpace(this);
+
+	for (int index{}; index < m_vPowerUps.size(); ++index)
+	{
+		m_vPowerUps[index]->Update(elapsedSec, GetWorld(), pKirby);
+	}
 
 	if (m_HasWater)
 	{
@@ -49,6 +61,10 @@ void Level::Draw() const
 	m_pTexture->Draw(m_Position);
 	if (m_pEnemyMngr) m_pEnemyMngr->Draw();
 
+	for (int index{}; index < m_vPowerUps.size(); ++index)
+	{
+		m_vPowerUps[index]->Draw();
+	}
 
 	if (utils::DEBUG_MODE)
 	{
@@ -57,6 +73,12 @@ void Level::Draw() const
 			utils::SetColor(Color4f(1, 0, 0, 1));
 			utils::FillRect(doorObj.doorRect);
 		}
+		for (int index{}; index < m_vPowerUps.size(); ++index)
+		{
+			utils::SetColor(Color4f(1, 1, 0, 1));
+			utils::FillRect(m_vPowerUps[index]->GetHitBox());
+		}
+
 	}
 }
 

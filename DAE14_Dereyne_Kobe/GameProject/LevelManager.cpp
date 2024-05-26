@@ -130,6 +130,12 @@ void LevelManager::AddLevel(const std::string& element)
 	endPos = element.find("</EnemyManager>") + 15;
 	subElement = element.substr(startPos, endPos - startPos);
 	AddEnemyManager(subElement, enemyManagerTemp);
+	
+	std::vector<PowerUp*> powerUpsTemp;
+	startPos = element.find("<PowerUps>");
+	endPos = element.find("</PowerUps>") + 11;
+	subElement = element.substr(startPos, endPos - startPos);
+	AddPowerUps(subElement, powerUpsTemp);
 
 	int subLevels{};
 	subLevels = std::stoi(utils::GetAttributeValue("subLevels", element));
@@ -141,7 +147,7 @@ void LevelManager::AddLevel(const std::string& element)
 	hasWater = utils::ToBool(utils::GetAttributeValue("hasWater", element));
 
 	//TODO check if I can/should make lvls non-ptrs, same for EnemyMngr in level class
-	Level* tempLevel = new Level(name, subLevels, enemyManagerTemp, doorsTemp, hasWater);
+	Level* tempLevel = new Level(name, subLevels, enemyManagerTemp, doorsTemp, powerUpsTemp, hasWater);
 	m_vLevels.push_back(std::move(tempLevel));
 
 }
@@ -224,10 +230,10 @@ void LevelManager::AddDoors(const std::string& element, std::vector<Door>& doors
 			sstream << line << "\n";
 
 			std::string tag;
-			size_t frameStartPos{ line.find("<") };
-			if (frameStartPos != std::string::npos)
+			size_t startPos{ line.find("<") };
+			if (startPos != std::string::npos)
 			{
-				tag = line.substr(frameStartPos + 1, line.find(">") - frameStartPos - 1);
+				tag = line.substr(startPos + 1, line.find(">") - startPos - 1);
 			}
 			if (tag[0] == '/')
 			{
@@ -241,6 +247,54 @@ void LevelManager::AddDoors(const std::string& element, std::vector<Door>& doors
 				int nextLevel		{ std::stoi(utils::GetAttributeValue("nextLevel", doorString)) };
 				Door theDoor		{ doorRect, doorOutcome, isFinal, nextLevel };
 				doors.push_back(theDoor);
+			}
+		}
+	}
+}
+void LevelManager::AddPowerUps(const std::string& element, std::vector<PowerUp*>& powerUps)
+{
+	std::stringstream elementStringStream;
+	elementStringStream << element;
+
+	std::stringstream sstream;
+	std::string line;
+	std::string powerUpString;
+	while (std::getline(elementStringStream, line))
+	{
+		if (line != "\n" and line != "" and line.find("PowerUps") == std::string::npos)
+		{
+			sstream << line << "\n";
+
+			std::string tag;
+			size_t startPos{ line.find("<") };
+			if (startPos != std::string::npos)
+			{
+				tag = line.substr(startPos + 1, line.find(">") - startPos - 1);
+			}
+			if (tag[0] == '/')
+			{
+				powerUpString = sstream.str();
+				sstream.str("");
+
+
+				Point2f powerUpPos{ utils::ToPoint2f(utils::GetAttributeValue("position", powerUpString)) };
+
+				if (powerUpString.find("Tomato") != std::string::npos)
+				{
+					powerUps.push_back(new PowerUp(powerUpPos, PowerUp::Type::Tomato));
+				}
+				if (powerUpString.find("Drink") != std::string::npos)
+				{
+					powerUps.push_back(new PowerUp(powerUpPos, PowerUp::Type::Drink));
+				}
+				if (powerUpString.find("Lollipop") != std::string::npos)
+				{
+					powerUps.push_back(new PowerUp(powerUpPos, PowerUp::Type::Lollipop));
+				}
+				if (powerUpString.find("LifeUp") != std::string::npos)
+				{
+					powerUps.push_back(new PowerUp(powerUpPos, PowerUp::Type::LifeUp));
+				}
 			}
 		}
 	}

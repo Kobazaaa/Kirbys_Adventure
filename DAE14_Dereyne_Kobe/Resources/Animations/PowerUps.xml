@@ -1,0 +1,11 @@
+<Tomato>
+	<Frame>
+		position="0,32"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+
+	loop="true"
+
+</Tomato>
