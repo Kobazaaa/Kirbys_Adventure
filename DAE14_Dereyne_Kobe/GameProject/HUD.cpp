@@ -4,7 +4,7 @@
 #include <typeinfo>
 
 HUD::HUD(Kirby* kirby, float scale)
-	: m_pKIRBY		 { kirby }
+	: m_pKirby		 { kirby }
 	, m_AccumSec	 { 0 }
 	, m_Scale		 { scale }
 	, m_CurrentFrame { 0 }
@@ -47,7 +47,7 @@ float HUD::GetHeight() const
 
 void HUD::PrintScore() const
 {
-	int score{ m_pKIRBY->GetScore() };
+	int score{ m_pKirby->GetScore() };
 	if (score < 0) score = 0;
 
 	for (int idx{0}; idx < 7; ++idx)
@@ -69,7 +69,7 @@ void HUD::PrintScore() const
 
 void HUD::DrawHealth() const
 {
-	int health{ m_pKIRBY->GetHealth() };
+	int health{ m_pKirby->GetHealth() };
 	if (health < 0) health = 0;
 
 	for (int idx{ 0 }; idx < 6; ++idx)
@@ -93,7 +93,7 @@ void HUD::DrawHealth() const
 
 void HUD::DrawLives() const
 {
-	int lives{ m_pKIRBY->GetLives() };
+	int lives{ m_pKirby->GetLives() };
 	if (lives < 0) lives = 0;
 
 	for (size_t idx{0}; idx < 2; ++idx)
@@ -138,11 +138,11 @@ void HUD::DrawCard() const
 		m_CARD_HEIGHT
 	};
 
-	if (m_pKIRBY->GetAbilityType() != Entity::AbilityType::None)
+	if (m_pKirby->GetAbilityType() != Entity::AbilityType::None)
 	{
-		if (m_pKIRBY->GetAbilityType() == Entity::AbilityType::Beam)	  srcRect.left = m_CARD_WIDTH;
-		if (m_pKIRBY->GetAbilityType() == Entity::AbilityType::Fire)	  srcRect.left = 2 * m_CARD_WIDTH;
-		if (m_pKIRBY->GetAbilityType() == Entity::AbilityType::Spark)	  srcRect.left = 3 * m_CARD_WIDTH;
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Beam)	  srcRect.left = m_CARD_WIDTH;
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Fire)	  srcRect.left = 2 * m_CARD_WIDTH;
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Spark)	  srcRect.left = 3 * m_CARD_WIDTH;
 	}
 	else srcRect.bottom = 120;
 

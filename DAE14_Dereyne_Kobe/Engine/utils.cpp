@@ -727,6 +727,16 @@ float utils::GetRandomFloat(int minIncl, int maxIncl, int precision)
 	return randomInt / precisionPower;
 }
 
+Point2f utils::GetRandomPosInRect(const Rectf& rect)
+{
+	Point2f point;
+
+	point.x = rand() % (int(rect.width)) + rect.left;
+	point.y = rand() % (int(rect.height)) + rect.bottom;
+
+	return point;
+}
+
 bool utils::IsRectInRect(const Rectf& smallRect, const Rectf& bigRect)
 {
 	if (smallRect.left > bigRect.left and

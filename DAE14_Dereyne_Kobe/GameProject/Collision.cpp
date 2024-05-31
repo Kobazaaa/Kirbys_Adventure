@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "Collision.h"
+#include "ParticleSystem.h"
 #include "Projectile.h"
 #include "Entity.h"
 #include "Kirby.h"
 #include "Enemy.h"
+#include "utils.h"
 #include <iostream>
 
 
@@ -129,7 +131,7 @@ bool Collision::WallCollision(Projectile* projectile, const std::vector<std::vec
 	{
 		if (utils::Raycast(world[idx], left, right, hitInfo))
 		{
-			//projectile->Deactivate();
+			if (projectile->DoesParticleOnImpact()) ParticleSystem::AddImpactParticles(projectile->GetPosition());
 			return true;
 		}
 	}
@@ -145,7 +147,7 @@ bool Collision::FloorCollision(Projectile* projectile, const std::vector<std::ve
 	{
 		if (utils::Raycast(world[idx], top, bottom, hitInfo))
 		{
-			//projectile->Deactivate();
+			if (projectile->DoesParticleOnImpact()) ParticleSystem::AddImpactParticles(projectile->GetPosition());
 			return true;
 		}
 	}
@@ -173,7 +175,6 @@ bool Collision::WallCollision(PowerUp* powerUp, const std::vector<std::vector<Po
 	}
 	return false;
 }
-
 bool Collision::FloorCollision(PowerUp* powerUp, const std::vector<std::vector<Point2f>>& world)
 {
 	const Point2f top		{ powerUp->GetHitBox().left + powerUp->GetHitBox().width / 2,		powerUp->GetHitBox().bottom + powerUp->GetHitBox().height };
@@ -212,7 +213,7 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 			if (Collision::EntityCollision(enemyPtr, pKirby))
 			{
 				enemyPtr->Reset();
-
+				ParticleSystem::AddEnemyDeathParticles(enemyPtr->GetPosition(), static_cast<Direction>(-utils::GetSign(pKirby->GetPosition().x - enemyPtr->GetPosition().x)));
 				if (enemyPtr->IsActivated())
 				{
 					//SoundManager::PlayEffect("EnemyDeath");

@@ -21,6 +21,7 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_CustomHitBoxSize	{ customHitBoxSize }
 	, m_pAnimationManager	{ new AnimationManager(textureName) }
 	, m_CurrentAnimation	{ "" }
+	, m_ParticlesOnImpact	{ true }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 
@@ -91,6 +92,11 @@ bool Projectile::IsFriendly() const
 bool Projectile::DoesEntityCollision() const
 {
 	return m_DoesEntityCollision;
+}
+
+bool Projectile::DoesParticleOnImpact() const
+{
+	return m_ParticlesOnImpact;
 }
 
 Point2f Projectile::GetPosition() const

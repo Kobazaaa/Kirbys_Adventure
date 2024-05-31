@@ -84,7 +84,7 @@ void Entity::IsUnderwater(bool isUdnerwater)
 {
 	if (isUdnerwater and !m_IsUnderwater)
 	{
-		m_Velocity.y = 0;
+		m_Velocity.y = -5.f;
 	}
 	m_IsUnderwater = isUdnerwater;
 }

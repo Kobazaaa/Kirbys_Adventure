@@ -19,7 +19,7 @@ void StarProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 		m_AccumSec += elapsedSec;
 		if (m_AccumSec >= m_TravelTime)	Deactivate();
 
-		if (Collision::WallCollision(this, world))	Deactivate();
+		if (Collision::WallCollision(this, world)) Deactivate();
 
 		m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);
 	}

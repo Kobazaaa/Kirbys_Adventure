@@ -3,6 +3,7 @@
 #include "Matrix2x3.h"
 #include "Game.h"
 #include "utils.h"
+#include "ParticleSystem.h"
 #include "ViewFade.h"
 #include "Kirby.h"
 #include <iostream>
@@ -21,7 +22,7 @@ Game::~Game( )
 void Game::Initialize( )
 {
 	m_GameState = GameState::Hub;
-
+	ParticleSystem::InitializeParticleSystem();
 	// Sounds
 	LoadSounds();
 	// Textures
@@ -74,7 +75,7 @@ void Game::Update( float elapsedSec )
 	}
 
 	ViewFade::Update(elapsedSec);
-
+	ParticleSystem::Update(elapsedSec);
 	//FadeUpdate(elapsedSec);
 	//if (!m_IsFadingIn and !m_IsFadingOut) m_FadeTimer = 0;
 
@@ -139,6 +140,8 @@ void Game::Draw( ) const
 				utils::DrawRect(m_pKirby->GetInhaleRect());
 
 			}
+
+			ParticleSystem::Draw();
 		}
 		m_pCamera->Reset();
 

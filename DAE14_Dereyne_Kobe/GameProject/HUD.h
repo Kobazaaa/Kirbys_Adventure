@@ -32,7 +32,7 @@ private:
 
 	// Private Variables
 	Texture*  m_pSprites;
-	Kirby*	  m_pKIRBY;
+	Kirby*	  m_pKirby;
 
 	float	 m_AccumSec;
 	float	 m_Scale;

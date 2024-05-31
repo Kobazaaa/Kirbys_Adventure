@@ -7,6 +7,7 @@ Star::Star(Level* pLevel)
 	: Projectile("StarProjectile", Vector2f(55, 0), 5.f, true, 16.f)
 	, m_AbilityType{Entity::AbilityType::None}
 {
+	m_ParticlesOnImpact = false;
 	m_DoesEntityCollision = false;
 }
 
@@ -44,23 +45,25 @@ void Star::SetAbility(Entity::AbilityType ability)
 
 void Star::ApplyPlaySpace(Level* pLevel)
 {
-	const Rectf subLevel
+	if (m_IsActive)
 	{
-		0,
-		pLevel->GetCurrentSubLevel() * pLevel->GetSubLevelHeight(),
-		pLevel->GetWidth(),
-		pLevel->GetSubLevelHeight()
-	};
+		const Rectf subLevel
+		{
+			0,
+			pLevel->GetCurrentSubLevel() * pLevel->GetSubLevelHeight(),
+			pLevel->GetWidth(),
+			pLevel->GetSubLevelHeight()
+		};
 
-	if (!utils::IsRectInRect(GetHitBox(), subLevel))
-	{
-		if (GetHitBox().left < subLevel.left or
-			GetHitBox().left + GetHitBox().width > subLevel.left + subLevel.width) InvertDirection();
-		if (GetHitBox().bottom < subLevel.bottom or
-			GetHitBox().bottom + GetHitBox().height > subLevel.bottom + subLevel.height) m_Velocity.y *= -1;
+		if (!utils::IsRectInRect(GetHitBox(), subLevel))
+		{
+			if (GetHitBox().left < subLevel.left or
+				GetHitBox().left + GetHitBox().width > subLevel.left + subLevel.width) InvertDirection();
+			if (GetHitBox().bottom < subLevel.bottom or
+				GetHitBox().bottom + GetHitBox().height > subLevel.bottom + subLevel.height) m_Velocity.y *= -1;
+		}
+		if (Collision::FloorCollision(this, pLevel->GetWorld())) m_Velocity.y = 175.f;
 	}
-	if (Collision::FloorCollision(this, pLevel->GetWorld())) m_Velocity.y = 175.f;
-
 }
 
 Entity::AbilityType Star::GetAbility() const

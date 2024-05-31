@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "utils.h"
 #include "Kirby.h"
-#include "Enemy.h"
 #include "Level.h"
 #include "ViewFade.h"
 #include "Camera.h"
 #include <iostream>
+#include "ParticleSystem.h"
 
 using namespace utils;
 
@@ -131,7 +131,7 @@ void Kirby::MovementUpdate(float elapsedSec)
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~			SLIDE			~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if ((KeyDown(SDL_SCANCODE_DOWN) and CanSlideWithCurrentState()) and !m_IsSliding)
+		if ((KeyDown(SDL_SCANCODE_DOWN) and CanSlideWithCurrentState()) and !m_IsSliding and !m_IsUnderwater)
 		{
 			m_CurrentState = State::Duck;
 			if (m_OldState != State::Duck) SoundManager::PlayEffect("Duck");
@@ -146,6 +146,8 @@ void Kirby::MovementUpdate(float elapsedSec)
 		}
 		if (m_IsSliding)
 		{
+			//ParticleSystem::AddRunParticles(Point2f(m_Position.x, m_Position.y - 8), Vector2f(-static_cast<int>(m_Direction) * 50, 0));
+
 			m_CurrentState = State::Slide;
 			if (m_AccumSec >= m_SLIDING_TIME)
 			{
@@ -169,9 +171,14 @@ void Kirby::MovementUpdate(float elapsedSec)
 				{
 					m_IsTurning = true;
 					SoundManager::PlayEffect("Turn");
+					ParticleSystem::AddRunParticles(Point2f(m_Position.x + 8, m_Position.y - 8), Vector2f(10, 0));
 				}
 				else m_IsTurning = false;
-				if (m_Direction == Direction::Right and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
+				if (m_Direction == Direction::Right and !m_IsTurning and !m_IsRunning)
+				{
+					m_IsRunning = true;
+					ParticleSystem::AddRunParticles(Point2f(m_Position.x, m_Position.y - 8), Vector2f(-50, 0));
+				}
 				else m_IsRunning = false;
 			}
 			if (KeyPress(SDL_SCANCODE_LEFT) and abs(m_Velocity.x) >= 5.f)
@@ -180,9 +187,14 @@ void Kirby::MovementUpdate(float elapsedSec)
 				{
 					m_IsTurning = true;
 					SoundManager::PlayEffect("Turn");
+					ParticleSystem::AddRunParticles(Point2f(m_Position.x - 8, m_Position.y - 8), Vector2f(-10, 0));
 				}
 				else m_IsTurning = false;
-				if (m_Direction == Direction::Left and !m_IsTurning and !m_IsRunning) m_IsRunning = true;
+				if (m_Direction == Direction::Left and !m_IsTurning and !m_IsRunning)
+				{
+					m_IsRunning = true;
+					ParticleSystem::AddRunParticles(Point2f(m_Position.x, m_Position.y - 8), Vector2f(50, 0));
+				}
 				else m_IsRunning = false;
 			}
 		}
@@ -316,6 +328,8 @@ void Kirby::MechanicUpdate(float elapsedSec)
 
 	if (m_CurrentState == State::Inhaling)
 	{
+		ParticleSystem::AddParticle("Inhale", utils::GetRandomPosInRect(GetInhaleRect()));
+
 		if (utils::IsOverlapping(m_Star.GetHitBox(), GetInhaleRect()))
 		{
 			float xInc{ -elapsedSec * 10.f * (m_Star.GetPosition().x - GetPosition().x) };
@@ -663,28 +677,35 @@ void Kirby::Reset()
 
 void Kirby::HitEnemy(const Point2f& enemyPos)
 {
-	if (!m_IsInvincible and !m_IsSliding)
+	if (!m_IsInvincible)
 	{
-		--m_Health;
-		m_IsInvincible = true;
-
-		m_Card = Card::Damaged;
-
-		Direction hitDirection{ static_cast<Direction>(utils::GetSign(enemyPos.x - m_Position.x)) };
-		m_Velocity.x = -static_cast<int>(hitDirection) * 100.f;
-
-		if (m_AbilityType != AbilityType::None)
+		if (!m_IsSliding and m_CurrentState != State::Falling)
 		{
-			m_Star.Activate(m_Position, static_cast<Direction>(-static_cast<int>(m_Direction)));
-			m_Star.SetAbility(m_AbilityType);
-			
-			m_AbilityType = AbilityType::None;
-			delete m_pAbility;
-			m_pAbility = nullptr;
-		}
+			--m_Health;
+			m_IsInvincible = true;
 
-		SoundManager::PlayEffect("Hit");
-		m_IsHit = true;
+			m_Card = Card::Damaged;
+
+			Direction hitDirection{ static_cast<Direction>(utils::GetSign(enemyPos.x - m_Position.x)) };
+			m_Velocity.x = -static_cast<int>(hitDirection) * 100.f;
+
+			if (m_AbilityType != AbilityType::None)
+			{
+				m_Star.Activate(m_Position, static_cast<Direction>(-static_cast<int>(m_Direction)));
+				m_Star.SetAbility(m_AbilityType);
+
+				m_AbilityType = AbilityType::None;
+				delete m_pAbility;
+				m_pAbility = nullptr;
+			}
+
+			SoundManager::PlayEffect("Hit");
+			m_IsHit = true;
+		}
+		else
+		{
+			SoundManager::PlayEffect("EnemyDeath");
+		}
 	}
 }
 void Kirby::InhaledEnemy(AbilityType ability)

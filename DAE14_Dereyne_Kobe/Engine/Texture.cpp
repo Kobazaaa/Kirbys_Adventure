@@ -3,6 +3,13 @@
 #include <string>
 #include "Texture.h"
 
+Texture::Texture()
+	: m_Id{ }
+	, m_Width{ 0.0f }
+	, m_Height{ 0.0f }
+	, m_CreationOk{ false }
+{
+}
 
 Texture::Texture( const std::string& imagePath )
 	:m_Id{ }

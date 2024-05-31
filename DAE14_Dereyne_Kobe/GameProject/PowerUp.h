@@ -14,6 +14,9 @@ public:
 		Tomato, Drink, Lollipop, LifeUp
 	};
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit PowerUp(const Point2f& position, PowerUp::Type powerUpType);
 	PowerUp(const PowerUp& other) = delete;
 	PowerUp(PowerUp&& other) = delete;
@@ -22,20 +25,34 @@ public:
 	~PowerUp() noexcept;
 
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, Kirby* pKirby);
 	void Draw() const;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Point2f GetPosition() const;
+	Rectf GetHitBox() const;
+	const utils::HitInfo& GetHitInfo() const;
+
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			MUTATORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Consume();
 	void Respawn();
 	void SetPosition(const Point2f& pos);
 	void SetVelocity(const Vector2f& vel);
 
-	Point2f GetPosition() const;
-	Rectf GetHitBox() const;
-	const utils::HitInfo& GetHitInfo() const;
 private:
+	// Animate according to correct type
 	void Animate(float elapsedSec, PowerUp::Type powerUpType);
 
+	// Private Member Variables
 	AnimationManager* m_pAnimationManager;
 	utils::HitInfo m_HitInfo;
 	Point2f m_Position;

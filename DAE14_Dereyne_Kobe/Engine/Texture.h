@@ -4,6 +4,7 @@
 class Texture final
 {
 public:
+	explicit Texture();
 	explicit Texture( const std::string& imagePath );
 	explicit Texture( const std::string& text, TTF_Font *pFont, const Color4f& textColor );
 	explicit Texture( const std::string& text, const std::string& fontPath, int ptSize, const Color4f& textColor );
