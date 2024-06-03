@@ -1,8 +1,10 @@
 #include "pch.h"
+#include "utils.h"
 #include "ParticleSystem.h"
 
 std::vector<Particle> ParticleSystem::m_vParticles;
 Texture ParticleSystem::m_Texture;
+float ParticleSystem::m_AccumSec{ 0 };
 
 bool ParticleSystem::InitializeParticleSystem()
 {
@@ -12,6 +14,7 @@ bool ParticleSystem::InitializeParticleSystem()
 
 void ParticleSystem::Update(float elapsedSec)
 {
+	m_AccumSec += elapsedSec;
 	for (int index{}; index < m_vParticles.size(); ++index)
 	{
 		m_vParticles[index].m_AccumSec += elapsedSec;
@@ -31,7 +34,6 @@ void ParticleSystem::Update(float elapsedSec)
 		}
 	}
 }
-
 void ParticleSystem::Draw()
 {
 	for (int index{}; index < m_vParticles.size(); ++index)
@@ -40,28 +42,15 @@ void ParticleSystem::Draw()
 	}
 }
 
-void ParticleSystem::AddParticle(const std::string& particleName, const Point2f& pos)
-{
-	if (particleName == "Inhale")
-	{
-		std::vector<Frame> frame{
-			Frame(Rectf(0, 0, 16, 16), 0.1f)
-		};
-		Animation anim{ std::move(frame), true };
-		AddParticle(pos, Vector2f(-10, -10), 1.f, anim);
-	}
-	
-}
-
 void ParticleSystem::AddParticle(const Particle& particle)
 {
 	m_vParticles.push_back(particle);
 }
-
 void ParticleSystem::AddParticle(const Point2f& pos, const Vector2f& vel, float lifetime, const Animation& animation)
 {
 	m_vParticles.push_back(Particle(pos, vel, lifetime, animation));
 }
+
 void ParticleSystem::AddEnemyDeathParticles(const Point2f& pos, Direction direction)
 {
 	int randomInt = rand() % 3;
@@ -69,6 +58,31 @@ void ParticleSystem::AddEnemyDeathParticles(const Point2f& pos, Direction direct
 	if (randomInt == 0) AddArc(pos, direction);
 	if (randomInt == 1) AddCircle(pos);
 	if (randomInt == 2) AddCross(pos, rand() % 2 == 0 ? true : false);
+}
+void ParticleSystem::AddKirbyDeathParticles(const Point2f& pos)
+{
+	std::vector<Frame> frame{
+		Frame(Rectf(0, -48, 16, 16), 0.1f),
+		Frame(Rectf(16, -48, 16, 16), 0.1f),
+		Frame(Rectf(32, -48, 16, 16), 0.1f),
+		Frame(Rectf(48, -48, 16, 16), 0.1f)
+	};
+	Animation anim{ std::move(frame), true };
+	Particle particle
+	{
+		pos, Vector2f(0, 0), 3.0f, anim
+	};
+
+
+	const float SPEED{ 40.f };
+	for (int index{}; index < 8; ++index)
+	{
+		const float ANGLE{ float(M_PI) / 4.f * index };
+		particle.m_Velocity.x = SPEED * cosf(ANGLE);
+		particle.m_Velocity.y = SPEED * sinf(ANGLE);
+		AddParticle(particle);
+	}
+
 }
 void ParticleSystem::AddRunParticles(const Point2f& pos, const Vector2f& vel)
 {
@@ -82,11 +96,61 @@ void ParticleSystem::AddRunParticles(const Point2f& pos, const Vector2f& vel)
 		pos, vel, 0.2f, anim
 	};
 
-	// Particle 1
 	AddParticle(particle);
 }
 void ParticleSystem::AddAirBubbles(const Point2f& pos)
 {
+	std::vector<Frame> frame{
+		Frame(Rectf(48, -32, 16, 16), 1.0f),
+	};
+	Animation anim{ std::move(frame), false };
+	Particle particle
+	{
+		pos, Vector2f(0, 20), 1.0f, anim
+	};
+
+	AddParticle(particle);
+}
+void ParticleSystem::AddLandParticles(const Point2f& pos)
+{
+	std::vector<Frame> frame{
+		Frame(Rectf(16, 0, 16, 16), 0.15f),
+	};
+	Animation anim{ std::move(frame), false };
+
+	float speed{ 100 };
+	float angle{ rand() % 8 * float(M_PI) / 4.f};
+	Vector2f vel{};
+	vel.x = cosf(angle) * speed;
+	vel.y = sinf(angle) * speed;
+
+	Particle particle
+	{
+		pos, vel, 0.20f, anim
+	};
+
+	AddParticle(particle);
+}
+void ParticleSystem::AddInhaleParticles(const Point2f& pos, const Rectf& inhaleRect)
+{
+	if (m_AccumSec > 0.03f)
+	{
+		m_AccumSec = 0;
+
+		std::vector<Frame> frame {
+			Frame(Rectf(0, 0, 16, 16), 0.15f),
+		};
+		Animation anim{ std::move(frame), false };
+
+		const float SPEED{2};
+		Point2f partPos{ utils::GetRandomPosInRect(inhaleRect) };
+		Particle particle
+		{
+			partPos, Vector2f(SPEED * (pos.x - partPos.x), SPEED * (pos.y - partPos.y)), 0.1f, anim
+		};
+
+		AddParticle(particle);
+	}
 }
 void ParticleSystem::AddImpactParticles(const Point2f& pos)
 {
@@ -101,7 +165,6 @@ void ParticleSystem::AddImpactParticles(const Point2f& pos)
 		pos, Vector2f(0, 0), 0.2f, anim
 	};
 
-	// Particle 1
 	AddParticle(particle);
 }
 

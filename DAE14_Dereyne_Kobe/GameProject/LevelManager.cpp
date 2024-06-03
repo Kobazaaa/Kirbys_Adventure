@@ -55,7 +55,11 @@ void LevelManager::Update(float elapsedSec)
 					}
 					else
 					{
-						if (m_pKirby->GetPosition().y > door.doorRect.bottom) m_CurrentLevel->IncreaseSubLevel();
+						if (m_pKirby->GetPosition().y > door.doorRect.bottom)
+						{
+							m_pKirby->SetSavePoint(door.outcomePos);
+							m_CurrentLevel->IncreaseSubLevel();
+						}
 						else m_CurrentLevel->DecreaseSubLevel();
 					}
 				}

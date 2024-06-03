@@ -123,6 +123,7 @@ void Game::Draw( ) const
 			m_VegetableValleyManager->Draw();
 			utils::SetColor(Color4f(1, 1, 1, 1));
 
+			ParticleSystem::Draw();
 			m_pKirby->Draw();
 
 
@@ -141,7 +142,6 @@ void Game::Draw( ) const
 
 			}
 
-			ParticleSystem::Draw();
 		}
 		m_pCamera->Reset();
 

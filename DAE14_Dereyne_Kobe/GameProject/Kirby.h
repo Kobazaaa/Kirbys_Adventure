@@ -65,6 +65,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void AddToScore(int addition);
 	void SetHealth(int health);
+	void SetSavePoint(const Point2f& pos);
 
 private:
 
@@ -118,6 +119,7 @@ private:
 
 	// Kirby Variables
 	bool m_Bounced{false};
+	bool m_DeathFade{true};
 
 	bool m_IsHit{false};
 	bool m_IsSliding{false};
@@ -129,6 +131,8 @@ private:
 	bool m_IsOn30{false};
 	bool m_IsOn45{false};
 	bool m_IsSlopeDown{false};
+
+	Point2f m_SavePoint;
 
 	// Private Constants
 	const float		m_JUMP_SPEED	{ 20.f - m_GRAVITY / 2.f};

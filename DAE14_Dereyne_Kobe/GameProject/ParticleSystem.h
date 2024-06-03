@@ -31,14 +31,16 @@ public:
 	static void Update(float elapsedSec);
 	static void Draw();
 
-	static void AddParticle(const std::string& particleName, const Point2f& pos);
 	static void AddParticle(const Point2f& pos, const Vector2f& vel, float lifetime, const Animation& animation);
 	static void AddParticle(const Particle& particle);
 
 	static void AddEnemyDeathParticles(const Point2f& pos, Direction direction);
+	static void AddKirbyDeathParticles(const Point2f& pos);
 	static void AddRunParticles(const Point2f& pos, const Vector2f& vel);
 	static void AddImpactParticles(const Point2f& pos);
 	static void AddAirBubbles(const Point2f& pos);
+	static void AddLandParticles(const Point2f& pos);
+	static void AddInhaleParticles(const Point2f& pos, const Rectf& inhaleRect);
 
 	static void AddArc(const Point2f& pos, Direction direction);
 	static void AddCross(const Point2f& pos, bool diagonal);
@@ -47,7 +49,7 @@ public:
 
 
 private:
-
+	static float m_AccumSec;
 	static std::vector<Particle> m_vParticles;
 	static Texture m_Texture;
 };

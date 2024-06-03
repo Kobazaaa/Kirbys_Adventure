@@ -21,6 +21,7 @@ Kirby::Kirby( const Point2f& center)
 	, m_Card						{ Card::Ability }
 	, m_InvincibleAccumSec			{ 0 }
 	, m_AbilityActivationAccumSec	{ 0 }
+	, m_SavePoint					{ center }
 {
 }
 std::string Kirby::EnumToString(Kirby::State state) const
@@ -68,8 +69,8 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 {
 	Entity::Update(elapsedSec, world);
 	Animate();
+
 	if (m_DoesWorldCollision) Collisions(world);
-	if (m_Health <= 0) Death();
 
 	if (m_CurrentState != State::Dead)
 	{
@@ -79,7 +80,15 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 		if (m_IsInvincible) Invincibility(elapsedSec);
 		SlopeHandling();
-		if (m_IsUnderwater) ApplyUnderwaterChanges();
+		if (m_IsUnderwater)
+		{
+			ApplyUnderwaterChanges();
+			if (m_AccumSec >= 2.0f)
+			{
+				ParticleSystem::AddAirBubbles(m_Position);
+				m_AccumSec = 0;
+			}
+		}
 		else if(m_WasInWater)
 		{
 			m_WasInWater = false;
@@ -96,6 +105,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	}
 
 
+	if (m_Health <= 0) Death();
 
 
 	if (utils::DEBUG_MODE)
@@ -176,8 +186,8 @@ void Kirby::MovementUpdate(float elapsedSec)
 				else m_IsTurning = false;
 				if (m_Direction == Direction::Right and !m_IsTurning and !m_IsRunning)
 				{
-					m_IsRunning = true;
 					ParticleSystem::AddRunParticles(Point2f(m_Position.x, m_Position.y - 8), Vector2f(-50, 0));
+					m_IsRunning = true;
 				}
 				else m_IsRunning = false;
 			}
@@ -328,7 +338,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 
 	if (m_CurrentState == State::Inhaling)
 	{
-		ParticleSystem::AddParticle("Inhale", utils::GetRandomPosInRect(GetInhaleRect()));
+		ParticleSystem::AddInhaleParticles(m_Position, GetInhaleRect());
 
 		if (utils::IsOverlapping(m_Star.GetHitBox(), GetInhaleRect()))
 		{
@@ -499,6 +509,7 @@ void Kirby::Collisions(const std::vector<std::vector<Point2f>>& world)
 			m_WasInAir = false;
 			if (CanJumpWithCurrentState() and !m_HasInhaledAbility and !m_IsUnderwater and ((m_AbilityType != AbilityType::None and !m_pAbility->IsActive()) or m_AbilityType == AbilityType::None))
 			{
+				ParticleSystem::AddLandParticles(m_Position);
 				SoundManager::PlayEffect("Land");
 				m_CurrentState = State::Land;
 			}
@@ -659,11 +670,7 @@ void Kirby::ForceInhale()
 
 void Kirby::Reset()
 {
-	//m_pLevel->SetSubLevel(0);
-	m_Position = Point2f(50, 50);
-	m_Lives = 4;
-	m_Health = 6;
-	m_Score = 0;
+	m_DeathFade = true;
 	m_IsInvincible = false;
 	m_HasInhaledAbility = false;
 	m_InhaledAbilityType = AbilityType::None;
@@ -671,6 +678,7 @@ void Kirby::Reset()
 	m_pAbility = nullptr;
 	m_AbilityType = AbilityType::None;
 	m_CurrentState = State::None;
+	m_CurrentAnimation = "Idle";
 	m_AccumSec = 0;
 	m_InvincibleAccumSec = 0;
 }
@@ -740,21 +748,30 @@ void Kirby::Death()
 		m_Position.y += 1;
 		m_DoesWorldCollision = false;
 		SoundManager::PlayStream("Dead");
-		//ViewFade::StartFade(1.f);
+		ParticleSystem::AddKirbyDeathParticles(m_Position);
 	}
 	m_CurrentState = State::Dead;
-	if (m_AccumSec >= 1.f)
+	if (m_AccumSec >= 3.f)
 	{
-		--m_Lives;
-		m_Health = 6;
-			Reset();
-	
-		if (m_Lives <= 0)
+		//m_CurrentState = State::None;
+		m_CurrentAnimation = "Idle";
+		if (m_DeathFade) ViewFade::StartFade(0.5f);
+		m_DeathFade = false;
+
+		if (!ViewFade::IsFading())
 		{
+			m_Health = 6;
+			--m_Lives;
+			m_Position = m_SavePoint;
 			Reset();
+			if (m_Lives < 0)
+			{
+			}
 		}
 	}
+
 }
+
 void Kirby::Invincibility(float elapsedSec)
 {
 	m_InvincibleAccumSec += elapsedSec;
@@ -804,6 +821,10 @@ void Kirby::AddToScore(int addition)
 void Kirby::SetHealth(int health)
 {
 	m_Health = health;
+}
+void Kirby::SetSavePoint(const Point2f& pos)
+{
+	m_SavePoint = pos;
 }
 Rectf Kirby::GetInhaleRect() const
 {

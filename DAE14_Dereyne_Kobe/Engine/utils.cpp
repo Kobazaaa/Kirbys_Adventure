@@ -720,6 +720,10 @@ int utils::GetRandomInt(int minIncl, int maxIncl)
 		return minIncl;
 	}
 }
+int utils::GetRandomSign()
+{
+	return rand() % 2 == 0 ? -1 : 1;
+}
 float utils::GetRandomFloat(int minIncl, int maxIncl, int precision)
 {
 	float precisionPower{ powf(10, precision)};

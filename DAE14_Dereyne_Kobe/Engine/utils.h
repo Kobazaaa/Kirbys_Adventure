@@ -5,7 +5,7 @@
 namespace utils
 {
 	const float g_Pi{ 3.1415926535f };
-	const bool DEBUG_MODE{ true };
+	const bool DEBUG_MODE{ false };
 
 #pragma region OpenGLDrawFunctionality
 
@@ -103,6 +103,7 @@ namespace utils
 
 	bool GetRandomBool();
 	int GetRandomInt(int minIncl, int maxIncl);
+	int GetRandomSign();
 	float GetRandomFloat(int minIncl, int maxIncl, int precision);
 	Point2f GetRandomPosInRect(const Rectf& rect);
 

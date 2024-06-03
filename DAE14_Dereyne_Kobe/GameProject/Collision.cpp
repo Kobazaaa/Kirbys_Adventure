@@ -241,6 +241,7 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 						if (Collision::ProjectileCollision(enemyPtr, projectilePtr))
 						{
 							enemyPtr->Reset();
+							ParticleSystem::AddEnemyDeathParticles(enemyPtr->GetPosition(), static_cast<Direction>(-utils::GetSign(projectilePtr->GetPosition().x - enemyPtr->GetPosition().x)));
 							SoundManager::PlayEffect("EnemyDeath");
 							pKirby->AddToScore(enemyPtr->GetScore() * 2);
 							// TODO fix beam segments getting deactivated (they shouldnt)
