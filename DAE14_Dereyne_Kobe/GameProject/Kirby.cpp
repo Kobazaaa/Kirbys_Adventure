@@ -327,7 +327,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 		}
 		else if (m_AbilityType != AbilityType::None)
 		{
-			if (!m_pAbility->IsActive()) m_pAbility->Activate(m_Position, m_Direction);
+			if (!m_pAbility->IsActive() and !m_IsUnderwater) m_pAbility->Activate(m_Position, m_Direction);
 		}
 		else if (CanInhaleWithCurrentState() and !m_IsUnderwater)
 		{
@@ -753,7 +753,6 @@ void Kirby::Death()
 	m_CurrentState = State::Dead;
 	if (m_AccumSec >= 3.f)
 	{
-		//m_CurrentState = State::None;
 		m_CurrentAnimation = "Idle";
 		if (m_DeathFade) ViewFade::StartFade(0.5f);
 		m_DeathFade = false;

@@ -42,7 +42,7 @@ void HUD::Update(float elapsedSec)
 
 float HUD::GetHeight() const
 {
-	return m_HUD_HEIGHT;
+	return m_HUD_HEIGHT + m_HUD_POS.y;
 }
 
 void HUD::PrintScore() const
@@ -52,7 +52,7 @@ void HUD::PrintScore() const
 
 	for (int idx{0}; idx < 7; ++idx)
 	{
-		const Point2f pos	{ m_SCORE_POS.x + (6.f - static_cast<float>(idx)) * m_NUMBER_WIDTH, m_SCORE_POS.y};
+		const Point2f pos	{ m_SCORE_POS.x + (6.f - static_cast<float>(idx)) * m_NUMBER_WIDTH, m_HUD_POS.y + m_SCORE_POS.y};
 		int nrToPrint		{ score / int(powf(10.f, static_cast<float>(idx))) % 10};
 		
 		const Rectf srcRect
@@ -78,12 +78,12 @@ void HUD::DrawHealth() const
 		Rectf srcRect{};
 		if (idx < health)
 		{
-			pos		= Point2f( m_KIRBY_HEALTH_POS.x + idx * m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_POS.y );
+			pos		= Point2f( m_KIRBY_HEALTH_POS.x + idx * m_KIRBY_HEALTH_WIDTH, m_HUD_POS.y + m_KIRBY_HEALTH_POS.y );
 			srcRect = Rectf( m_KIRBY_HEALTH_WIDTH * (m_CurrentFrame % 2), -8, m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_HEIGHT );
 		}
 		else
 		{
-			pos		= Point2f( m_KIRBY_HEALTH_POS.x + idx * m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_POS.y );
+			pos		= Point2f( m_KIRBY_HEALTH_POS.x + idx * m_KIRBY_HEALTH_WIDTH, m_HUD_POS.y + m_KIRBY_HEALTH_POS.y );
 			srcRect = Rectf( 16, -8, m_KIRBY_HEALTH_WIDTH, m_KIRBY_HEALTH_HEIGHT );
 		}
 		m_pSprites->Draw(pos, srcRect);
@@ -98,7 +98,7 @@ void HUD::DrawLives() const
 
 	for (size_t idx{0}; idx < 2; ++idx)
 	{
-		const Point2f pos{ m_KIRBY_LIVES_POS.x + (1 - idx) * m_NUMBER_WIDTH, m_KIRBY_LIVES_POS.y };
+		const Point2f pos{ m_KIRBY_LIVES_POS.x + (1 - idx) * m_NUMBER_WIDTH, m_HUD_POS.y + m_KIRBY_LIVES_POS.y };
 		int nrToPrint{ lives / int(powf(10, static_cast<float>(idx))) % 10};
 		
 		const Rectf srcRect
@@ -115,7 +115,7 @@ void HUD::DrawLives() const
 
 void HUD::DrawLivesAnim() const
 {
-	const Point2f pos	{ m_KIRBY_ANIM_POS.x, m_KIRBY_ANIM_POS.y };
+	const Point2f pos	{ m_KIRBY_ANIM_POS.x, m_HUD_POS.y + m_KIRBY_ANIM_POS.y };
 	const Rectf srcRect
 	{ 
 		(m_CurrentFrame % 4) * m_KIRBY_ANIM_WIDTH,
@@ -129,7 +129,7 @@ void HUD::DrawLivesAnim() const
 
 void HUD::DrawCard() const
 {
-	const Point2f pos{ m_CARD_POS.x, m_CARD_POS.y};
+	const Point2f pos{ m_CARD_POS.x, m_HUD_POS.y + m_CARD_POS.y};
 	Rectf srcRect
 	{
 		0,

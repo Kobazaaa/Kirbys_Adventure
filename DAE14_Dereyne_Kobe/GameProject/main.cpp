@@ -12,7 +12,7 @@ int SDL_main(int argv, char** args)
 
 	StartHeapControl();
 
-	Game* pGame{ new Game{ Window{ "Kirby's Adventure - Dereyne, Kobe - 1DAEGD14", 496.f , 464.f} } };
+	Game* pGame{ new Game{ Window{ "Kirby's Adventure - Dereyne, Kobe - 1DAEGD14", 496.f , 448.f} } };
 	pGame->Run();
 	delete pGame;
 

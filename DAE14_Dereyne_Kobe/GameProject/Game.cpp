@@ -6,6 +6,7 @@
 #include "ParticleSystem.h"
 #include "ViewFade.h"
 #include "Kirby.h"
+#include "StateMachine.h"
 #include <iostream>
 
 Game::Game( const Window& window ) 
@@ -21,7 +22,6 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	m_GameState = GameState::Hub;
 	ParticleSystem::InitializeParticleSystem();
 	// Sounds
 	LoadSounds();
@@ -61,45 +61,28 @@ void Game::Update( float elapsedSec )
 {
 	if (ViewFade::IsFading())
 	{
-		m_GameState = GameState::Pause;
+	//	StateMachine::SetState(StateMachine::State::Freeze);
 	}
-	else
+	else if (StateMachine::GetState() != StateMachine::State::Pause)
 	{
-		m_GameState = GameState::Play;
+		StateMachine::SetState(StateMachine::State::Gameplay);
 	}
-
+// TODO fix UwU
 	if (utils::KeyPress(SDL_SCANCODE_ESCAPE))
 	{
-		if (m_GameState == GameState::Play) m_GameState = GameState::Hub;
-		else if (m_GameState == GameState::Hub) m_GameState = GameState::Play;
+		ViewFade::StartFade(1.f);
+	}
+	else if (ViewFade::IsFadingIn())
+	{
+		if (StateMachine::GetState() == StateMachine::State::Gameplay) StateMachine::SetState(StateMachine::State::Pause);
+		else if (StateMachine::GetState() == StateMachine::State::Pause) StateMachine::SetState(StateMachine::State::Gameplay);
+
 	}
 
 	ViewFade::Update(elapsedSec);
 	ParticleSystem::Update(elapsedSec);
-	//FadeUpdate(elapsedSec);
-	//if (!m_IsFadingIn and !m_IsFadingOut) m_FadeTimer = 0;
 
-	//if (m_PlayerEnteredDoor)
-	//{
-	//	if (m_GameState == GameState::Play) Fade(0.5f);
-	//	m_GameState = GameState::Pause;
-
-	//	if (!IsFadingOut())
-	//	{
-	//		m_pCamera->SetPosition(Point2f(0, m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight()));
-	//		if (!IsFadingIn())
-	//		{
-	//			m_GameState = GameState::Play;
-	//			m_PlayerEnteredDoor = false;
-	//		}
-	//	}
-	//}
-	//if (m_pKirby->DoDoorChecks(IsFadingIn()))
-	//{
-	//	m_PlayerEnteredDoor = true;
-	//}
-
-	if (m_GameState != GameState::Pause)
+	if (StateMachine::GetState() == StateMachine::State::Gameplay)
 	{
 		m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->KirbyInhaleCollision(m_pKirby, elapsedSec);
 		if (Collision::KirbyHitDetection(m_pKirby, m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->GetAllEnemies(), Projectile::GetAllProjectiles()))
@@ -118,6 +101,16 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 
+	if (StateMachine::GetState() == StateMachine::State::Pause)
+	{
+		TextureManager::GetTexture("PauseScreen")->Draw(Rectf(0,0, m_SCALE * 248, m_SCALE * 224), Rectf(0, -262, 248, 224));
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::None) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(0, -131, 192, 128));
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Spark) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(0, 0, 192, 128));
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Beam) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(195, -131, 192, 128));
+		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Fire) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(195, 0, 192, 128));
+	}
+	if (StateMachine::GetState() == StateMachine::State::Gameplay or StateMachine::GetState() == StateMachine::State::Freeze)
+	{
 		m_pCamera->Aim(m_VegetableValleyManager->GetCurrentLevel()->GetWidth(), m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight(), m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
 		{
 			m_VegetableValleyManager->Draw();
@@ -144,9 +137,9 @@ void Game::Draw( ) const
 
 		}
 		m_pCamera->Reset();
-
-	m_pHUD->Draw();
-	ViewFade::Draw(GetViewPort());
+		m_pHUD->Draw();
+	}
+		ViewFade::Draw(GetViewPort());
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
@@ -241,6 +234,7 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("VegetableValleyLevel",	"Levels/VegetableValleyLevel.png");
 	TextureManager::LoadTexture("VegetableValleyHub",	"Levels/VegetableValleyHub.png");
 	TextureManager::LoadTexture("PowerUps",				"PowerUps/Items.png");
+	TextureManager::LoadTexture("PauseScreen",			"HUD/PauseScreen.png");
 }
 void Game::LoadSounds()
 {

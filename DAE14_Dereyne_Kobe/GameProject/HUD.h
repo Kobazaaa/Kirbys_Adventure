@@ -41,7 +41,7 @@ private:
 	// Dimensions for every HUD element
 	const float		m_HUD_WIDTH				{ 248.f };
 	const float		m_HUD_HEIGHT			{  64.f };
-	const Point2f	m_HUD_POS				{ 0.f, 0.f };
+	const Point2f	m_HUD_POS				{ 0.f, -8.f };
 
 	const float		m_CARD_WIDTH			{  32.f };
 	const float		m_CARD_HEIGHT			{  40.f };
