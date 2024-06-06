@@ -21,6 +21,18 @@ void ViewFade::StartFade(float duration)
 	}
 }
 
+void ViewFade::StartFadeIn(float duration)
+{
+	if (!m_IsFading)
+	{
+		m_IsFading = true;
+		m_FadeOut = false;
+		m_FadeIn = true;
+		m_FadeDuration = duration;
+		m_FadeTimer = 0;
+	}
+}
+
 void ViewFade::Update(float elapsedSec)
 {
 	if (m_IsFading)

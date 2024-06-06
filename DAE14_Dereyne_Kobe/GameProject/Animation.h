@@ -17,6 +17,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	explicit Animation();
 	explicit Animation(std::vector<Frame>&& frames, bool loop);
 
 

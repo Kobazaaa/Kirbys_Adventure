@@ -7,6 +7,7 @@ public:
 	// ~~			BEHAVIOURAL			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	static void StartFade(float duration);
+	static void StartFadeIn(float duration);
 	static void Update(float elapsedSec);
 	static void Draw(const Rectf& viewPort);
 

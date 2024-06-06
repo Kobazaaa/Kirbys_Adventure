@@ -15,7 +15,6 @@ LevelManager::LevelManager(const std::string& filePath, Kirby* kirby, Camera* ca
 {
 	LoadFromFile(filePath);
 	m_CurrentLevel = m_vLevels[0];
-	m_CurrentLevel->PlayMusic();
 }
 
 LevelManager::~LevelManager() noexcept

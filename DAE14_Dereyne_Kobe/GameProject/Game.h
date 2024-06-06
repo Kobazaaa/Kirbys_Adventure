@@ -7,6 +7,7 @@
 #include "EnemyManager.h"
 #include "TextureManager.h"
 #include "SoundManager.h"
+#include "StateMachine.h"
 #include <vector>
 
 class Kirby;
@@ -43,10 +44,12 @@ private:
 	void LoadSounds();
 
 	// VARIABLES
-	bool m_PlayerEnteredDoor{false};
+	bool m_BeenPaused{false};
 
 	Kirby* m_pKirby;
 	LevelManager* m_VegetableValleyManager;
+
+	StateMachine* m_StateMachine;
 
 	Camera* m_pCamera;
 

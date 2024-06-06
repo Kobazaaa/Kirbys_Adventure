@@ -6,7 +6,6 @@
 #include "ParticleSystem.h"
 #include "ViewFade.h"
 #include "Kirby.h"
-#include "StateMachine.h"
 #include <iostream>
 
 Game::Game( const Window& window ) 
@@ -22,6 +21,7 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
+
 	ParticleSystem::InitializeParticleSystem();
 	// Sounds
 	LoadSounds();
@@ -40,6 +40,8 @@ void Game::Initialize( )
 
 	//HUD
 	m_pHUD = new HUD(m_pKirby, m_SCALE);
+
+	m_StateMachine = new StateMachine();
 }
 
 void Game::Cleanup( )
@@ -52,6 +54,8 @@ void Game::Cleanup( )
 	m_VegetableValleyManager = nullptr;
 	delete m_pHUD;
 	m_pHUD = nullptr;
+	delete m_StateMachine;
+	m_StateMachine = nullptr;
 
 	SoundManager::DeleteAllSound();
 	TextureManager::DeleteTextures();
@@ -59,41 +63,70 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
+	m_StateMachine->Update(elapsedSec);
+
 	if (ViewFade::IsFading())
 	{
-	//	StateMachine::SetState(StateMachine::State::Freeze);
+		m_StateMachine->Freeze();
 	}
-	else if (StateMachine::GetState() != StateMachine::State::Pause)
+	else
 	{
-		StateMachine::SetState(StateMachine::State::Gameplay);
+		m_StateMachine->Unfreeze();
 	}
-// TODO fix UwU
-	if (utils::KeyPress(SDL_SCANCODE_ESCAPE))
+
+	if (utils::KeyPress(SDL_SCANCODE_RETURN) and m_StateMachine->GetState() == StateMachine::State::Titlescreen) m_StateMachine->ChangeState(StateMachine::State::Gameplay);
+	if (utils::KeyPress(SDL_SCANCODE_ESCAPE) and !ViewFade::IsFading())
 	{
-		ViewFade::StartFade(1.f);
-	}
-	else if (ViewFade::IsFadingIn())
-	{
-		if (StateMachine::GetState() == StateMachine::State::Gameplay) StateMachine::SetState(StateMachine::State::Pause);
-		else if (StateMachine::GetState() == StateMachine::State::Pause) StateMachine::SetState(StateMachine::State::Gameplay);
+		if		(m_StateMachine->GetState() == StateMachine::State::Gameplay)	m_StateMachine->ChangeState(StateMachine::State::Pause);
+		else if (m_StateMachine->GetState() == StateMachine::State::Pause)		m_StateMachine->ChangeState(StateMachine::State::Gameplay);
+
+		m_BeenPaused = true;
+		//if (StateMachine::GetState() == StateMachine::State::Gameplay) SoundManager::PlayEffect("Pause");
+		//else if (StateMachine::GetState() == StateMachine::State::Pause)
+		//{
+		//	SoundManager::PlayEffect("Unpause");
+		//}
 
 	}
+	//if (m_BeenPaused and ViewFade::IsFadingIn())
+	//{
+	//	m_BeenPaused = false;
+	//	if (StateMachine::GetState() == StateMachine::State::Gameplay)
+	//	{
+	//		StateMachine::SetState(StateMachine::State::Pause);
+	//	}
+	//	else if (StateMachine::GetState() == StateMachine::State::Pause)
+	//	{
+	//		StateMachine::SetState(StateMachine::State::Gameplay);
+	//	}
+	//
+	//}
+	//if (StateMachine::GetState() == StateMachine::State::Pause)
+	//{
+	//	if (utils::KeyPress(SDL_SCANCODE_DOWN))
+	//	{
+	//
+	//	}
+	//}
 
 	ViewFade::Update(elapsedSec);
 	ParticleSystem::Update(elapsedSec);
 
-	if (StateMachine::GetState() == StateMachine::State::Gameplay)
+	if (m_StateMachine->GetState() == StateMachine::State::Gameplay)
 	{
-		m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->KirbyInhaleCollision(m_pKirby, elapsedSec);
-		if (Collision::KirbyHitDetection(m_pKirby, m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->GetAllEnemies(), Projectile::GetAllProjectiles()))
+		if (!m_StateMachine->IsFrozen())
 		{
-			m_pCamera->Shake(0.1f, 0.1f);
-		}
+			m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->KirbyInhaleCollision(m_pKirby, elapsedSec);
+			if (Collision::KirbyHitDetection(m_pKirby, m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->GetAllEnemies(), Projectile::GetAllProjectiles()))
+			{
+				m_pCamera->Shake(0.1f, 0.1f);
+			}
 
-		m_pKirby->Update(elapsedSec, m_VegetableValleyManager->GetCurrentLevel()->GetWorld());
-		m_pHUD->Update(elapsedSec);
+			m_pKirby->Update(elapsedSec, m_VegetableValleyManager->GetCurrentLevel()->GetWorld());
+			m_pHUD->Update(elapsedSec);
+		}
+		m_VegetableValleyManager->Update(elapsedSec);
 	}
-	m_VegetableValleyManager->Update(elapsedSec);
 	m_pCamera->Update(elapsedSec);
 }
 
@@ -101,15 +134,33 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 
-	if (StateMachine::GetState() == StateMachine::State::Pause)
+	m_StateMachine->Draw();
+
+	//if (m_StateMachine->GetState() == StateMachine::State::Titlescreen)
+	//{
+	//	TextureManager::GetTexture("TitleScreen")->Draw(Rectf(0, 0, m_SCALE * 248, m_SCALE * 224), Rectf(0, -58, 248, 224));
+	//
+	//	std::vector<Frame> frames
+	//	{
+	//		Frame(Rectf(0, 0, 59, 55), 0.1f),
+	//		Frame(Rectf(60, 0, 59, 55), 0.1f),
+	//		Frame(Rectf(120, 0, 62, 55), 0.1f)
+	//	};
+	//	Animation anim{ std::move(frames), true};
+	//	TextureManager::GetTexture("TitleScreen")->Draw(Rectf(0, 0, m_SCALE * 248, m_SCALE * 224), Rectf(0, -58, 248, 224));
+	//	anim.Draw(TextureManager::GetTexture("TitleScreen"), Point2f(GetViewPort().width / 2, GetViewPort().height / 2));
+	//}
+	if (m_StateMachine->GetState() == StateMachine::State::Pause)
 	{
-		TextureManager::GetTexture("PauseScreen")->Draw(Rectf(0,0, m_SCALE * 248, m_SCALE * 224), Rectf(0, -262, 248, 224));
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::None) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(0, -131, 192, 128));
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Spark) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(0, 0, 192, 128));
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Beam) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(195, -131, 192, 128));
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Fire) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(195, 0, 192, 128));
+		//TextureManager::GetTexture("PauseScreen")->Draw(Rectf(0,0, m_SCALE * 248, m_SCALE * 224), Rectf(0, -262, 248, 224));
+		//if (m_pKirby->GetAbilityType() == Entity::AbilityType::None) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(0, -131, 192, 128));
+		//if (m_pKirby->GetAbilityType() == Entity::AbilityType::Spark) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(0, 0, 192, 128));
+		//if (m_pKirby->GetAbilityType() == Entity::AbilityType::Beam) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(195, -131, 192, 128));
+		//if (m_pKirby->GetAbilityType() == Entity::AbilityType::Fire) TextureManager::GetTexture("PauseScreen")->Draw	(Rectf(m_SCALE * 24, m_SCALE * 88, m_SCALE * 192, m_SCALE * 128), Rectf(195, 0, 192, 128));
+		//
+		//TextureManager::GetTexture("Kirby2")->Draw(Rectf(m_SCALE * 70, m_SCALE * 37, m_SCALE * 16, m_SCALE * 16), Rectf(0, 0, 16, 16));
 	}
-	if (StateMachine::GetState() == StateMachine::State::Gameplay or StateMachine::GetState() == StateMachine::State::Freeze)
+	if (m_StateMachine->GetState() == StateMachine::State::Gameplay)
 	{
 		m_pCamera->Aim(m_VegetableValleyManager->GetCurrentLevel()->GetWidth(), m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight(), m_VegetableValleyManager->GetCurrentLevel()->GetCurrentSubLevel() * m_VegetableValleyManager->GetCurrentLevel()->GetSubLevelHeight(), m_pKirby->GetPosition(), m_pHUD->GetHeight());
 		{
@@ -235,6 +286,7 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("VegetableValleyHub",	"Levels/VegetableValleyHub.png");
 	TextureManager::LoadTexture("PowerUps",				"PowerUps/Items.png");
 	TextureManager::LoadTexture("PauseScreen",			"HUD/PauseScreen.png");
+	TextureManager::LoadTexture("TitleScreen",			"HUD/TitleScreen.png");
 }
 void Game::LoadSounds()
 {
@@ -258,9 +310,13 @@ void Game::LoadSounds()
 	SoundManager::LoadSoundEffect("DoorEnter", "Sound/SoundEffects/Door.wav");
 	SoundManager::LoadSoundEffect("EnemyDeath", "Sound/SoundEffects/EnemyDeath.wav");
 	SoundManager::LoadSoundEffect("NoPowerUpReceived", "Sound/SoundEffects/NoPowerUpReceived.wav");
+	SoundManager::LoadSoundEffect("Pause", "Sound/SoundEffects/Pause.wav");
+	SoundManager::LoadSoundEffect("Unpause", "Sound/SoundEffects/Unpause.wav");
+	SoundManager::LoadSoundEffect("LowHealth", "Sound/SoundEffects/LowHealth.wav");
 
 
 	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
 	SoundManager::LoadSoundStream("VegetableValleyHub", "Sound/Music/Vegetable_Valley_Hub.mp3");
 	SoundManager::LoadSoundStream("Dead", "Sound/Music/Dead.mp3");
+	SoundManager::LoadSoundStream("TitleMusic", "Sound/Music/TitleMusic.mp3");
 }
