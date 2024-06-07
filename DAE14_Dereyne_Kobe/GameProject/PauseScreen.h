@@ -6,11 +6,11 @@ class Texture;
 class PauseScreen final : public BaseState
 {
 public:
-	PauseScreen(float scale);
+	PauseScreen(float scale, Rectf viewport);
 
 	virtual void Enter() override;
 	virtual void Exit() override;
-	virtual void Update(float elapsedSec) override;
+	virtual void Update(float elapsedSec, bool freeze) override;
 	virtual void Draw() const override;
 
 private:

@@ -4,6 +4,7 @@
 #include "StateMachine.h"
 #include "PauseScreen.h"
 #include "TitleScreen.h"
+#include "Gameplay.h"
 
 void StateMachine::ChangeState(StateMachine::State newState)
 {
@@ -15,13 +16,15 @@ void StateMachine::ChangeState(StateMachine::State newState)
 	if (m_mStates[m_NextState]) m_mStates[m_NextState]->Enter();
 }
 
-StateMachine::StateMachine()
-	: m_Freeze		{ false },
-	m_CurrentState	{  },
-	m_NextState		{  }
+StateMachine::StateMachine(Rectf viewport)
+	: m_Freeze			{ false }
+	,  m_CurrentState	{  }
+	, m_NextState		{  }
+	, m_ViewPort		{ viewport }
 {
-	m_mStates[StateMachine::State::Titlescreen] = new TitleScreen(2);
-	m_mStates[StateMachine::State::Pause] = new PauseScreen(2);
+	m_mStates[StateMachine::State::Titlescreen] = new TitleScreen(2, m_ViewPort);
+	m_mStates[StateMachine::State::Pause] = new PauseScreen(2, m_ViewPort);
+	m_mStates[StateMachine::State::Gameplay] = new Gameplay(2, m_ViewPort);
 
 	m_mStates[StateMachine::State::Titlescreen]->Enter();
 }
@@ -29,7 +32,13 @@ StateMachine::StateMachine()
 StateMachine::~StateMachine() noexcept
 {
 	delete m_mStates[StateMachine::State::Pause];
+	m_mStates[StateMachine::State::Pause] = nullptr;
+
 	delete m_mStates[StateMachine::State::Titlescreen];
+	m_mStates[StateMachine::State::Titlescreen] = nullptr;
+
+	delete m_mStates[StateMachine::State::Gameplay];
+	m_mStates[StateMachine::State::Gameplay] = nullptr;
 }
 
 void StateMachine::Update(float elapsedSec)
@@ -39,7 +48,7 @@ void StateMachine::Update(float elapsedSec)
 		m_Freeze = false;
 		m_CurrentState = m_NextState;
 	}
-	if (m_mStates[m_CurrentState]) m_mStates[m_CurrentState]->Update(elapsedSec);
+	if (m_mStates[m_CurrentState]) m_mStates[m_CurrentState]->Update(elapsedSec, m_Freeze);
 }
 
 void StateMachine::Draw() const

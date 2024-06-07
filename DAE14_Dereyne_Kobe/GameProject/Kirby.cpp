@@ -67,6 +67,8 @@ std::string Kirby::EnumToString(Kirby::State state) const
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
+	if (KeyPress(SDL_SCANCODE_R)) --m_Health;
+
 	Entity::Update(elapsedSec, world);
 	Animate();
 
@@ -106,6 +108,11 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 
 	if (m_Health <= 0) Death();
+	else if (m_Health <= 1 and m_AccumSec >= 30.f)
+	{
+		m_AccumSec = 0;
+		SoundManager::PlayEffect("LowHealth");
+	}
 
 
 	if (utils::DEBUG_MODE)
@@ -333,6 +340,7 @@ void Kirby::MechanicUpdate(float elapsedSec)
 		{
 			SoundManager::PlayEffect("InhalingStart");
 			m_CurrentState = State::Inhaling;
+			m_AccumSec = 0;
 		}
 	}
 
@@ -885,8 +893,16 @@ void Kirby::Animate()
 		}
 		else
 		{
-			if (!m_HasInhaledAbility) m_CurrentAnimation = "Walk";
-			else m_CurrentAnimation = "InhaledWalk";
+			if (m_IsRunning)
+			{
+				if (!m_HasInhaledAbility) m_CurrentAnimation = "Run";
+				else m_CurrentAnimation = "InhaledRun";
+			}
+			else
+			{
+				if (!m_HasInhaledAbility) m_CurrentAnimation = "Walk";
+				else m_CurrentAnimation = "InhaledWalk";
+			}
 		}
 		break;
 	case Kirby::State::Slide:
@@ -1004,7 +1020,7 @@ void Kirby::Animate()
 		}
 	}
 
-	if (m_IsHit)
+	if (m_IsHit and m_CurrentState != State::Dead)
 	{
 		if (!m_HasInhaledAbility)
 		{
@@ -1034,7 +1050,6 @@ void Kirby::Animate()
 	if (m_CurrentState != m_OldState)
 	{
 		m_OldState = m_CurrentState;
-		m_AccumSec = 0;
 	}
 
 }

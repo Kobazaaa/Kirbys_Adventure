@@ -1,15 +1,6 @@
 #include "pch.h"
 #include "Animation.h"
-
-Animation::Animation()
-	: m_Loop		{ false }
-	, m_AccumSec	{ 0 }
-	, m_CurrentFrame{ 0 }
-	, m_IsActivated	{ false }
-	, m_vFrames		{ }
-	, m_IsDone		{ false }
-{
-}
+#include <iostream>
 
 Animation::Animation(std::vector<Frame>&& frames, bool loop)
 	: m_Loop{ loop }

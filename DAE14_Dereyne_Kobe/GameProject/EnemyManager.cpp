@@ -173,6 +173,18 @@ bool EnemyManager::KirbyInhaleCollision(Kirby* pKirby, float elapsedSec)
 			else if (!enemyPtr->IsActivated())
 			{
 				pKirby->ForceInhale();
+				if (!utils::IsPointInRect(enemyPtr->GetPosition(), pKirby->GetInhaleRect()))
+				{
+					bool enemyAboveKirby{ utils::GetSign(enemyPtr->GetPosition().y - pKirby->GetInhaleRect().bottom) == 1 ? true : false};
+					if (enemyAboveKirby)
+					{
+						enemyPtr->SetPosition(enemyPtr->GetPosition().x, pKirby->GetInhaleRect().bottom + pKirby->GetInhaleRect().height);
+					}
+					else
+					{
+						enemyPtr->SetPosition(enemyPtr->GetPosition().x, pKirby->GetInhaleRect().bottom);
+					}
+				}
 			}
 
 		}

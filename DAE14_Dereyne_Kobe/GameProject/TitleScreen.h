@@ -7,11 +7,11 @@ class Texture;
 class TitleScreen final : public BaseState
 {
 public:
-	TitleScreen(float scale);
+	TitleScreen(float scale, Rectf viewport);
 
 	virtual void Enter() override;
 	virtual void Exit() override;
-	virtual void Update(float elapsedSec) override;
+	virtual void Update(float elapsedSec, bool freeze) override;
 	virtual void Draw() const override;
 
 private:

@@ -44,16 +44,5 @@ private:
 	void LoadSounds();
 
 	// VARIABLES
-	bool m_BeenPaused{false};
-
-	Kirby* m_pKirby;
-	LevelManager* m_VegetableValleyManager;
-
 	StateMachine* m_StateMachine;
-
-	Camera* m_pCamera;
-
-	HUD* m_pHUD;
-	
-	const float m_SCALE{2.f};
 };

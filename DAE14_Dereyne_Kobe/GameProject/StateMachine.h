@@ -10,7 +10,7 @@ public:
 		Titlescreen, Pause, Gameplay
 	};
 
-	explicit StateMachine();
+	explicit StateMachine(Rectf viewport);
 	StateMachine(const StateMachine& other) = delete;
 	StateMachine(StateMachine&& other) = delete;
 	StateMachine& operator=(const StateMachine& rhs) = delete;
@@ -32,5 +32,6 @@ private:
 	State m_CurrentState;
 	State m_NextState;
 	bool m_Freeze;
+	Rectf m_ViewPort;
 };
 
