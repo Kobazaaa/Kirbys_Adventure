@@ -68,16 +68,27 @@ std::string Kirby::EnumToString(Kirby::State state) const
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
 	if (KeyPress(SDL_SCANCODE_R)) --m_Health;
+	if (KeyPress(SDL_SCANCODE_I)) std::cout << *this << std::endl;
 
 	Entity::Update(elapsedSec, world);
 	Animate();
 
 	if (m_DoesWorldCollision) Collisions(world);
 
+
 	if (m_CurrentState != State::Dead)
 	{
 		m_DoesWorldCollision = true;
 
+		if (m_Card != Card::Ability)
+		{
+			m_CardAccumSec += elapsedSec;
+			if (m_CardAccumSec >= 1.f)
+			{
+				m_CardAccumSec = 0;
+				m_Card = Card::Ability;
+			}
+		}
 		AbilityUpdate(elapsedSec, world);
 
 		if (m_IsInvincible) Invincibility(elapsedSec);
@@ -421,6 +432,13 @@ void Kirby::MechanicUpdate(float elapsedSec)
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			SWALLOW			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	if (m_CurrentState == State::Swallow and m_AbilityType != AbilityType::None)
+	{
+		ViewFade::Darken(.25f);
+		ParticleSystem::AddAbilityActivation(m_Position);
+	}
+	else if (m_CurrentState != State::Swallow and m_AbilityType != AbilityType::None and !m_pAbility->IsActive()) ViewFade::RemoveDarken();
+
 	if (m_HasInhaledAbility and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN))
 	{
 		m_HasInhaledAbility = false;
@@ -691,6 +709,19 @@ void Kirby::Reset()
 	m_InvincibleAccumSec = 0;
 }
 
+void Kirby::HardReset()
+{
+	Reset();
+	SoundManager::StopAll();
+	m_IsHit = false;
+	m_IsSliding = false;
+	m_IsRunning = false;
+	m_Velocity = Vector2f(0, 0);
+	m_Score = 0;
+	m_Health = 6;
+	m_Lives = 4;
+}
+
 void Kirby::HitEnemy(const Point2f& enemyPos)
 {
 	if (!m_IsInvincible)
@@ -755,7 +786,7 @@ void Kirby::Death()
 		m_Velocity.y = m_JUMP_SPEED;
 		m_Position.y += 1;
 		m_DoesWorldCollision = false;
-		SoundManager::PlayStream("Dead");
+		SoundManager::PlayEffect("Dead");
 		ParticleSystem::AddKirbyDeathParticles(m_Position);
 	}
 	m_CurrentState = State::Dead;
@@ -775,6 +806,10 @@ void Kirby::Death()
 			{
 			}
 		}
+	}
+	else
+	{
+		SoundManager::ResetStream();
 	}
 
 }

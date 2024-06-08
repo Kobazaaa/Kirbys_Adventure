@@ -25,8 +25,6 @@ public:
 	void Ascend();
 	void Straight(float elapsedSec, const Point2f& kirbyPos);
 
-	// TODO possibly remove? was needed to generate file
-	Tactic GetTactic() const;
 private:
 	// Private Variables
 	int m_NrCycles;

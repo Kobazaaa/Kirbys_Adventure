@@ -26,7 +26,8 @@ void FireProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 			m_Position.x += static_cast<int>(m_Direction) * (m_Velocity.x * elapsedSec);
 			m_Position.y += m_Velocity.y * elapsedSec;
 
-			if (Collision::WallCollision(this, world)) Deactivate();
+			if (Collision::WallCollision(this, world)) Hide();
+			else Reveal();
 		}
 
 		m_pAnimationManager->Update(elapsedSec, m_CurrentAnimation);

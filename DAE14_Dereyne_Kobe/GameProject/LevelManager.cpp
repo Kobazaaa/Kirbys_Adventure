@@ -76,6 +76,11 @@ void LevelManager::Draw() const
 	}
 }
 
+void LevelManager::Reset()
+{
+	m_CurrentLevel = m_vLevels[0];
+}
+
 Level* LevelManager::GetCurrentLevel() const
 {
 	return m_CurrentLevel;

@@ -138,13 +138,26 @@ void HUD::DrawCard() const
 		m_CARD_HEIGHT
 	};
 
-	if (m_pKirby->GetAbilityType() != Entity::AbilityType::None)
+	if (m_pKirby->GetCard() == Kirby::Card::Ability)
 	{
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Beam)	  srcRect.left = m_CARD_WIDTH;
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Fire)	  srcRect.left = 2 * m_CARD_WIDTH;
-		if (m_pKirby->GetAbilityType() == Entity::AbilityType::Spark)	  srcRect.left = 3 * m_CARD_WIDTH;
+		if (m_pKirby->GetAbilityType() != Entity::AbilityType::None)
+		{
+			if (m_pKirby->GetAbilityType() == Entity::AbilityType::Beam)	  srcRect.left = m_CARD_WIDTH;
+			if (m_pKirby->GetAbilityType() == Entity::AbilityType::Fire)	  srcRect.left = 2 * m_CARD_WIDTH;
+			if (m_pKirby->GetAbilityType() == Entity::AbilityType::Spark)	  srcRect.left = 3 * m_CARD_WIDTH;
+		}
+		else srcRect.bottom = 120;
 	}
-	else srcRect.bottom = 120;
+	else if (m_pKirby->GetCard() == Kirby::Card::Damaged)
+	{
+		srcRect.left = 0;
+		srcRect.bottom -= 2 * m_CARD_HEIGHT;
+	}
+	else if (m_pKirby->GetCard() == Kirby::Card::Nothing)
+	{
+		srcRect.left = 0;
+		srcRect.bottom -= m_CARD_HEIGHT;
+	}
 
 	m_pSprites->Draw(pos, srcRect);
 }

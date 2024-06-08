@@ -152,6 +152,32 @@ void ParticleSystem::AddInhaleParticles(const Point2f& pos, const Rectf& inhaleR
 		AddParticle(particle);
 	}
 }
+void ParticleSystem::AddAbilityActivation(const Point2f& pos)
+{
+	if (m_AccumSec >= 0.05f)
+	{
+		m_AccumSec = 0;
+
+		std::vector<Frame> frame{
+			Frame(Rectf(0, -16, 16, 16), 0.03f),
+			Frame(Rectf(16, -16, 16, 16), 0.03f),
+			Frame(Rectf(32, -16, 16, 16), 0.03f),
+		};
+		Animation anim{ std::move(frame), false };
+		const Point2f position
+		{
+			pos.x + utils::GetRandomFloat(-32, 32, 2),
+			pos.y + utils::GetRandomFloat(-32, 32, 2)
+		};
+
+		Particle particle
+		{
+			position, Vector2f(0, 0), 0.1f, anim
+		};
+
+		AddParticle(particle);
+	}
+}
 void ParticleSystem::AddImpactParticles(const Point2f& pos)
 {
 	std::vector<Frame> frame{

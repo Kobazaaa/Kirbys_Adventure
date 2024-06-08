@@ -14,7 +14,7 @@ Gameplay::Gameplay(float scale, Rectf viewport)
 	m_pCamera = new Camera(m_VIEWPORT.width, m_VIEWPORT.height, m_Scale);
 
 	// Kirby
-	m_pKirby = new Kirby(Point2f(100, 100));
+	m_pKirby = new Kirby(Point2f(62, 248));
 
 	// LevelManager
 	m_VegetableValleyManager = new LevelManager("Levels/World.xml", m_pKirby, m_pCamera);
@@ -38,14 +38,16 @@ Gameplay::~Gameplay()
 
 void Gameplay::Enter()
 {
-
+	SoundManager::ResumeAll();
+	m_VegetableValleyManager->GetCurrentLevel()->PlayMusic();
 }
 
 void Gameplay::Exit()
 {
+	SoundManager::PauseAll();
 }
 
-void Gameplay::Update(float elapsedSec, bool freeze)
+void Gameplay::Update(StateMachine& stateMachine, float elapsedSec, bool freeze)
 {
 	if (!freeze)
 	{
@@ -95,4 +97,16 @@ void Gameplay::Draw() const
 	m_pCamera->Reset();
 	m_pHUD->Draw();
 
+}
+
+void Gameplay::Reset()
+{
+	m_VegetableValleyManager->Reset();
+	m_pKirby->HardReset();
+	m_pKirby->SetPosition(62, 248);
+}
+
+Entity::AbilityType Gameplay::GetKirbyAbility()
+{
+	return m_pKirby->GetAbilityType();
 }

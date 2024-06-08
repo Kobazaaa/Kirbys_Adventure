@@ -136,8 +136,3 @@ void BrontoBurt::Straight(float elapsedSec, const Point2f& kirbyPos)
 		m_CurrentAnimation = "NoFlap";
 	}
 }
-
-BrontoBurt::Tactic BrontoBurt::GetTactic() const
-{
-	return m_Tactic;
-}

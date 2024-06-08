@@ -22,6 +22,7 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_pAnimationManager	{ new AnimationManager(textureName) }
 	, m_CurrentAnimation	{ "" }
 	, m_ParticlesOnImpact	{ true }
+	, m_DeactivateOnImpact	{ false }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 
@@ -97,6 +98,11 @@ bool Projectile::DoesEntityCollision() const
 bool Projectile::DoesParticleOnImpact() const
 {
 	return m_ParticlesOnImpact;
+}
+
+bool Projectile::DoesDeactivateOnImpact() const
+{
+	return m_DeactivateOnImpact;
 }
 
 Point2f Projectile::GetPosition() const

@@ -26,7 +26,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Update(float elapsedSec);
 	void Draw() const;
-
+	void Reset();
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			ACCESSORS			~~

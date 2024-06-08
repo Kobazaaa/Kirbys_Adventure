@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <iostream>
+#include "ParticleSystem.h"
 #include "Collision.h"
 #include "Star.h"
 
@@ -21,6 +22,7 @@ void Star::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 		if (m_AccumSec >= m_TravelTime)
 		{
 			std::cout << "STAR DEACTIVATED\n";
+			ParticleSystem::AddCircle(m_Position);
 			Deactivate();
 		}
 

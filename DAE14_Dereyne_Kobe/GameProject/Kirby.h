@@ -48,6 +48,7 @@ public:
 	void ApplyPlaySpace(Level* pLevel);
 
 	void Reset();
+	void HardReset();
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,6 +112,7 @@ private:
 
 	float m_InvincibleAccumSec{};
 	float m_AbilityActivationAccumSec{};
+	float m_CardAccumSec{};
 
 	// Projectiles & Abilities
 	Puff m_Puff;

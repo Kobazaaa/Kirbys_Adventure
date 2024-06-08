@@ -6,6 +6,7 @@ Puff::Puff(bool isFriendly)
 	: Projectile("Puff", Vector2f(400.f, 0.f), 0.25f, isFriendly)
 	, m_CanMove{true}
 {
+	m_DeactivateOnImpact = true;
 }
 
 void Puff::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index)

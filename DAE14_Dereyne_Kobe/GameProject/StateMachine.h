@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
-#include "BaseState.h"
+
+class BaseState;
 
 class StateMachine final
 {

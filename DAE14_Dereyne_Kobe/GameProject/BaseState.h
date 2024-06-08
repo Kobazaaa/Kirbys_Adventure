@@ -3,6 +3,9 @@
 #include "utils.h"
 #include "ViewFade.h"
 #include "SoundManager.h"
+#include "StateMachine.h"
+
+class StateMachine;
 
 class BaseState
 {
@@ -16,7 +19,7 @@ public:
 
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;
-	virtual void Update(float elapsedSec, bool freeze) = 0;
+	virtual void Update(StateMachine& stateMachine, float elapsedSec, bool freeze) = 0;
 	virtual void Draw() const = 0;
 
 protected:

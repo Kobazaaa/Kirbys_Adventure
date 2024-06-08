@@ -47,7 +47,10 @@ void Game::Update( float elapsedSec )
 	if (ViewFade::IsFading()) m_StateMachine->Freeze();
 	else m_StateMachine->Unfreeze();
 
-	if (utils::KeyPress(SDL_SCANCODE_RETURN) and m_StateMachine->GetState() == StateMachine::State::Titlescreen) m_StateMachine->ChangeState(StateMachine::State::Gameplay);
+	if (utils::KeyPress(SDL_SCANCODE_RETURN) and m_StateMachine->GetState() == StateMachine::State::Titlescreen)
+	{
+		m_StateMachine->ChangeState(StateMachine::State::Gameplay);
+	}
 	if (utils::KeyPress(SDL_SCANCODE_ESCAPE) and !ViewFade::IsFading())
 	{
 		if		(m_StateMachine->GetState() == StateMachine::State::Gameplay)	m_StateMachine->ChangeState(StateMachine::State::Pause);
@@ -134,10 +137,10 @@ void Game::LoadSounds()
 	SoundManager::LoadSoundEffect("Pause", "Sound/SoundEffects/Pause.wav");
 	SoundManager::LoadSoundEffect("Unpause", "Sound/SoundEffects/Unpause.wav");
 	SoundManager::LoadSoundEffect("LowHealth", "Sound/SoundEffects/LowHealth.wav");
+	SoundManager::LoadSoundEffect("Dead", "Sound/Music/Dead.mp3");
 
 
 	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");
 	SoundManager::LoadSoundStream("VegetableValleyHub", "Sound/Music/Vegetable_Valley_Hub.mp3");
-	SoundManager::LoadSoundStream("Dead", "Sound/Music/Dead.mp3");
 	SoundManager::LoadSoundStream("TitleMusic", "Sound/Music/TitleMusic.mp3");
 }

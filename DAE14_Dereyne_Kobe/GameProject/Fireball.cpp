@@ -5,6 +5,7 @@
 Fireball::Fireball(float travelTime, bool isFriendly)
 	: Projectile("Fire", Vector2f(0, 0), travelTime, isFriendly)
 {
+	m_DeactivateOnImpact = true;
 }
 
 void Fireball::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index)

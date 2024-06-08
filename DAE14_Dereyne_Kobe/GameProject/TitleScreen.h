@@ -11,7 +11,7 @@ public:
 
 	virtual void Enter() override;
 	virtual void Exit() override;
-	virtual void Update(float elapsedSec, bool freeze) override;
+	virtual void Update(StateMachine& stateMachine, float elapsedSec, bool freeze) override;
 	virtual void Draw() const override;
 
 private:

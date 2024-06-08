@@ -7,7 +7,6 @@ TitleScreen::TitleScreen(float scale, Rectf viewport)
 	, m_pTexture{ TextureManager::GetTexture("TitleScreen") }
 	, m_Animation{ Animation(std::vector<Frame>{}, true) }
 {
-	//TODO this causes memoty leak???
 	std::vector<Frame> frames
 	{
 		Frame(Rectf(0, 0, 64, 55), 0.3f),
@@ -43,7 +42,7 @@ void TitleScreen::Exit()
 	ViewFade::StartFade(0.5f);
 }
 
-void TitleScreen::Update(float elapsedSec, bool freeze)
+void TitleScreen::Update(StateMachine& stateMachine, float elapsedSec, bool freeze)
 {
 	m_Animation.Update(elapsedSec);
 }

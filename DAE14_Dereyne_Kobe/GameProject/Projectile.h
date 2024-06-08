@@ -36,6 +36,7 @@ public:
 	bool IsFriendly() const;
 	bool DoesEntityCollision() const;
 	bool DoesParticleOnImpact() const;
+	bool DoesDeactivateOnImpact() const;
 	Point2f GetPosition() const;
 	Direction GetDirection() const;
 	float GetWidth() const;
@@ -62,6 +63,7 @@ protected:
 	bool			m_DoesEntityCollision;
 	bool			m_Hidden;
 	bool			m_ParticlesOnImpact;
+	bool			m_DeactivateOnImpact;
 
 	Point2f			m_Position;
 	Point2f			m_StartPosition;

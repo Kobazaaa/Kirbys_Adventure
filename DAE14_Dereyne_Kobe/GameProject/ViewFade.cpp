@@ -4,10 +4,26 @@
 
 float ViewFade::m_FadeDuration = 0;
 float ViewFade::m_FadeTimer = 0;
+float ViewFade::m_DarkenIntensity = 0;
 
+bool ViewFade::m_Darkened = false;
 bool ViewFade::m_IsFading = false;
 bool ViewFade::m_FadeIn = false;
 bool ViewFade::m_FadeOut = false;
+
+void ViewFade::Darken(float intensity)
+{
+	if (!m_Darkened)
+	{
+		m_Darkened = true;
+		m_DarkenIntensity = intensity;
+	}
+}
+
+void ViewFade::RemoveDarken()
+{
+	m_Darkened = false;
+}
 
 void ViewFade::StartFade(float duration)
 {
@@ -68,6 +84,11 @@ void ViewFade::Draw(const Rectf& viewPort)
 			utils::SetColor(Color4f(0, 0, 0, ((m_FadeDuration / 2) - m_FadeTimer) / (m_FadeDuration / 2)));
 			utils::FillRect(viewPort);
 		}
+	}
+	if (m_Darkened)
+	{
+			utils::SetColor(Color4f(0.3f, 0.2f, 0.1f, m_DarkenIntensity));
+			utils::FillRect(viewPort);
 	}
 }
 

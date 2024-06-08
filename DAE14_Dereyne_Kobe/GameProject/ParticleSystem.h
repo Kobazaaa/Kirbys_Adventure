@@ -41,6 +41,7 @@ public:
 	static void AddAirBubbles(const Point2f& pos);
 	static void AddLandParticles(const Point2f& pos);
 	static void AddInhaleParticles(const Point2f& pos, const Rectf& inhaleRect);
+	static void AddAbilityActivation(const Point2f& pos);
 
 	static void AddArc(const Point2f& pos, Direction direction);
 	static void AddCross(const Point2f& pos, bool diagonal);

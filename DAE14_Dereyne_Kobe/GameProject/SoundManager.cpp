@@ -5,6 +5,7 @@
 
 std::vector<SoundManager::SoundStreamObj*> SoundManager::m_vSoundStreams;
 std::vector<SoundManager::SoundEffectObj*> SoundManager::m_vSoundEffects;
+std::string SoundManager::m_CurrentActiveStream;
 
 bool SoundManager::LoadSoundStream(const std::string& name, const std::string& filePath)
 {
@@ -62,6 +63,7 @@ void SoundManager::PlayStream(const std::string& name, bool loop)
 	{
 		if (m_vSoundStreams[index]->m_Name == name)
 		{
+			m_CurrentActiveStream = name;
 			m_vSoundStreams[index]->m_pSoundStream->Play(loop);
 		}
 	}
@@ -111,6 +113,11 @@ void SoundManager::StopEffect(const std::string& name)
 			m_vSoundEffects[index]->m_pSoundEffect->Stop();
 		}
 	}
+}
+
+void SoundManager::ResetStream()
+{
+	SoundManager::PlayStream(m_CurrentActiveStream);
 }
 
 void SoundManager::PauseAll()

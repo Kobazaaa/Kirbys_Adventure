@@ -49,6 +49,7 @@ public:
 	static bool IsPlayingEffect(const std::string& name);
 	static void StopEffect(const std::string& name);
 
+	static void ResetStream();
 	static void PauseAll();
 	static void ResumeAll();
 	static void StopAll();
@@ -62,5 +63,7 @@ private:
 	// Private Data Members
 	static std::vector<SoundStreamObj*> m_vSoundStreams;
 	static std::vector<SoundEffectObj*> m_vSoundEffects;
+
+	static std::string m_CurrentActiveStream;
 };
 

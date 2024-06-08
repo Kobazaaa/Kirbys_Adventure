@@ -2,6 +2,7 @@
 #include "ViewFade.h"
 #include "TextureManager.h"
 #include "StateMachine.h"
+#include "BaseState.h"
 #include "PauseScreen.h"
 #include "TitleScreen.h"
 #include "Gameplay.h"
@@ -23,8 +24,8 @@ StateMachine::StateMachine(Rectf viewport)
 	, m_ViewPort		{ viewport }
 {
 	m_mStates[StateMachine::State::Titlescreen] = new TitleScreen(2, m_ViewPort);
-	m_mStates[StateMachine::State::Pause] = new PauseScreen(2, m_ViewPort);
 	m_mStates[StateMachine::State::Gameplay] = new Gameplay(2, m_ViewPort);
+	m_mStates[StateMachine::State::Pause] = new PauseScreen(2, m_ViewPort, dynamic_cast<Gameplay*>(m_mStates[StateMachine::State::Gameplay]));
 
 	m_mStates[StateMachine::State::Titlescreen]->Enter();
 }
@@ -48,7 +49,7 @@ void StateMachine::Update(float elapsedSec)
 		m_Freeze = false;
 		m_CurrentState = m_NextState;
 	}
-	if (m_mStates[m_CurrentState]) m_mStates[m_CurrentState]->Update(elapsedSec, m_Freeze);
+	if (m_mStates[m_CurrentState]) m_mStates[m_CurrentState]->Update(*this, elapsedSec, m_Freeze);
 }
 
 void StateMachine::Draw() const
