@@ -25,7 +25,6 @@ public:
 
 	void Reset();
 	Entity::AbilityType GetKirbyAbility();
-
 private:
 	Kirby* m_pKirby;
 	LevelManager* m_VegetableValleyManager;

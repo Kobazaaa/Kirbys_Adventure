@@ -83,7 +83,6 @@
 	loop="true"
 
 </InhaledIdle30Down>
-
 <Idle45Up>
 	<Frame>
 		position="128,0"
@@ -158,6 +157,35 @@
 	loop="true"
 
 </Walk>
+<Run>
+	<Frame>
+		position="0,16"
+		width="16"
+		height="16"
+		duration="0.075"
+	</Frame>
+	<Frame>
+		position="16,16"
+		width="16"
+		height="16"
+		duration="0.075"
+	</Frame>
+	<Frame>
+		position="32,16"
+		width="16"
+		height="16"
+		duration="0.075"
+	</Frame>
+	<Frame>
+		position="48,16"
+		width="16"
+		height="16"
+		duration="0.075"
+	</Frame>
+
+	loop="true"
+
+</Run>
 <Walk45Up>
 	<Frame>
 		position="192,0"
@@ -557,6 +585,34 @@
 
 	loop="true"
 </InhaledWalk>
+<InhaledRun>
+	<Frame>
+		position="96,24"
+		width="24"
+		height="24"
+		duration="0.15"
+	</Frame>
+	<Frame>
+		position="120,24"
+		width="24"
+		height="24"
+		duration="0.075"
+	</Frame>
+	<Frame>
+		position="144,24"
+		width="24"
+		height="24"
+		duration="0.15"
+	</Frame>
+	<Frame>
+		position="120,24"
+		width="24"
+		height="24"
+		duration="0.075"
+	</Frame>
+
+	loop="true"
+</InhaledRun>
 <InhaledJump>
 	<Frame>
 		position="96,24"
@@ -701,3 +757,59 @@
 	
 	loop="true"
 </Death>
+<SwimSide>
+	<Frame>
+		position="101,96"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="117,96"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="133,96"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="149,96"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	
+	loop="true"
+</SwimSide>
+<SwimUp>
+	<Frame>
+		position="101,112"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="117,112"
+		width="20"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="137,112"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	<Frame>
+		position="153,112"
+		width="16"
+		height="16"
+		duration="0.2"
+	</Frame>
+	
+	loop="true"
+</SwimUp>

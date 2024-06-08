@@ -19,7 +19,7 @@ void StateMachine::ChangeState(StateMachine::State newState)
 
 StateMachine::StateMachine(Rectf viewport)
 	: m_Freeze			{ false }
-	,  m_CurrentState	{  }
+	, m_CurrentState	{  }
 	, m_NextState		{  }
 	, m_ViewPort		{ viewport }
 {

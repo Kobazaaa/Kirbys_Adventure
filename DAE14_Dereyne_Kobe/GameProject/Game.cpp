@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SVGParser.h"
-#include "Matrix2x3.h"
+#include "BaseState.h"
 #include "Game.h"
 #include "utils.h"
 #include "ParticleSystem.h"
@@ -28,13 +28,13 @@ void Game::Initialize( )
 	// Textures
 	LoadTextures();
 
-	m_StateMachine = new StateMachine(GetViewPort());
+	m_pStateMachine = new StateMachine(GetViewPort());
 }
 
 void Game::Cleanup( )
 {
-	delete m_StateMachine;
-	m_StateMachine = nullptr;
+	delete m_pStateMachine;
+	m_pStateMachine = nullptr;
 
 	SoundManager::DeleteAllSound();
 	TextureManager::DeleteTextures();
@@ -42,19 +42,19 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
-	m_StateMachine->Update(elapsedSec);
+	m_pStateMachine->Update(elapsedSec);
 
-	if (ViewFade::IsFading()) m_StateMachine->Freeze();
-	else m_StateMachine->Unfreeze();
+	if (ViewFade::IsFading()) m_pStateMachine->Freeze();
+	else m_pStateMachine->Unfreeze();
 
-	if (utils::KeyPress(SDL_SCANCODE_RETURN) and m_StateMachine->GetState() == StateMachine::State::Titlescreen)
+	if (utils::KeyPress(SDL_SCANCODE_RETURN) and m_pStateMachine->GetState() == StateMachine::State::Titlescreen)
 	{
-		m_StateMachine->ChangeState(StateMachine::State::Gameplay);
+		m_pStateMachine->ChangeState(StateMachine::State::Gameplay);
 	}
 	if (utils::KeyPress(SDL_SCANCODE_ESCAPE) and !ViewFade::IsFading())
 	{
-		if		(m_StateMachine->GetState() == StateMachine::State::Gameplay)	m_StateMachine->ChangeState(StateMachine::State::Pause);
-		else if (m_StateMachine->GetState() == StateMachine::State::Pause)		m_StateMachine->ChangeState(StateMachine::State::Gameplay);
+		if		(m_pStateMachine->GetState() == StateMachine::State::Gameplay)	m_pStateMachine->ChangeState(StateMachine::State::Pause);
+		else if (m_pStateMachine->GetState() == StateMachine::State::Pause)		m_pStateMachine->ChangeState(StateMachine::State::Gameplay);
 	}
 
 	ViewFade::Update(elapsedSec);
@@ -64,7 +64,7 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 
-	m_StateMachine->Draw();
+	m_pStateMachine->Draw();
 	ViewFade::Draw(GetViewPort());
 }
 
@@ -111,6 +111,7 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("PowerUps",				"PowerUps/Items.png");
 	TextureManager::LoadTexture("PauseScreen",			"HUD/PauseScreen.png");
 	TextureManager::LoadTexture("TitleScreen",			"HUD/TitleScreen.png");
+	TextureManager::LoadTexture("LevelTiles",			"Levels/LevelTiles.png");
 }
 void Game::LoadSounds()
 {

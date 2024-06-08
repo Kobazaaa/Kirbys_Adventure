@@ -22,11 +22,11 @@ void BeamProjectile::Update(float elapsedSec, const std::vector<std::vector<Poin
 		}
 		else
 		{
-			const float angle{ 2 * M_PI / 3};
+			const float angle{ 2 * float(M_PI) / 3};
 			const float percentage{ m_AccumSec / m_TravelTime };
 		
-			m_Velocity.x = (index + 1) * m_DIAMETER * cosf( angle * percentage - M_PI / 2);
-			m_Velocity.y = (index + 1) * m_DIAMETER * sinf( angle * percentage - M_PI / 2);
+			m_Velocity.x = (index + 1) * m_DIAMETER * cosf( angle * percentage - float(M_PI) / 2);
+			m_Velocity.y = (index + 1) * m_DIAMETER * sinf( angle * percentage - float(M_PI) / 2);
 
 			m_Position.x = m_StartPosition.x + static_cast<int>(m_Direction) * m_Velocity.x;
 			m_Position.y = m_StartPosition.y - m_Velocity.y;

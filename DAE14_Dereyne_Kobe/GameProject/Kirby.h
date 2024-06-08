@@ -95,7 +95,7 @@ private:
 	bool CanInhaleWithCurrentState()	const;
 
 	// Timers (constants)
-	const float m_INVINCIBILITY_TIME	{3.f};
+	const float m_INVINCIBILITY_TIME	{2.f};
 	const float m_SLIDING_TIME			{0.5f};
 
 	// States

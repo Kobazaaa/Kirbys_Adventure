@@ -41,6 +41,7 @@ private:
 	void AddEnemyManager(const std::string& element, EnemyManager* enemyManager);
 	void AddDoors(const std::string& element, std::vector<Door>& doors);
 	void AddPowerUps(const std::string& element, std::vector<PowerUp*>& powerUps);
+	void AddAnimations(const std::string& element, std::vector<Animation>& vAnims, std::vector<Point2f>& vAnimPos);
 
 	// Private Variables
 	Level* m_CurrentLevel;

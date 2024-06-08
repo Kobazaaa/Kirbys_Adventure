@@ -5,6 +5,7 @@
 #include "LevelManager.h"
 #include "HUD.h"
 #include "Gameplay.h"
+#include <iostream>
 
 Gameplay::Gameplay(float scale, Rectf viewport)
 	: BaseState(viewport)
@@ -63,8 +64,6 @@ void Gameplay::Update(StateMachine& stateMachine, float elapsedSec, bool freeze)
 	}
 	m_VegetableValleyManager->Update(elapsedSec);
 	m_pCamera->Update(elapsedSec);
-
-
 }
 
 void Gameplay::Draw() const
@@ -93,10 +92,10 @@ void Gameplay::Draw() const
 
 		}
 
-	}
-	m_pCamera->Reset();
-	m_pHUD->Draw();
+		m_pCamera->Reset();
+		m_pHUD->Draw();
 
+	}
 }
 
 void Gameplay::Reset()

@@ -2,10 +2,13 @@
 #include <map>
 
 class BaseState;
+class Camera;
 
 class StateMachine final
 {
 public:
+
+
 	enum class State
 	{
 		Titlescreen, Pause, Gameplay

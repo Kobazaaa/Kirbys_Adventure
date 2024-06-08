@@ -145,6 +145,13 @@ void LevelManager::AddLevel(const std::string& element)
 	subElement = element.substr(startPos, endPos - startPos);
 	AddPowerUps(subElement, powerUpsTemp);
 
+	std::vector<Animation> animsTemp;
+	std::vector<Point2f> animsPosTemp;
+	startPos = element.find("<Animations>");
+	endPos = element.find("</Animations>") + 13;
+	subElement = element.substr(startPos, endPos - startPos);
+	AddAnimations(subElement, animsTemp, animsPosTemp);
+
 	int subLevels{};
 	subLevels = std::stoi(utils::GetAttributeValue("subLevels", element));
 
@@ -155,7 +162,7 @@ void LevelManager::AddLevel(const std::string& element)
 	hasWater = utils::ToBool(utils::GetAttributeValue("hasWater", element));
 
 	//TODO check if I can/should make lvls non-ptrs, same for EnemyMngr in level class
-	Level* tempLevel = new Level(name, subLevels, enemyManagerTemp, doorsTemp, powerUpsTemp, hasWater);
+	Level* tempLevel = new Level(name, subLevels, enemyManagerTemp, doorsTemp, powerUpsTemp, hasWater, animsTemp, animsPosTemp);
 	m_vLevels.push_back(std::move(tempLevel));
 
 }
@@ -306,4 +313,186 @@ void LevelManager::AddPowerUps(const std::string& element, std::vector<PowerUp*>
 			}
 		}
 	}
+}
+void LevelManager::AddAnimations(const std::string& element, std::vector<Animation>& vAnims, std::vector<Point2f>& vAnimPos)
+{
+	std::stringstream elementStringStream;
+	elementStringStream << element;
+
+	std::stringstream sstream;
+	std::string line;
+	std::string animString;
+	while (std::getline(elementStringStream, line))
+	{
+		if (line != "\n" and line != "" and line.find("Animations") == std::string::npos)
+		{
+			sstream << line << "\n";
+
+			std::string tag;
+			size_t startPos{ line.find("<") };
+			if (startPos != std::string::npos)
+			{
+				tag = line.substr(startPos + 1, line.find(">") - startPos - 1);
+			}
+			if (tag[0] == '/')
+			{
+				animString = sstream.str();
+				sstream.str("");
+
+				Point2f animPos{ utils::ToPoint2f(utils::GetAttributeValue("pos", animString)) };
+				Animation animNext{ std::vector<Frame>{}, true };
+
+				if (animString.find("Water") != std::string::npos)
+				{
+					int offset{16};
+					int width{ std::stoi(utils::GetAttributeValue("widthRep", animString)) };
+					int height{ std::stoi(utils::GetAttributeValue("heightRep", animString)) };
+
+					if (animString.find("WaterTop") != std::string::npos)
+					{
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0, -78, 16, 16), 0.1f),
+							Frame(Rectf(18, -78, 16, 16), 0.1f),
+							Frame(Rectf(36, -78, 16, 16), 0.1f),
+							Frame(Rectf(54, -78, 16, 16), 0.1f)
+								}, true };
+					}
+					if (animString.find("WaterBody") != std::string::npos)
+					{
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0, -60, 16, 16), 0.1f),
+							Frame(Rectf(18, -60, 16, 16), 0.1f),
+							Frame(Rectf(36, -60, 16, 16), 0.1f),
+							Frame(Rectf(54, -60, 16, 16), 0.1f)
+								}, true };
+					}
+					if (animString.find("WaterBodyHalf") != std::string::npos)
+					{
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0, -68, 16, 8), 0.1f),
+							Frame(Rectf(18, -68, 16, 8), 0.1f),
+							Frame(Rectf(36, -68, 16, 8), 0.1f),
+							Frame(Rectf(54, -68, 16, 8), 0.1f)
+								}, true };
+					}
+					if (animString.find("WaterForeground") != std::string::npos)
+					{
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0,  0, 16, 8), 0.1f),
+							Frame(Rectf(18, 0, 16, 8), 0.1f),
+							Frame(Rectf(36, 0, 16, 8), 0.1f),
+							Frame(Rectf(54, 0, 16, 8), 0.1f)
+								}, true };
+					}
+					if (animString.find("WaterBackgroundGrass") != std::string::npos)
+					{
+						offset = 8;
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0,  -182, 8, 8), 0.1f),
+							Frame(Rectf(10, -182, 8, 8), 0.1f),
+							Frame(Rectf(20, -182, 8, 8), 0.1f),
+								}, true };
+					}
+					if (animString.find("WaterBackgroundWater") != std::string::npos)
+					{
+						offset = 8;
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0,  -172, 8, 8), 0.1f),
+							Frame(Rectf(10, -172, 8, 8), 0.1f),
+							Frame(Rectf(20, -172, 8, 8), 0.1f),
+								}, true };
+					}
+					if (animString.find("WaterBackgroundSun") != std::string::npos)
+					{
+						offset = 8;
+						animNext = Animation{ std::vector<Frame>{
+							Frame(Rectf(0,  -192, 8, 8), 0.1f),
+							Frame(Rectf(10, -192, 8, 8), 0.1f),
+							Frame(Rectf(20, -192, 8, 8), 0.1f),
+								}, true };
+					}
+
+
+					for (int widthIdx{}; widthIdx < width; ++widthIdx)
+					{
+						for (int heightIdx{}; heightIdx < height; ++heightIdx)
+						{
+							vAnimPos.push_back(Point2f(animPos.x + offset * widthIdx, animPos.y + offset * heightIdx));
+							vAnims.push_back(animNext);
+						}
+					}
+
+				}
+				else if (animString.find("Cloud") != std::string::npos)
+				{
+
+					int left{ std::stoi(utils::GetAttributeValue("left", animString)) };
+					int right{ std::stoi(utils::GetAttributeValue("right", animString)) };
+					animPos.x -= 4;
+					Point2f animNextPos = animPos;
+					for (int index{}; index < left; ++index)
+					{
+						if (index % 2 == 0)
+						{
+							// cloudLeft outwards angle
+							animNext = Animation{ std::vector<Frame>{
+										Frame(Rectf(0,  -139, 8, 8), 0.1f),
+										Frame(Rectf(10, -139, 8, 8), 0.1f),
+										Frame(Rectf(0,  -139, 8, 8), 0.1f),
+										Frame(Rectf(20, -139, 8, 8), 0.1f),
+											}, true };
+							animNextPos.x = animPos.x - (index / 2) * 8;
+						}
+						else
+						{
+							// cloudLeft inwards angle
+							animNext = Animation{ std::vector<Frame>{
+										Frame(Rectf(0,  -129, 8, 8), 0.1f),
+										Frame(Rectf(10, -129, 8, 8), 0.1f),
+										Frame(Rectf(0,  -129, 8, 8), 0.1f),
+										Frame(Rectf(20, -129, 8, 8), 0.1f),
+											}, true };
+							animNextPos.y = animPos.y - ((index + 1) / 2) * 8;
+						}
+
+						vAnims.push_back(animNext);
+						vAnimPos.push_back(animNextPos);
+					}
+					animPos.x += 8;
+					animNextPos = animPos;
+					for (int index{}; index < right; ++index)
+					{
+						if (index % 2 == 0)
+						{
+							// cloudRight outwards angle
+							animNext = Animation{ std::vector<Frame>{
+										Frame(Rectf(0,  -119, 8, 8), 0.1f),
+										Frame(Rectf(10, -119, 8, 8), 0.1f),
+										Frame(Rectf(0,  -119, 8, 8), 0.1f),
+										Frame(Rectf(20, -119, 8, 8), 0.1f),
+											}, true };
+							animNextPos.x = animPos.x + (index / 2) * 8;
+						}
+						else
+						{
+							// cloudRight inwards angle
+							animNext = Animation{ std::vector<Frame>{
+										Frame(Rectf(0,  -109, 8, 8), 0.1f),
+										Frame(Rectf(10, -109, 8, 8), 0.1f),
+										Frame(Rectf(0,  -109, 8, 8), 0.1f),
+										Frame(Rectf(20, -109, 8, 8), 0.1f),
+											}, true };
+							animNextPos.y = animPos.y -((index + 1) / 2) * 8;
+						}
+
+						vAnims.push_back(animNext);
+						vAnimPos.push_back(animNextPos);
+					}
+				}
+
+
+			}
+		}
+	}
+
 }

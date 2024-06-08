@@ -44,5 +44,6 @@ private:
 	void LoadSounds();
 
 	// VARIABLES
-	StateMachine* m_StateMachine;
+	StateMachine* m_pStateMachine;
+
 };

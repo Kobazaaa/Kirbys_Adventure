@@ -6,6 +6,7 @@
 #include "StateMachine.h"
 
 class StateMachine;
+class Camera;
 
 class BaseState
 {

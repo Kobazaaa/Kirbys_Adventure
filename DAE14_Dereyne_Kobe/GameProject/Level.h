@@ -20,7 +20,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, std::vector<PowerUp*> powerUps, bool hasWater);
+	explicit Level(const std::string& name, int nrSubLevels, EnemyManager* enemies, std::vector<Door> doors, std::vector<PowerUp*> powerUps, bool hasWater, std::vector<Animation> anims, std::vector<Point2f> animPos);
 	Level(const Level& other) = delete;
 	Level(Level&& other) = delete;
 	Level& operator=(const Level& rhs) = delete;
@@ -78,5 +78,9 @@ private:
 	int m_NrSubLevels;
 	int m_CurrentSubLevel;
 	std::string m_Name;
+
+
+	std::vector<Animation> m_vAnimations;
+	std::vector<Point2f> m_vAnimPositions;
 };
 
