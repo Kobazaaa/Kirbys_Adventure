@@ -7,7 +7,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit WaddleDoo(const Point2f& center, bool doesWorldCollsion = true);
+	explicit WaddleDoo(const Point2f& center);
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

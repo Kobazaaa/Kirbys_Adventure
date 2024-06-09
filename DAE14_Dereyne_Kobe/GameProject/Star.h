@@ -19,6 +19,7 @@ public:
 	void SetAbility(Entity::AbilityType ability);
 	void ApplyPlaySpace(Level* pLevel);
 
+
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			ACCESSORS			~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

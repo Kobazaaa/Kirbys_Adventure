@@ -46,7 +46,13 @@ Level::~Level() noexcept
 
 void Level::Update(float elapsedSec, Kirby* pKirby)
 {
-	//if (m_pEnemyMngr) m_pEnemyMngr->Update(elapsedSec, m_World, pKirby->GetPosition());
+	for (int index{}; index < m_vAnimations.size(); ++index)
+	{
+		m_vAnimations[index].Update(elapsedSec);
+	}
+
+
+	if (m_pEnemyMngr) m_pEnemyMngr->Update(elapsedSec, m_World, pKirby->GetPosition());
 	pKirby->ApplyPlaySpace(this);
 
 	for (int index{}; index < m_vPowerUps.size(); ++index)
@@ -63,18 +69,16 @@ void Level::Update(float elapsedSec, Kirby* pKirby)
 			m_pEnemyMngr->DoUnderwaterChecks(m_WaterBodies);
 		}
 	}
-
-
-	for (int index{}; index < m_vAnimations.size(); ++index)
-	{
-		m_vAnimations[index].Update(elapsedSec);
-	}
-
 }
 
 void Level::Draw() const
 {
 	m_pTexture->Draw(m_Position);
+	for (int index{}; index < m_vAnimations.size(); ++index)
+	{
+		m_vAnimations[index].Draw(TextureManager::GetTexture("LevelTiles"), m_vAnimPositions[index]);
+	}
+
 	if (m_pEnemyMngr) m_pEnemyMngr->Draw();
 
 	for (int index{}; index < m_vPowerUps.size(); ++index)
@@ -82,10 +86,6 @@ void Level::Draw() const
 		m_vPowerUps[index]->Draw();
 	}
 
-	for (int index{}; index < m_vAnimations.size(); ++index)
-	{
-		m_vAnimations[index].Draw(TextureManager::GetTexture("LevelTiles"), m_vAnimPositions[index]);
-	}
 
 
 	if (utils::DEBUG_MODE)

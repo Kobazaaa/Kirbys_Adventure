@@ -36,6 +36,9 @@ std::string Kirby::EnumToString(Kirby::State state) const
 	case Kirby::State::Walk:
 		enumAsString = "Walk";
 		break;
+	case Kirby::State::Duck:
+		enumAsString = "Duck";
+		break;
 	case Kirby::State::Slide:
 		enumAsString = "Slide";
 		break;
@@ -57,8 +60,20 @@ std::string Kirby::EnumToString(Kirby::State state) const
 	case Kirby::State::Swallow:
 		enumAsString = "Swallow";
 		break;
+	case Kirby::State::Ability:
+		enumAsString = "Ability";
+		break;
+	case Kirby::State::EnterDoor:
+		enumAsString = "EnterDoor";
+		break;
+	case Kirby::State::Land:
+		enumAsString = "Land";
+		break;
+	case Kirby::State::Dead:
+		enumAsString = "Dead";
+		break;
 	default:
-		enumAsString = "[NO STATE FOUND]";
+		enumAsString = "State not found";
 		break;
 	}
 
@@ -67,9 +82,6 @@ std::string Kirby::EnumToString(Kirby::State state) const
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	if (KeyPress(SDL_SCANCODE_R)) --m_Health;
-	if (KeyPress(SDL_SCANCODE_I)) std::cout << *this << std::endl;
-
 	Entity::Update(elapsedSec, world);
 	Animate();
 
@@ -128,10 +140,9 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 
 	if (utils::DEBUG_MODE)
 	{
-		if (KeyPress(SDL_SCANCODE_K))
-		{
-			--m_Health;
-		}
+		if (KeyPress(SDL_SCANCODE_I)) std::cout << *this << std::endl;
+		if (KeyPress(SDL_SCANCODE_R)) --m_Health;
+		if (KeyPress(SDL_SCANCODE_K)) --m_Lives;
 	}
 }
 void Kirby::Draw() const
@@ -142,6 +153,7 @@ void Kirby::Draw() const
 
 	if (m_Direction == Direction::Left) Entity::Draw(true);
 	else Entity::Draw(false);
+
 }
 
 void Kirby::MovementUpdate(float elapsedSec)
@@ -434,12 +446,12 @@ void Kirby::MechanicUpdate(float elapsedSec)
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if (m_CurrentState == State::Swallow and m_AbilityType != AbilityType::None)
 	{
-		ViewFade::Darken(.25f);
+		ViewFade::Darken(.5f);
 		ParticleSystem::AddAbilityActivation(m_Position);
 	}
 	else if (m_CurrentState != State::Swallow and m_AbilityType != AbilityType::None and !m_pAbility->IsActive()) ViewFade::RemoveDarken();
 
-	if (m_HasInhaledAbility and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN))
+	if (m_HasInhaledAbility and (m_CurrentState == State::None or m_CurrentState == State::Walk) and KeyPress(SDL_SCANCODE_DOWN) and m_IsGrounded)
 	{
 		m_HasInhaledAbility = false;
 		m_CurrentAnimation = "Swallow";
@@ -608,23 +620,25 @@ void Kirby::ApplyFriction(float elapsedSec)
 }
 void Kirby::ApplyPlaySpace(Level* pLevel)
 {
-	const Rectf subLevel
+	if (m_DoesWorldCollision)
 	{
-		0,
-		pLevel->GetCurrentSubLevel() * pLevel->GetSubLevelHeight(),
-		pLevel->GetWidth(),
-		pLevel->GetSubLevelHeight()
-	};
+		const Rectf subLevel
+		{
+			0,
+			pLevel->GetCurrentSubLevel() * pLevel->GetSubLevelHeight(),
+			pLevel->GetWidth(),
+			pLevel->GetSubLevelHeight()
+		};
 
-	if (m_Position.x - GetHitBox().width  / 2 < subLevel.left)							m_Position.x = subLevel.left + GetHitBox().width / 2;
-	if (m_Position.x + GetHitBox().width  / 2 > subLevel.left + subLevel.width)			m_Position.x = subLevel.left + subLevel.width - GetHitBox().width  / 2;
-	if (m_Position.y + GetHitBox().height / 2 > subLevel.bottom + subLevel.height)
-	{
-		m_Position.y = subLevel.bottom + subLevel.height - GetHitBox().height / 2;
-		m_Velocity.y = 0;
+		if (m_Position.x - GetHitBox().width / 2 < subLevel.left)							m_Position.x = subLevel.left + GetHitBox().width / 2;
+		if (m_Position.x + GetHitBox().width / 2 > subLevel.left + subLevel.width)			m_Position.x = subLevel.left + subLevel.width - GetHitBox().width / 2;
+		if (m_Position.y + GetHitBox().height / 2 > subLevel.bottom + subLevel.height)
+		{
+			m_Position.y = subLevel.bottom + subLevel.height - GetHitBox().height / 2;
+			m_Velocity.y = 0;
+		}
+		if (m_Position.y + GetHitBox().height / 2 < subLevel.bottom) m_Health = 0;
 	}
-	if (m_Position.y + GetHitBox().height / 2 < subLevel.bottom) m_Health = 0;
-
 	m_Star.ApplyPlaySpace(pLevel);
 }
 
@@ -696,6 +710,9 @@ void Kirby::ForceInhale()
 
 void Kirby::Reset()
 {
+	m_GameOver = false;
+	m_WasInWater = false;
+	m_IsUnderwater = false;
 	m_DeathFade = true;
 	m_IsInvincible = false;
 	m_HasInhaledAbility = false;
@@ -707,12 +724,14 @@ void Kirby::Reset()
 	m_CurrentAnimation = "Idle";
 	m_AccumSec = 0;
 	m_InvincibleAccumSec = 0;
+
+	m_WalkSpeedMultiplier = 1.f;
+	m_GravityMultiplier = 1.f;
 }
 
 void Kirby::HardReset()
 {
 	Reset();
-	SoundManager::StopAll();
 	m_IsHit = false;
 	m_IsSliding = false;
 	m_IsRunning = false;
@@ -781,6 +800,9 @@ void Kirby::Death()
 {
 	if (m_CurrentState != State::Dead)
 	{
+		m_WalkSpeedMultiplier = 1.f;
+		m_GravityMultiplier = 1.f;
+		
 		m_AccumSec = 0;
 		m_Velocity.x = 0;
 		m_Velocity.y = m_JUMP_SPEED;
@@ -790,28 +812,33 @@ void Kirby::Death()
 		ParticleSystem::AddKirbyDeathParticles(m_Position);
 	}
 	m_CurrentState = State::Dead;
+
 	if (m_AccumSec >= 3.f)
 	{
 		m_CurrentAnimation = "Idle";
-		if (m_DeathFade) ViewFade::StartFade(0.5f);
+		if (m_DeathFade) ViewFade::StartFade(0.5f, false);
 		m_DeathFade = false;
 
-		if (!ViewFade::IsFading())
+		if (ViewFade::IsFadingIn())
 		{
-			m_Health = 6;
-			--m_Lives;
-			m_Position = m_SavePoint;
-			Reset();
-			if (m_Lives < 0)
+			if (!m_GameOver and m_CurrentState == State::Dead)
 			{
+				m_Health = 6;
+				--m_Lives;
+				m_Position = m_SavePoint;
+				Reset();
+				if (m_Lives < 0)
+				{
+					m_GameOver = true;
+				}
 			}
 		}
+
 	}
 	else
 	{
 		SoundManager::ResetStream();
 	}
-
 }
 
 void Kirby::Invincibility(float elapsedSec)
@@ -855,6 +882,10 @@ Kirby::Card Kirby::GetCard() const
 bool Kirby::IsInvincible() const
 {
 	return m_IsInvincible;
+}
+bool Kirby::IsGameOver() const
+{
+	return m_GameOver;
 }
 void Kirby::AddToScore(int addition)
 {
@@ -1035,7 +1066,7 @@ void Kirby::Animate()
 		break;
 	}
 
-	if (m_IsUnderwater and m_CurrentState != State::Flight)
+	if (m_IsUnderwater and m_CurrentState != State::Flight and m_CurrentState != State::Dead)
 	{
 		if (!m_IsGrounded and m_Velocity.y >= m_SWIM_SPEED - 5.f and abs(m_Velocity.x) < 5.f)
 		{
@@ -1075,7 +1106,6 @@ void Kirby::Animate()
 			{
 				m_IsHit = false;
 				m_CurrentState = m_OldState;
-				m_InhaledAbilityType = AbilityType::None;
 			}
 		}
 
@@ -1115,6 +1145,7 @@ bool Kirby::CanJumpWithCurrentState() const
 		m_CurrentState == State::Ability	or
 		m_CurrentState == State::Swallow	or
 		m_IsHit								or
+		!m_IsGrounded						or
 		m_Velocity.y != 0.f) return false;
 	else return true;
 }

@@ -5,6 +5,7 @@
 #include "BaseState.h"
 #include "PauseScreen.h"
 #include "TitleScreen.h"
+#include "GameOverScreen.h"
 #include "Gameplay.h"
 
 void StateMachine::ChangeState(StateMachine::State newState)
@@ -26,6 +27,7 @@ StateMachine::StateMachine(Rectf viewport)
 	m_mStates[StateMachine::State::Titlescreen] = new TitleScreen(2, m_ViewPort);
 	m_mStates[StateMachine::State::Gameplay] = new Gameplay(2, m_ViewPort);
 	m_mStates[StateMachine::State::Pause] = new PauseScreen(2, m_ViewPort, dynamic_cast<Gameplay*>(m_mStates[StateMachine::State::Gameplay]));
+	m_mStates[StateMachine::State::GameOver] = new GameOverScreen(2, m_ViewPort);
 
 	m_mStates[StateMachine::State::Titlescreen]->Enter();
 }
@@ -40,6 +42,9 @@ StateMachine::~StateMachine() noexcept
 
 	delete m_mStates[StateMachine::State::Gameplay];
 	m_mStates[StateMachine::State::Gameplay] = nullptr;
+
+	delete m_mStates[StateMachine::State::GameOver];
+	m_mStates[StateMachine::State::GameOver] = nullptr;
 }
 
 void StateMachine::Update(float elapsedSec)
@@ -67,12 +72,12 @@ void StateMachine::Unfreeze()
 	m_Freeze = false;
 }
 
-bool StateMachine::IsFrozen()
+bool StateMachine::IsFrozen() const
 {
 	return m_Freeze;
 }
 
-StateMachine::State StateMachine::GetState()
+StateMachine::State StateMachine::GetState() const
 {
 	return m_CurrentState;
 }

@@ -162,6 +162,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="Fireball.cpp" />
     <ClCompile Include="FireProjectile.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameOverScreen.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="HotHead.cpp" />
     <ClCompile Include="HUD.cpp" />
@@ -200,6 +201,7 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="BrontoBurt.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="GameOverScreen.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PauseScreen.h" />

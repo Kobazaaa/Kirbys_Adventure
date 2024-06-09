@@ -2,18 +2,18 @@
 #include <map>
 
 class BaseState;
-class Camera;
 
 class StateMachine final
 {
 public:
-
-
 	enum class State
 	{
-		Titlescreen, Pause, Gameplay
+		Titlescreen, Pause, Gameplay, GameOver
 	};
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	explicit StateMachine(Rectf viewport);
 	StateMachine(const StateMachine& other) = delete;
 	StateMachine(StateMachine&& other) = delete;
@@ -21,21 +21,35 @@ public:
 	StateMachine& operator=(StateMachine&& rhs) = delete;
 	~StateMachine() noexcept;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Update(float elapsedSec);
 	void Draw() const;
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			MUTATORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void ChangeState(StateMachine::State newState);
 	void Freeze();
 	void Unfreeze();
-	bool IsFrozen();
 
-	StateMachine::State GetState();
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			ACCESSORS			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	bool IsFrozen() const;
+	StateMachine::State GetState() const;
 
 private:
+	// Private Datamambers
 	std::map<StateMachine::State, BaseState*> m_mStates;
 	State m_CurrentState;
 	State m_NextState;
-	bool m_Freeze;
+
 	Rectf m_ViewPort;
+	bool m_Freeze;
 };
 

@@ -60,6 +60,7 @@ public:
 	int			 GetLives()			const;
 	Kirby::Card  GetCard()			const;
 	bool		 IsInvincible()		const;
+	bool		 IsGameOver()		const;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			MUTATORS			~~
@@ -124,6 +125,7 @@ private:
 	bool m_DeathFade{true};
 
 	bool m_IsHit{false};
+	bool m_GameOver{false};
 	bool m_IsSliding{false};
 	bool m_IsRunning{false};
 	bool m_IsTurning{false};

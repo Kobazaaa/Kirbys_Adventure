@@ -2,8 +2,8 @@
 #include "Fire.h"
 #include "HotHead.h"
 
-HotHead::HotHead(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("HotHead", center, 300, doesWorldCollsion)
+HotHead::HotHead(const Point2f& center)
+	: Enemy("HotHead", center, 300)
 	, m_FireShot				{ 5.f, false }
 	, m_AbilityDurationCounter	{ 0.f }
 	, m_UsedFireShot			{ false }

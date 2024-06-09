@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "WaddleDee.h"
 
-WaddleDee::WaddleDee(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("WaddleDee", center, 200, doesWorldCollsion)
+WaddleDee::WaddleDee(const Point2f& center)
+	: Enemy("WaddleDee", center, 200)
 {
 }
 

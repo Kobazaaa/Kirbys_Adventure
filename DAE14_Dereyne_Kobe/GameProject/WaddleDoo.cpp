@@ -2,8 +2,8 @@
 #include "Beam.h"
 #include "WaddleDoo.h"
 
-WaddleDoo::WaddleDoo(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("WaddleDoo", center, 300, doesWorldCollsion)
+WaddleDoo::WaddleDoo(const Point2f& center)
+	: Enemy("WaddleDoo", center, 300)
 {
 	m_pAbility = new Beam(false);
 	m_AbilityType = AbilityType::Beam;

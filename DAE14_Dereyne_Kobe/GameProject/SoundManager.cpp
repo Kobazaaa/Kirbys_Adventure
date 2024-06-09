@@ -12,6 +12,7 @@ bool SoundManager::LoadSoundStream(const std::string& name, const std::string& f
 	if (!IsStreamLoaded(name))
 	{
 		m_vSoundStreams.push_back(std::move(new SoundStreamObj{ name, filePath }));
+		m_vSoundStreams.back()->m_pSoundStream->SetVolume(100);
 
 		if (!m_vSoundStreams.at(m_vSoundStreams.size() - 1)->m_pSoundStream->IsLoaded())
 		{
@@ -30,6 +31,7 @@ bool SoundManager::LoadSoundEffect(const std::string& name, const std::string& f
 	if (!IsEffectloaded(name))
 	{
 		m_vSoundEffects.push_back(std::move(new SoundEffectObj{ name, filePath }));
+		m_vSoundEffects.back()->m_pSoundEffect->SetVolume(100);
 
 		if (!m_vSoundEffects.at(m_vSoundEffects.size() - 1)->m_pSoundEffect->IsLoaded())
 		{
@@ -37,8 +39,6 @@ bool SoundManager::LoadSoundEffect(const std::string& name, const std::string& f
 			return false;
 		}
 	}
-
-	std::cout << m_vSoundEffects.size() << "\t Effect" << std::endl;
 
 	return true;
 }
@@ -140,11 +140,30 @@ void SoundManager::StopAll()
 
 void SoundManager::SetVolume(int volume)
 {
+	volume = volume <= 0   ? 0   : volume;
+	volume = volume >= 100 ? 100 : volume;
+
 	for (int index{}; index < m_vSoundEffects.size(); ++index)
 	{
 		m_vSoundEffects[index]->m_pSoundEffect->SetVolume(volume);
 	}
 	SoundStream::SetVolume(volume);
+}
+
+void SoundManager::AdjustVolume(int volumeChange)
+{
+	for (int index{}; index < m_vSoundEffects.size(); ++index)
+	{
+		int newVolFX{ m_vSoundEffects[index]->m_pSoundEffect->GetVolume() + volumeChange };
+		newVolFX = newVolFX <= 0 ? 0 : newVolFX;
+		newVolFX = newVolFX >= 100 ? 100 : newVolFX;
+		m_vSoundEffects[index]->m_pSoundEffect->SetVolume(newVolFX);
+	}
+
+	int newVolSt{ SoundStream::GetVolume() + volumeChange };
+	newVolSt = newVolSt <= 0 ? 0 : newVolSt;
+	newVolSt = newVolSt >= 100 ? 100 : newVolSt;
+	SoundStream::SetVolume(newVolSt);
 }
 
 
@@ -207,7 +226,6 @@ SoundManager::SoundStreamObj::~SoundStreamObj()
 	delete m_pSoundStream;
 	m_pSoundStream = nullptr;
 
-	std::cout << m_Name << "\t Stream" << std::endl;
 }
 #pragma endregion
 #pragma region SoundEffectObject
@@ -242,7 +260,5 @@ SoundManager::SoundEffectObj::~SoundEffectObj()
 {
 	delete m_pSoundEffect;
 	m_pSoundEffect = nullptr;
-
-	std::cout << m_Name << "\t Effect" << std::endl;
 }
 #pragma endregion

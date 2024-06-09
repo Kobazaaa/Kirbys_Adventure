@@ -26,6 +26,9 @@ struct Particle
 class ParticleSystem
 {
 public:
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	static bool InitializeParticleSystem();
 
 	static void Update(float elapsedSec);

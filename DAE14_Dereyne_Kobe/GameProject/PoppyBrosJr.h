@@ -7,7 +7,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit PoppyBrosJr(const Point2f& center, bool doesWorldCollsion = true);
+	explicit PoppyBrosJr(const Point2f& center);
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

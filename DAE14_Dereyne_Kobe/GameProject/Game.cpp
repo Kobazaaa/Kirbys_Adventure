@@ -44,7 +44,10 @@ void Game::Update( float elapsedSec )
 {
 	m_pStateMachine->Update(elapsedSec);
 
-	if (ViewFade::IsFading()) m_pStateMachine->Freeze();
+	if (ViewFade::IsFading() and ViewFade::CauseFreeze())
+	{
+		m_pStateMachine->Freeze();
+	}
 	else m_pStateMachine->Unfreeze();
 
 	if (utils::KeyPress(SDL_SCANCODE_RETURN) and m_pStateMachine->GetState() == StateMachine::State::Titlescreen)
@@ -111,10 +114,12 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("PowerUps",				"PowerUps/Items.png");
 	TextureManager::LoadTexture("PauseScreen",			"HUD/PauseScreen.png");
 	TextureManager::LoadTexture("TitleScreen",			"HUD/TitleScreen.png");
+	TextureManager::LoadTexture("GameOverScreen",		"HUD/GameOverScreen.png");
 	TextureManager::LoadTexture("LevelTiles",			"Levels/LevelTiles.png");
 }
 void Game::LoadSounds()
 {
+	SoundManager::LoadSoundEffect("GameOver", "Sound/SoundEffects/GameOver.mp3");
 	SoundManager::LoadSoundEffect("Turn", "Sound/SoundEffects/23.wav");
 	SoundManager::LoadSoundEffect("Jump", "Sound/SoundEffects/Jump.wav");
 	SoundManager::LoadSoundEffect("InhalingStart", "Sound/SoundEffects/InhalingStart.wav");
@@ -138,7 +143,7 @@ void Game::LoadSounds()
 	SoundManager::LoadSoundEffect("Pause", "Sound/SoundEffects/Pause.wav");
 	SoundManager::LoadSoundEffect("Unpause", "Sound/SoundEffects/Unpause.wav");
 	SoundManager::LoadSoundEffect("LowHealth", "Sound/SoundEffects/LowHealth.wav");
-	SoundManager::LoadSoundEffect("Dead", "Sound/Music/Dead.mp3");
+	SoundManager::LoadSoundEffect("Dead", "Sound/SoundEffects/Dead.mp3");
 
 
 	SoundManager::LoadSoundStream("VegetableValleyLevel", "Sound/Music/Vegetable_Valley_Level.mp3");

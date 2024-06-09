@@ -4,13 +4,13 @@
 class Texture;
 class Gameplay;
 
-class PauseScreen final : public BaseState
+class GameOverScreen final : public BaseState
 {
 public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit PauseScreen(float scale, Rectf viewport, Gameplay* gameplayState);
+	explicit GameOverScreen(float scale, Rectf viewport);
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,12 +23,15 @@ public:
 
 private:
 	// Private Datamembers
-	enum class Option{ Continue, Exit };
-	
-	Gameplay* m_pGameplay;
+	enum class Option { Continue, Exit };
 
 	Texture* m_pTexture;
 	float m_Scale;
 	Option m_Option;
+
+	Rectf m_SrcRect;
+
+	float m_AccumSec;
+	bool m_ShowOptions;
 };
 

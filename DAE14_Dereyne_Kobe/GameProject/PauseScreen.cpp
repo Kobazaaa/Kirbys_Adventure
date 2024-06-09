@@ -27,6 +27,18 @@ void PauseScreen::Exit()
 
 void PauseScreen::Update(StateMachine& stateMachine, float elapsedSec, bool freeze)
 {
+	if (utils::KeyPress(SDL_SCANCODE_LEFT))
+	{
+		SoundManager::AdjustVolume(-5);
+		SoundManager::PlayEffect("Land");
+	}
+	if (utils::KeyPress(SDL_SCANCODE_RIGHT))
+	{
+		SoundManager::AdjustVolume(5);
+		SoundManager::PlayEffect("Jump");
+
+	}
+
 	if (utils::KeyPress(SDL_SCANCODE_DOWN))
 	{
 		m_Option = Option::Exit;
@@ -44,6 +56,7 @@ void PauseScreen::Update(StateMachine& stateMachine, float elapsedSec, bool free
 			break;
 		case PauseScreen::Option::Exit:
 			m_pGameplay->Reset();
+			SoundManager::StopAll();
 			stateMachine.ChangeState(StateMachine::State::Titlescreen);
 			break;
 		default:

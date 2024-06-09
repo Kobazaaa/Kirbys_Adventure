@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "PoppyBrosJr.h"
 
-PoppyBrosJr::PoppyBrosJr(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("PoppyBrosJr", center, 200, doesWorldCollsion)
+PoppyBrosJr::PoppyBrosJr(const Point2f& center)
+	: Enemy("PoppyBrosJr", center, 200)
 	, m_JumpAccumSec{ 0.f }
 {
 	m_StartDirection = m_Direction;

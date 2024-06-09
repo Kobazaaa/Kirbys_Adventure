@@ -20,7 +20,7 @@ public:
 	EnemyManager(const EnemyManager&& other) = delete;
 	EnemyManager& operator=(const EnemyManager& rhs) = delete;
 	EnemyManager& operator=(const EnemyManager&& rhs) = delete;
-	~EnemyManager() noexcept;
+	virtual ~EnemyManager() noexcept;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~			BEHAVIOURAL			~~

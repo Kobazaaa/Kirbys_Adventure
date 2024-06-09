@@ -55,6 +55,7 @@ public:
 	static void StopAll();
 
 	static void SetVolume(int volume);
+	static void AdjustVolume(int volumeChange);
 private:
 	// Private Accessors
 	static bool IsStreamLoaded(const std::string& name);

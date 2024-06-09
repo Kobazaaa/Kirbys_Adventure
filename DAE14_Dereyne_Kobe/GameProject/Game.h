@@ -45,5 +45,4 @@ private:
 
 	// VARIABLES
 	StateMachine* m_pStateMachine;
-
 };

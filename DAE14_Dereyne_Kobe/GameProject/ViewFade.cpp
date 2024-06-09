@@ -10,6 +10,7 @@ bool ViewFade::m_Darkened = false;
 bool ViewFade::m_IsFading = false;
 bool ViewFade::m_FadeIn = false;
 bool ViewFade::m_FadeOut = false;
+bool ViewFade::m_Freeze = true;
 
 void ViewFade::Darken(float intensity)
 {
@@ -25,10 +26,11 @@ void ViewFade::RemoveDarken()
 	m_Darkened = false;
 }
 
-void ViewFade::StartFade(float duration)
+void ViewFade::StartFade(float duration, bool freeze)
 {
 	if (!m_IsFading)
 	{
+		m_Freeze = freeze;
 		m_IsFading = true;
 		m_FadeOut = true;
 		m_FadeIn = false;
@@ -85,10 +87,14 @@ void ViewFade::Draw(const Rectf& viewPort)
 			utils::FillRect(viewPort);
 		}
 	}
+}
+
+void ViewFade::DrawDarken(const Rectf& viewPort)
+{
 	if (m_Darkened)
 	{
-			utils::SetColor(Color4f(0.3f, 0.2f, 0.1f, m_DarkenIntensity));
-			utils::FillRect(viewPort);
+		utils::SetColor(Color4f(0.1f, 0.1f, 0.1f, m_DarkenIntensity));
+		utils::FillRect(viewPort);
 	}
 }
 
@@ -100,4 +106,14 @@ bool ViewFade::IsFading()
 bool ViewFade::IsFadingIn()
 {
 	return m_FadeIn;
+}
+
+bool ViewFade::IsDarkened()
+{
+	return m_Darkened;
+}
+
+bool ViewFade::CauseFreeze()
+{
+	return m_Freeze;
 }

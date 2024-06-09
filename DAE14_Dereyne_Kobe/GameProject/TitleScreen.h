@@ -7,14 +7,22 @@ class Texture;
 class TitleScreen final : public BaseState
 {
 public:
-	TitleScreen(float scale, Rectf viewport);
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	explicit TitleScreen(float scale, Rectf viewport);
 
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~			BEHAVIOURAL			~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	virtual void Enter() override;
 	virtual void Exit() override;
 	virtual void Update(StateMachine& stateMachine, float elapsedSec, bool freeze) override;
 	virtual void Draw() const override;
 
 private:
+	// Private Datamembers
 	Texture* m_pTexture;
 	float m_Scale;
 

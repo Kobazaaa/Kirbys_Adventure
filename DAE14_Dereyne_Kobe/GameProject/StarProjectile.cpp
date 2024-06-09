@@ -4,7 +4,6 @@
 
 StarProjectile::StarProjectile(bool isFriendly)
 	: Projectile("StarProjectile", Vector2f(200.f, 0.f), 1.2f, isFriendly)
-	, m_Type{ StarProjectile::Type::Single }
 {
 	m_DeactivateOnImpact = true;
 }

@@ -94,7 +94,5 @@ TextureManager::TextureObj::~TextureObj()
 {
 	delete m_pTexture;
 	m_pTexture = nullptr;
-	
-	std::cout << m_Name << "\t Texture" << std::endl;
 }
 #pragma endregion

@@ -8,7 +8,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit HotHead(const Point2f& center, bool doesWorldCollsion = true);
+	explicit HotHead(const Point2f& center);
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

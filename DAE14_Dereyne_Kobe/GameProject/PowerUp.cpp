@@ -76,7 +76,7 @@ Point2f PowerUp::GetPosition() const
 Rectf PowerUp::GetHitBox() const
 {
 	Rectf hitBox{};
-	hitBox.width	= 16;
+	hitBox.width	= 8;
 	hitBox.height	= 16;
 	hitBox.left		= m_Position.x - hitBox.width  / 2;
 	hitBox.bottom	= m_Position.y - hitBox.height / 2;

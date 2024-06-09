@@ -50,13 +50,19 @@ void Gameplay::Exit()
 
 void Gameplay::Update(StateMachine& stateMachine, float elapsedSec, bool freeze)
 {
+	if (m_pKirby->IsGameOver())
+	{
+		stateMachine.ChangeState(StateMachine::State::GameOver);
+		Reset();
+	}
+
 	if (!freeze)
 	{
 		ParticleSystem::Update(elapsedSec);
 		m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->KirbyInhaleCollision(m_pKirby, elapsedSec);
 		if (Collision::KirbyHitDetection(m_pKirby, m_VegetableValleyManager->GetCurrentLevel()->GetEnemyMngr()->GetAllEnemies(), Projectile::GetAllProjectiles()))
 		{
-			m_pCamera->Shake(0.1f, 0.1f);
+			m_pCamera->Shake(0.2f, 0.2f);
 		}
 
 		m_pKirby->Update(elapsedSec, m_VegetableValleyManager->GetCurrentLevel()->GetWorld());
@@ -72,6 +78,13 @@ void Gameplay::Draw() const
 	{
 		m_VegetableValleyManager->Draw();
 		utils::SetColor(Color4f(1, 1, 1, 1));
+
+		glPushMatrix();
+		{
+			glTranslatef(m_pCamera->GetCameraView().left, m_pCamera->GetCameraView().bottom, 0);
+			ViewFade::DrawDarken(m_VIEWPORT);
+		}
+		glPopMatrix();
 
 		ParticleSystem::Draw();
 		m_pKirby->Draw();
@@ -92,10 +105,10 @@ void Gameplay::Draw() const
 
 		}
 
-		m_pCamera->Reset();
-		m_pHUD->Draw();
 
 	}
+	m_pCamera->Reset();
+	m_pHUD->Draw();
 }
 
 void Gameplay::Reset()

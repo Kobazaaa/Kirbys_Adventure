@@ -7,7 +7,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	explicit WaddleDee(const Point2f& center, bool doesWorldCollsion = true);
+	explicit WaddleDee(const Point2f& center);
 
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

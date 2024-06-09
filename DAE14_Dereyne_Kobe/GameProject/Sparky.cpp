@@ -2,8 +2,8 @@
 #include "Sparky.h"
 #include "Spark.h"
 
-Sparky::Sparky(const Point2f& center, bool doesWorldCollsion)
-	: Enemy("Sparky", center, 300, doesWorldCollsion)
+Sparky::Sparky(const Point2f& center)
+	: Enemy("Sparky", center, 300)
 	, m_AbilityDurationCounter{0}
 {
 	m_Velocity.x = 0.f;
