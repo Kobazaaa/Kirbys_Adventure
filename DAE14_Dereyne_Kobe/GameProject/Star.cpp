@@ -21,7 +21,6 @@ void Star::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wor
 		m_AccumSec += elapsedSec;
 		if (m_AccumSec >= m_TravelTime)
 		{
-			std::cout << "STAR DEACTIVATED\n";
 			ParticleSystem::AddCircle(m_Position);
 			Deactivate();
 		}

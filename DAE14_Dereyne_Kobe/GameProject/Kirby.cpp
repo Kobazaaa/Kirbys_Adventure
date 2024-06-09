@@ -82,8 +82,6 @@ std::string Kirby::EnumToString(Kirby::State state) const
 
 void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world)
 {
-	if (KeyDown(SDL_SCANCODE_F)) HitEnemy(Point2f(m_Position.x + 10, m_Position.y), Projectile::Element::Fire);
-
 	Entity::Update(elapsedSec, world);
 	Animate();
 
@@ -712,6 +710,8 @@ void Kirby::ForceInhale()
 
 void Kirby::Reset()
 {
+	m_IsHit = false;
+	m_ElementalDamage = false;
 	m_GameOver = false;
 	m_WasInWater = false;
 	m_IsUnderwater = false;
@@ -745,7 +745,7 @@ void Kirby::HardReset()
 
 void Kirby::HitEnemy(const Point2f& enemyPos, Projectile::Element element)
 {
-	if (!m_IsInvincible)
+	if (!m_IsInvincible and !m_IsHit)
 	{
 		if (!m_IsSliding and m_CurrentState != State::Falling)
 		{
@@ -761,7 +761,7 @@ void Kirby::HitEnemy(const Point2f& enemyPos, Projectile::Element element)
 				m_ElementalDamage = true;
 				m_Direction = hitDirection;
 				m_Velocity.x = -static_cast<int>(hitDirection) * 50.f;
-				m_Position.y += 1;
+				m_Position.y += 3;
 				m_Velocity.y = 150.f;
 			}
 			else
@@ -788,7 +788,7 @@ void Kirby::HitEnemy(const Point2f& enemyPos, Projectile::Element element)
 			SoundManager::PlayEffect("EnemyDeath");
 		}
 	}
-	else
+	else if (!m_IsHit and element == Projectile::Element::None)
 	{
 		SoundManager::PlayEffect("EnemyDeath");
 	}
@@ -1131,7 +1131,7 @@ void Kirby::Animate()
 		{
 			m_Velocity.x = -static_cast<int>(m_Direction) * 50.f;
 			m_CurrentAnimation = "FireRoll";
-			if (m_Bounced or m_IsGrounded)
+			if (m_pAnimationManager->IsDone("FireRoll"))
 			{
 				m_ElementalDamage = false;
 				m_Bounced = false;

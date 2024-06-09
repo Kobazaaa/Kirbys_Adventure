@@ -306,6 +306,91 @@
 	loop="false"
 
 </InhaledRoll>
+
+<FireRoll>
+	<Frame>
+		position="48,129"
+		width="21"
+		height="27"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="71,129"
+		width="23"
+		height="23"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="95,129"
+		width="23"
+		height="31"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="71,129"
+		width="23"
+		height="23"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="95,129"
+		width="23"
+		height="31"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="71,129"
+		width="23"
+		height="23"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="95,129"
+		width="23"
+		height="31"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="71,129"
+		width="23"
+		height="23"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="95,129"
+		width="23"
+		height="31"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="71,129"
+		width="23"
+		height="23"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="95,129"
+		width="23"
+		height="31"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="71,129"
+		width="23"
+		height="23"
+		duration="0.1"
+	</Frame>
+	<Frame>
+		position="95,129"
+		width="23"
+		height="31"
+		duration="0.1"
+	</Frame>
+
+	loop="false"
+
+</FireRoll>
+
 <EndFlip>
 	<Frame>
 		position="64,32"

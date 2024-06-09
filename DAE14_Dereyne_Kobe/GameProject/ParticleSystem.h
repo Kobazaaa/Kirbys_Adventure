@@ -55,6 +55,6 @@ public:
 private:
 	static float m_AccumSec;
 	static std::vector<Particle> m_vParticles;
-	static Texture m_Texture;
+	static Texture* m_pTexture;
 };
 

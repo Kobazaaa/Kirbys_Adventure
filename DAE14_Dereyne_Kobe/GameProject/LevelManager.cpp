@@ -161,7 +161,6 @@ void LevelManager::AddLevel(const std::string& element)
 	bool hasWater;
 	hasWater = utils::ToBool(utils::GetAttributeValue("hasWater", element));
 
-	//TODO check if I can/should make lvls non-ptrs, same for EnemyMngr in level class
 	Level* tempLevel = new Level(name, subLevels, enemyManagerTemp, doorsTemp, powerUpsTemp, hasWater, animsTemp, animsPosTemp);
 	m_vLevels.push_back(std::move(tempLevel));
 

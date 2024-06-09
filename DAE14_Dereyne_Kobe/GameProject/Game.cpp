@@ -21,12 +21,12 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	ParticleSystem::InitializeParticleSystem();
-
 	// Sounds
 	LoadSounds();
 	// Textures
 	LoadTextures();
+
+	ParticleSystem::InitializeParticleSystem();
 
 	m_pStateMachine = new StateMachine(GetViewPort());
 }
@@ -116,6 +116,7 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("TitleScreen",			"HUD/TitleScreen.png");
 	TextureManager::LoadTexture("GameOverScreen",		"HUD/GameOverScreen.png");
 	TextureManager::LoadTexture("LevelTiles",			"Levels/LevelTiles.png");
+	TextureManager::LoadTexture("Particles",			"Particles/Particles.png");
 }
 void Game::LoadSounds()
 {

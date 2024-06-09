@@ -1,15 +1,16 @@
 #include "pch.h"
 #include "utils.h"
+#include "TextureManager.h"
 #include "ParticleSystem.h"
 
 std::vector<Particle> ParticleSystem::m_vParticles;
-Texture ParticleSystem::m_Texture;
+Texture* ParticleSystem::m_pTexture;
 float ParticleSystem::m_AccumSec{ 0 };
 
 bool ParticleSystem::InitializeParticleSystem()
 {
-	m_Texture = Texture("Particles/Particle.png");
-	return m_Texture.IsCreationOk();
+	m_pTexture = TextureManager::GetTexture("Particles");
+	return m_pTexture->IsCreationOk();
 }
 
 void ParticleSystem::Update(float elapsedSec)
@@ -38,7 +39,7 @@ void ParticleSystem::Draw()
 {
 	for (int index{}; index < m_vParticles.size(); ++index)
 	{
-		m_vParticles[index].m_Animation.Draw(&m_Texture, m_vParticles[index].m_Position);
+		m_vParticles[index].m_Animation.Draw(m_pTexture, m_vParticles[index].m_Position);
 	}
 }
 

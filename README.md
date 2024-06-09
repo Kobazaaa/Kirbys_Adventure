@@ -34,6 +34,7 @@
     </li>
     <li><a href="#how-to-play">How To Play</a></li>
     <li><a href="#class-structure">Class structure</a></li>
+    <li><a href="#classes-deep-dive">Classes Deep Dive</a></li>
     <li><a href="#checklist">Checklist</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -80,7 +81,7 @@ This section gives a clear and detailed overview of which parts of the original 
 
 <!-- GETTING STARTED -->
 ## Getting Started
-Detailed instructions on how to run your game project are in this section.
+Detailed instructions on how to run the game project are in this section.
 
 ### Prerequisites
 
@@ -144,7 +145,7 @@ Please refer to the screenshot included down below to have a better understandin
 ### Texture- and SoundManager
 
 The Texture- and SoundManager are static classes that manage certain objects. The TextureManager holds all the textures while the SoundManager holds all the sounds.
-This allows to avoid having duplicate sounds or textures (as these managers also prevent the same texture from being loaded twice).
+This is to avoid having duplicate sounds or textures (as these managers also prevent the same texture from being loaded twice).
 
 ### LevelManager
 
@@ -154,7 +155,7 @@ The LevelManager can also load levels from a file, making it even easier to expa
 ### EnemyManager
 
 An EnemyManager is specific to each Level and handles all the enemies of said level. It draws, updates, and handles every enemy.
-Since the EnemyManagers are specific to each level, creating them is just adding them to the level file, they will automatically be loaded and created.
+Since the EnemyManagers are specific to each level, creating them is just defining and adding them to the level file, they will automatically be loaded and created.
 
 ### ViewFade
 
@@ -169,19 +170,19 @@ Returning a boolean allows each object to still do extra things when a collision
 
 ### ParticleSystem
 
-The ParticleSystem class will HANDLE, UPDATE, DRAW and CREATE particles. Each particle is defined to have a position, velocity, lifetime and animation. I opted to make this class static, for the same reasons why I made the Texture- and SoundManager static. I wouldn't need more than one ParticleSystem instance, and the static class makes ease of use. I can easily add particles from different sources in my game.
+The ParticleSystem class will HANDLE, UPDATE, DRAW and CREATE particles. Each particle is defined to have a position, velocity, lifetime and animation. I opted to make this class static, for the same reasons why I made the Texture- and SoundManager static. I wouldn't need more than one ParticleSystem instance, and the static class makes for ease of use. I can easily add particles from different sources in my game.
+Since adding animated particles based on the position in a spritesheet, I premade some functions in this class to quickly add, for example, impact particles. This allows me to easily add particles in game (air bubbles, projectile hits wall, sprint, ... ).
 
 ### Animation(manager)
 
-The Animation and AnimationManager class go hand in hand. The Animation class hold a single animation, defined as a vector of frames (which are in turn defined to have a source rectangle and duration). Each animation can draw their own frames if activated.
+The Animation and AnimationManager class go hand in hand. The Animation class holds a single animation, defined as a vector of frames (which are in turn defined to have a source rectangle and duration). Each animation can draw their own frames if activated.
 The AnimationManager is another class. It acts as an encapsulator for a group of Animations. For example, Kirby has his own AnimationManager, which contains a vector of all of Kirby's different animations. In the Kirby class all I have to do is specify to the AnimationManager which animation to play.
-The AnimationManager also allows to load a set of animations from a file for ease of use.
+The AnimationManager also allows to load a set of animations from a file for ease of use. I specifically implented this because a lot of my animations have different sizes and durations frame per frame. Defining these characteristics in a file is way easier and more managable.
 
 ### StateMachine
 
-The StateMachine manages the different states the game can be in (title screen, gamelpay, pause screen, or game over). Whichever state is the current active one will be drawn and updated.
-The different states are classes on their own, which inherit from an abstract base class, named BaseState. Each State class must have an Enter, Exit, Update and Draw function. The Enter and Exit functions are called when the StateMachine enters of leaves said state.
-
+The StateMachine manages the different states the game can be in (title screen, gameplay, pause screen, or game over). Whichever state is the current active one will be drawn and updated.
+The different states are classes on their own, which inherit from an abstract base class, named BaseState. Each state class that inherits from BaseState  class must have an Enter, Exit, Update and Draw function. The Enter and Exit functions are called when the StateMachine enters of leaves said state, allowing from smoother transitions.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
