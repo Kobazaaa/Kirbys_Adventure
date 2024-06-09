@@ -58,7 +58,7 @@ void GameOverScreen::Update(StateMachine& stateMachine, float elapsedSec, bool f
 				stateMachine.ChangeState(StateMachine::State::Gameplay);
 				break;
 			case GameOverScreen::Option::Exit:
-				std::exit(0);
+
 				break;
 			default:
 				break;

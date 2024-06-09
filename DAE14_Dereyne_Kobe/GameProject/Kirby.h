@@ -76,7 +76,6 @@ private:
 	void AbilityUpdate(float elapsedSec, const std::vector<std::vector<Point2f>>& world);
 	void Death();
 	void Invincibility(float elapsedSec);
-	void UserInput();
 	void ApplyUnderwaterChanges();
 	void MovementUpdate(float elapsedSec);
 	void MechanicUpdate(float elapsedSec);

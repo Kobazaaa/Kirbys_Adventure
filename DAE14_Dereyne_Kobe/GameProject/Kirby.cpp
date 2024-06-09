@@ -138,7 +138,7 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	}
 
 
-	if (utils::DEBUG_MODE)
+	if (!utils::DEBUG_MODE)
 	{
 		if (KeyPress(SDL_SCANCODE_I)) std::cout << *this << std::endl;
 		if (KeyPress(SDL_SCANCODE_R)) --m_Health;
@@ -849,9 +849,6 @@ void Kirby::Invincibility(float elapsedSec)
 		m_InvincibleAccumSec = 0;
 		m_IsInvincible = false;
 	}
-}
-void Kirby::UserInput()
-{
 }
 
 void Kirby::ApplyUnderwaterChanges()
