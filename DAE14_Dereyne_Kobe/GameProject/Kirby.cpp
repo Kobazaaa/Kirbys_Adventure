@@ -138,12 +138,9 @@ void Kirby::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& wo
 	}
 
 
-	if (!utils::DEBUG_MODE)
-	{
-		if (KeyPress(SDL_SCANCODE_I)) std::cout << *this << std::endl;
-		if (KeyPress(SDL_SCANCODE_R)) --m_Health;
-		if (KeyPress(SDL_SCANCODE_K)) --m_Lives;
-	}
+	if (KeyPress(SDL_SCANCODE_I)) std::cout << *this << std::endl;
+	if (KeyPress(SDL_SCANCODE_R)) --m_Health;
+	if (KeyPress(SDL_SCANCODE_K)) --m_Lives;
 }
 void Kirby::Draw() const
 {

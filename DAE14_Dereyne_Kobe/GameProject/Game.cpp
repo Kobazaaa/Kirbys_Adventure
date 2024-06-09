@@ -108,7 +108,6 @@ void Game::LoadTextures()
 	TextureManager::LoadTexture("PoppyBrosJr",			"Enemies/PoppyBrosJr.png");
 	TextureManager::LoadTexture("WaddleDoo",			"Enemies/WaddleDoo.png");
 	TextureManager::LoadTexture("HUD",					"HUD/HUD.png");
-	TextureManager::LoadTexture("Kirby",				"Kirby/Kirby.png");
 	TextureManager::LoadTexture("VegetableValleyLevel",	"Levels/VegetableValleyLevel.png");
 	TextureManager::LoadTexture("VegetableValleyHub",	"Levels/VegetableValleyHub.png");
 	TextureManager::LoadTexture("PowerUps",				"PowerUps/Items.png");
