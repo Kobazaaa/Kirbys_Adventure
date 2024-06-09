@@ -8,6 +8,11 @@
 class Projectile
 {
 public:
+	enum class Element
+	{
+		None, Fire, Electricity
+	};
+
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ~~	CONSTRUCTOR & DESTRUCTOR	~~
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,6 +46,7 @@ public:
 	Direction GetDirection() const;
 	float GetWidth() const;
 	float GetHeight() const;
+	Element GetElement();
 
 	static std::vector<Projectile*>& GetAllProjectiles();
 
@@ -73,6 +79,8 @@ protected:
 
 	AnimationManager* m_pAnimationManager;
 	std::string m_CurrentAnimation;
+
+	Element m_Element;
 private:
 	// Private Variables
 	utils::HitInfo	m_HitInfo;

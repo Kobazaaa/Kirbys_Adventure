@@ -1131,7 +1131,7 @@ void Kirby::Animate()
 		{
 			m_Velocity.x = -static_cast<int>(m_Direction) * 50.f;
 			m_CurrentAnimation = "FireRoll";
-			if (m_Bounced or m_IsGrounded)
+			if (m_Bounced and m_IsGrounded)
 			{
 				m_ElementalDamage = false;
 				m_Bounced = false;

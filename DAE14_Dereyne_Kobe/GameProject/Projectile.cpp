@@ -23,6 +23,7 @@ Projectile::Projectile(const std::string& textureName, const Vector2f velocity, 
 	, m_CurrentAnimation	{ "" }
 	, m_ParticlesOnImpact	{ true }
 	, m_DeactivateOnImpact	{ false }
+	, m_Element				{ Element::None }
 {
 	m_pAnimationManager->LoadFromFile("Animations/" + textureName + ".xml");
 
@@ -123,6 +124,11 @@ float Projectile::GetWidth() const
 float Projectile::GetHeight() const
 {
 	return m_Height;
+}
+
+Projectile::Element Projectile::GetElement()
+{
+	return m_Element;
 }
 
 std::vector<Projectile*>& Projectile::GetAllProjectiles()

@@ -40,7 +40,7 @@ public:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world) override;
 	void Draw() const;
-	void HitEnemy(const Point2f& enemyPos);
+	void HitEnemy(const Point2f& enemyPos, Projectile::Element element);
 	void InhaledEnemy(AbilityType ability);
 	bool HasEnteredDoor();
 	void EnterDoor();
@@ -124,6 +124,7 @@ private:
 	bool m_DeathFade{true};
 
 	bool m_IsHit{false};
+	bool m_ElementalDamage{false};
 	bool m_GameOver{false};
 	bool m_IsSliding{false};
 	bool m_IsRunning{false};

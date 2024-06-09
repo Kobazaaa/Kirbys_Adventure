@@ -6,6 +6,7 @@ FireProjectile::FireProjectile(float travelTime, bool isFriendly)
 	: Projectile("Fire", Vector2f(150, 0), travelTime, isFriendly)
 	, m_HorizontalFlip{false}
 {
+	m_Element = Element::Fire;
 }
 
 void FireProjectile::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index)

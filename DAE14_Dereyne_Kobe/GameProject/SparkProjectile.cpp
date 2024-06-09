@@ -4,6 +4,7 @@
 SparkProjectile::SparkProjectile(float travelTime, bool isFriendly)
 	: Projectile("Spark", Vector2f(0, 0), travelTime, isFriendly, 24.f)
 {
+	m_Element = Element::Electricity;
 }
 
 void SparkProjectile::Update(float elapsedSec, const std::vector<std::vector<Point2f>>& world, int index)

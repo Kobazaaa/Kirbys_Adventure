@@ -218,7 +218,7 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 				{
 					//SoundManager::PlayEffect("EnemyDeath");
 					pKirby->AddToScore(enemyPtr->GetScore() * 2);
-					pKirby->HitEnemy(enemyPtr->GetPosition());
+					pKirby->HitEnemy(enemyPtr->GetPosition(), Projectile::Element::None);
 					kirbyGotHitByEnemy = true;
 				}
 			}
@@ -253,7 +253,7 @@ bool Collision::KirbyHitDetection(Kirby* pKirby, std::vector<Enemy*>& vEnemies, 
 			{
 				if (Collision::ProjectileCollision(pKirby, projectilePtr))
 				{
-					pKirby->HitEnemy(projectilePtr->GetPosition());
+					pKirby->HitEnemy(projectilePtr->GetPosition(), projectilePtr->GetElement());
 					kirbyGotHitByProjectile = true;
 				}
 
